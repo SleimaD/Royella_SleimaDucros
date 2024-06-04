@@ -86,12 +86,12 @@ from django.contrib.postgres.fields import JSONField
     
 
 
-# class Facility(models.Model):
-#     name = models.CharField(max_length=100)
-#     description = models.TextField()
-#     image = models.ImageField(upload_to='facilities/')
- 
+class Facility(models.Model):
+    name = models.CharField(max_length=100)
+    icon = models.ImageField(upload_to='facilities/', blank=True)
+    image = models.ImageField(upload_to='facilities/')
 
+ 
 
 class Manager(models.Model):
     name = models.CharField(max_length=100)

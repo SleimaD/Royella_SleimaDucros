@@ -5,7 +5,8 @@ from app.seed import *
 
 
 if __name__ == "__main__":
-   runManager()
+   # runManager()
+   runFacility()
    
 
     

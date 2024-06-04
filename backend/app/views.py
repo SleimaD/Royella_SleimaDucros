@@ -30,3 +30,8 @@ class ManagerViewSet(viewsets.ModelViewSet):
 
 
 
+class FacilityViewSet(viewsets.ModelViewSet):
+    queryset = Facility.objects.all()
+    serializer_class = FacilitySerializer
+
+

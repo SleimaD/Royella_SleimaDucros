@@ -6,3 +6,8 @@ class ManagerSerializer(serializers.ModelSerializer):
         model = Manager
         fields = '__all__'
     
+
+class FacilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Facility
+        fields = '__all__'

@@ -12,6 +12,7 @@ from django.views import *
 
 router = DefaultRouter()
 router.register(r'managers', ManagerViewSet)
+router.register(r'facilities', FacilityViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
