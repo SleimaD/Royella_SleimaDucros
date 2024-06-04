@@ -3,6 +3,8 @@ import { createBrowserRouter } from "react-router-dom";
 // Home And Main Home1
 import Main from "../Main/Main";
 import Home1 from "../Pages/Home1/Home1";
+import MainBackoffice from "../Main/MainBackoffice";
+
 // Home And Main Home2
 // import Main2 from "../Main/Main2";
 // import Home2 from "../Pages/Home2/Home2";
@@ -29,6 +31,7 @@ import Blog from "../Pages/InnerPage/Blog";
 import BlogDetails from "../Pages/InnerPage/BlogDetails";
 import Contact from "../Pages/InnerPage/Contact";
 import ErrorPage from "../Shared/ErrorPage/ErrorPage";
+import Backoffice from "../Pages/Backoffice/Backoffice";
 
 // Starting React Router.
 const router = createBrowserRouter([
@@ -84,6 +87,17 @@ const router = createBrowserRouter([
       {
         path: "/contact",
         element: <Contact />,
+      },
+    ],
+  },
+  {
+    path: "/",
+    element: <MainBackoffice />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: "/backoffice",
+        element: <Backoffice />,
       },
     ],
   },
