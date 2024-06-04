@@ -112,9 +112,9 @@ const Navbar = () => {
             >
               <span className="flex items-center">
                 Home
-                <BiChevronDown className="ml-1" />
+                {/* <BiChevronDown className="ml-1" /> */}
               </span>
-              <div className="absolute pt-5 lg:pt-8 z-20">
+              {/* <div className="absolute pt-5 lg:pt-8 z-20">
                 <ul className="shadow-2xl hidden group-hover:block rounded-sm bg-white text-black w-[200px] text-left dark:bg-normalBlack dark:text-white transition-all duration-500 text-sm py-4 ">
                   <div className=" px-5 group hover:bg-khaki hover:text-white">
                     <li className="hover:ml-3 duration-300  ">
@@ -155,7 +155,7 @@ const Navbar = () => {
                     </li>
                   </div>
                 </ul>
-              </div>
+              </div> */}
             </NavLink>
             <NavLink
               className={`${({ isActive, isPending }) =>
@@ -177,11 +177,13 @@ const Navbar = () => {
                   : ""} text-lightBlack lg:text-white dark:text-white  lg:border-b-0 px-3 py-2 w-full block transition-all duration-300 group relative `}
               to="#"
             >
-              <span className="flex items-center">
-                Rooms
-                <BiChevronDown className="ml-1" />
+              <span className="flex items-center justify-center">
+              <NavLink to="/find_room" className="block ">
+                Find Room 
+              </NavLink>
+                {/* <BiChevronDown className="ml-1" /> */}
               </span>
-              <div className="absolute pt-5 lg:pt-8 z-20">
+              {/* <div className="absolute pt-5 lg:pt-8 z-20">
                 <ul className="shadow-2xl hidden group-hover:block rounded-sm bg-white text-black w-[200px] text-left dark:bg-normalBlack dark:text-white transition-all duration-500 text-sm py-4 ">
                   <div className=" px-5 group hover:bg-khaki hover:text-white">
                     <li className="hover:ml-3 duration-300  ">
@@ -205,22 +207,24 @@ const Navbar = () => {
                     </li>
                   </div>
                 </ul>
-              </div>
+              </div> */}
             </NavLink>
             <NavLink
               className={`${({ isActive, isPending }) =>
                 isPending
                   ? "pending"
                   : isActive
-                  ? "active"
+                  ? "active" 
                   : ""} text-lightBlack lg:text-white dark:text-white  lg:border-b-0 px-3 py-2 w-full block transition-all duration-300 group relative `}
               to="#"
             >
               <span className="flex items-center">
-                Page
-                <BiChevronDown className="ml-1" />
+              <NavLink to="/pricing" className="block">
+                        PRICING
+                      </NavLink>
+                {/* <BiChevronDown className="ml-1" /> */}
               </span>
-              <div className="absolute pt-5 lg:pt-8 z-20">
+              {/* <div className="absolute pt-5 lg:pt-8 z-20">
                 <ul className="shadow-2xl hidden group-hover:block rounded-sm bg-white text-black w-[200px] text-left dark:bg-normalBlack dark:text-white transition-all duration-500 text-sm py-4 ">
                   <div className=" px-5 group hover:bg-khaki hover:text-white">
                     <li className="hover:ml-3 duration-300  ">
@@ -258,7 +262,7 @@ const Navbar = () => {
                     </li>
                   </div>
                 </ul>
-              </div>
+              </div> */}
             </NavLink>
             {/* blog sub menu link */}
             <NavLink
@@ -271,10 +275,12 @@ const Navbar = () => {
               to="#"
             >
               <span className="flex items-center">
-                BLOG
-                <BiChevronDown className="ml-1" />
+              <NavLink to="/blog" className="block">
+                        BLOG
+              </NavLink>
+                {/* <BiChevronDown className="ml-1" /> */}
               </span>
-              <div className="absolute pt-4 lg:pt-8 z-20">
+              {/* <div className="absolute pt-4 lg:pt-8 z-20">
                 <ul className="shadow-2xl hidden group-hover:block rounded-sm bg-white text-black w-60 text-left dark:bg-normalBlack dark:text-white transition-all duration-500 text-sm  py-4">
                   <div className=" px-5 group hover:bg-khaki hover:text-white">
                     <li className="hover:ml-3 duration-300 ">
@@ -291,7 +297,7 @@ const Navbar = () => {
                     </li>
                   </div>
                 </ul>
-              </div>
+              </div> */}
             </NavLink>
             <NavLink
               className={`${({ isActive, isPending }) =>
