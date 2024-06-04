@@ -4,16 +4,19 @@ from django.contrib.postgres.fields import JSONField
 
 
 
-# class User(AbstractUser):
-#     roles = [
-#         ('ADMIN', 'Admin'),
-#         ('WEBMASTER', 'Webmaster'),
-#         ('REDACTEUR', 'Rédacteur'),
-#         ('RECEPTIONISTE', 'Réceptionniste'),
-#         ('UTILISATEUR', 'Utilisateur')
-#     ]
-#     role = models.CharField(max_length=12, choices=roles, default='UTILISATEUR')
-#     bankcard = models.CharField(max_length=100)
+
+class User(AbstractUser):
+    role_choix = [
+        ('UTILISATEUR', 'Utilisateur'),
+        ('RECEPTIONIST', 'Receptionist'),
+        ('REDACTEUR', 'Redacteur'),
+        ('WEBMASTER', 'Webmaster'),
+        ('ADMIN', 'Admin'),
+    ]
+    role = models.CharField(max_length=12, choices=role_choix, default='Utilisateur')
+    photo = models.ImageField(upload_to='users/', default='users/avatar.jpg', null=True, blank=True)
+    credit_card_info = models.CharField(max_length=255, blank=True, null=True)
+
 
 
 # class Amenity(models.Model):
