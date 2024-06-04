@@ -12,7 +12,7 @@ manager_entries = [
         'quote': 'Model. Appropriately create interactive infrastructures after main Holisticly facilitate stand-alone inframe of the world',
         'video_url': 'https://cdn.pixabay.com/video/2016/05/12/3190-166339081_large.mp4'
     }
-]
+] 
 
  
 def runManager():

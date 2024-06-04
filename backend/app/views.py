@@ -26,7 +26,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class ManagerViewSet(viewsets.ModelViewSet):
     queryset = Manager.objects.all()
-    serializer_class = Manager
+    serializer_class = ManagerSerializer        
 
 
 
