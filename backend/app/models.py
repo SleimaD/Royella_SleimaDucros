@@ -161,9 +161,9 @@ class Manager(models.Model):
 #     response = models.TextField(blank=True)
 
 
-# class FAQ(models.Model):
-#     question = models.CharField(max_length=200) 
-#     answer = models.TextField()
+class FAQ(models.Model):
+    question = models.CharField(max_length=255) 
+    answer = models.TextField()
 
 
 # class Comment(models.Model):
