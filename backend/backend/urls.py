@@ -17,6 +17,9 @@ router.register(r'facilities', FacilityViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    path('', index, name='index'),
+    path('api/register/', UserCreateView.as_view(), name='register'),
+    path('api/login/', LoginView.as_view(), name='login'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
  

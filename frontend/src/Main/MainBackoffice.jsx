@@ -16,12 +16,12 @@ const MainBackoffice = () => {
   }, []);
 
   return (
-    <div className="w-full h-screen flex flex-col gap-3 bg-red-200">
+    <div className="w-full h-screen flex flex-col gap-10 ">
       {/* <HelmetChanger title="Hotel Booking" />
       <ScrollToTop />
       <GoToTop />*/}
       <NavbarBackoffice /> 
-      <div className="w-full mt-16">
+      <div className="w-full mt-[8rem]">
         <Outlet />
       </div>
       {/* <Footer /> */}

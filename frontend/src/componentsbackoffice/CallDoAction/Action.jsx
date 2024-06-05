@@ -28,7 +28,6 @@ const Action = () => {
         .then(response => {
             if (response.data && response.data.length > 0) {
                 setManager(response.data[0]);  
-                console.log("Video URL:", response.data[0].video_url); 
                 console.log(response.data[0]);
             }
         })
@@ -91,14 +90,13 @@ const Action = () => {
           >
 
             <video
+              
               muted
               loop
               playsInline
               className="absolute top-0 left-0 w-full h-full object-cover"
               src={manager.video_url}
             />
-
-
 
             <div
               className="w-[70px] h-[70px]  text-white absolute top-1/2 md:top-[35%] lg:top-1/2 left-[45%] bg-khaki rounded-full flex items-center justify-center cursor-pointer z-[1] "

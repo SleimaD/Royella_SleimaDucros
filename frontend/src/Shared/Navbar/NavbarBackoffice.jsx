@@ -16,8 +16,8 @@ const Navbar = () => {
   // scrolling tracker
   const scrollPosition = useScrollPosition();
   // background color add and remover
-  const navbarBgColor =
-    scrollPosition > 100 ? "lg:bg-lightBlack" : "lg:bg-transparent";
+//   const navbarBgColor =
+//     scrollPosition > 100 ? "lg:bg-lightBlack" : "lg:bg-[#000]";
 
   const toggleNavbar = () => {
     setIsOpen(!isOpen);
@@ -37,9 +37,12 @@ const Navbar = () => {
     }
   }, [isDarkMode]);
 
+//   className={` w-full lg:fixed font-Lora z-10  lg:px-5 lg:py-2  transition-all duration-300 ${navbarBgColor} `} 
+
+
   return (
     <nav
-      className={` w-full lg:fixed font-Lora z-10  lg:px-5 lg:py-2  transition-all duration-300 ${navbarBgColor} `}
+      className={` w-full lg:fixed font-Lora z-10  lg:px-5 lg:py-2  transition-all duration-300 bg-[#000] text-white `}
     >
       <div className="lg:px-10">
         <div className="flex flex-col lg:flex-row items-center justify-between">
@@ -109,7 +112,7 @@ const Navbar = () => {
               to="/"
             >
               <span className="flex items-center">
-                Home
+                Back-Home
               </span>
             </NavLink>
             <NavLink
@@ -121,7 +124,7 @@ const Navbar = () => {
                   : ""} text-lightBlack lg:text-white dark:text-white  lg:border-b-0 px-3 py-2 w-full block transition-all duration-300`}
               to="/about"
             >
-              About
+              back-About
             </NavLink>
             <NavLink
               className={`${({ isActive, isPending }) =>
@@ -134,7 +137,7 @@ const Navbar = () => {
             >
               <span className="flex items-center justify-center">
               <NavLink to="/find_room" className="block ">
-                Find Room 
+                Back-Room 
               </NavLink>
                 {/* <BiChevronDown className="ml-1" /> */}
               </span>
@@ -150,7 +153,7 @@ const Navbar = () => {
             >
               <span className="flex items-center">
               <NavLink to="/pricing" className="block">
-                        PRICING
+                        Back-PRICING
                       </NavLink>
                 {/* <BiChevronDown className="ml-1" /> */}
               </span>
@@ -180,7 +183,7 @@ const Navbar = () => {
                   : ""} text-lightBlack lg:text-white dark:text-white lg:border-b-0 px-3 py-2 w-full block transition-all duration-300`}
               to="/contact"
             >
-              Contact
+              Back-Contact
             </NavLink>
           </ul>
 
@@ -200,10 +203,10 @@ const Navbar = () => {
                 />
               )}
             </span>
-            <Link to="/find_room">
+            {/* <Link to="/find_room">
               <button className="btn-secondary ">Booking Online</button>
-            </Link>
-            <NavLink to="/">
+            </Link> */}
+            <NavLink to="/" className="p-3">
                 Home
             </NavLink>
 

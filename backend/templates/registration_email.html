@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}     
+<div class="container">
+    <h1>Welcome to Hotel Royella!</h1>
+    <p>Dear {{ user.first_name }},</p>
+    <p>Thank you for registering with us. <br> We are excited to have you on board and look forward to providing you with the best service.</p>
+    <footer>
+        <p>Regards,<br>Hotel Royella Team</p>
+    </footer>
+    <div class="logo"></div>
+</div>{% endblock %}

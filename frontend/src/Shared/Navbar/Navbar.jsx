@@ -3,6 +3,7 @@ import useScrollPosition from "./useScrollPosition";
 import { FaBars } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import { BiChevronDown, BiSun } from "react-icons/bi";
+import { IoSettingsSharp, IoSettingsOutline } from "react-icons/io5";
 import { IoMoonSharp } from "react-icons/io5";
 import { useEffect, useState } from "react";
 
@@ -17,7 +18,7 @@ const Navbar = () => {
   const scrollPosition = useScrollPosition();
   // background color add and remover
   const navbarBgColor =
-    scrollPosition > 100 ? "lg:bg-lightBlack" : "lg:bg-transparent";
+    scrollPosition > 100 ? "lg:bg-lightBlack" : "lg:bg-[#9a99999e]";
 
   const toggleNavbar = () => {
     setIsOpen(!isOpen);
@@ -313,8 +314,15 @@ const Navbar = () => {
             <Link to="/find_room">
               <button className="btn-secondary ">Booking Online</button>
             </Link>
-            <NavLink to="/backoffice">
-                Backoffice
+            <NavLink to="/login" className="p-3 text-white">
+                Sign In
+            </NavLink>
+            <NavLink to="/register" className="p-3 text-white">
+                Sign Up
+            </NavLink>
+            <NavLink to="/backoffice" className="p-3 text-white text-[2rem]">
+              {/* <IoSettingsSharp /> */}
+              <IoSettingsOutline />
             </NavLink>
 
           </div>
