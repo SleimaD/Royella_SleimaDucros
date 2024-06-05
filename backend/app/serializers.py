@@ -47,9 +47,16 @@ class FeatureSerializer(serializers.ModelSerializer):
         model = Feature
         fields = '__all__'
 
+
 class PaymentPlanSerializer(serializers.ModelSerializer):
     features = FeatureSerializer(many=True, read_only=True)
     
     class Meta:
         model = PaymentPlan
         fields = ['id', 'name', 'price', 'image', 'features']
+
+
+class FAQSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FAQ
+        fields = "__all__"
