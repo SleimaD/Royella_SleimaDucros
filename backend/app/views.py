@@ -108,3 +108,11 @@ class LoginView(APIView):
 
 
 
+
+class PaymentPlanViewSet(viewsets.ModelViewSet):
+    queryset = PaymentPlan.objects.all()
+    serializer_class = PaymentPlanSerializer
+
+class FeatureViewSet(viewsets.ModelViewSet):
+    queryset = Feature.objects.all()
+    serializer_class = FeatureSerializer

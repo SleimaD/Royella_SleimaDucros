@@ -76,4 +76,63 @@ def runFacility():
         })
     pks = seeder.execute()
     print(pks)
-    
+
+
+
+def run_payment_plans():
+    seeder = Seed.seeder()
+
+    features_data = [
+        'Bed and floor Cleaning',
+        'Daily Towel Replacement',
+        'Priority Service from Reception',
+        'Complimentary Breakfast',
+        'Private Jacuzzi Setup',
+        'Exclusive Gym Access',
+        'Unlimited Room Service',
+        "24/7 Housekeeping Support",
+        "In-Room Newspaper Delivery",
+        "Upgraded Amenities",
+        "Ice Delivery",
+        "Unlimited Housekeeping",
+        "Luxury Bath Amenities",
+        "Personalized Service",
+        "Daily Fresh Flowers",
+        "In-room dining experiences"
+    ]
+    features = []
+    for feature in features_data:
+        feat, created = Feature.objects.get_or_create(description=feature)
+        features.append(feat)
+
+    payment_plan_entries = [
+        {
+            'name': 'Basic Plan',
+            'price': 12.00,
+            'image': 'plans/basic.png',
+            'features': ['Bed and floor Cleaning', 'Daily Towel Replacement', 'Priority Service from Reception', "24/7 Housekeeping Support"]
+        },
+        {
+            'name': 'Premium Plan',
+            'price': 23.00,
+            'image': 'plans/premium.png',
+            'features': ['Upgraded Amenities', "Ice Delivery", "Unlimited Room Service", "In-Room Newspaper Delivery" ]
+        },
+        {
+            'name': 'Luxury Plan',
+            'price': 120.00,
+            'image': 'plans/luxury.png',
+            'features': ['Luxury Bath Amenities', 'Private Jacuzzi Setup',"In-room dining experiences", "Unlimited Housekeeping"]
+        }
+    ]
+
+    for plan_data in payment_plan_entries:
+        plan = PaymentPlan.objects.create(
+            name=plan_data['name'],
+            price=plan_data['price'],
+            image=plan_data['image']
+        )
+        plan_features = Feature.objects.filter(description__in=plan_data['features'])
+        plan.features.set(plan_features)
+
+

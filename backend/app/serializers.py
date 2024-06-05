@@ -29,7 +29,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 
- 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
 
@@ -40,3 +39,17 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])
         return super().create(validated_data)
+    
+
+
+class FeatureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Feature
+        fields = '__all__'
+
+class PaymentPlanSerializer(serializers.ModelSerializer):
+    features = FeatureSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = PaymentPlan
+        fields = ['id', 'name', 'price', 'image', 'features']

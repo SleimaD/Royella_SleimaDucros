@@ -7,6 +7,7 @@ from app.seed import *
 if __name__ == "__main__":
    # runManager()
    # runFacility()
+   # run_payment_plans()
    
 
     

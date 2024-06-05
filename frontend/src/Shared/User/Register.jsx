@@ -31,12 +31,12 @@ const RegistrationForm = () => {
         e.preventDefault();
         const data = new FormData();
         Object.keys(formData).forEach(key => {
-            if (formData[key] !== null && formData[key] !== '') { // Only append if the value is not null or empty
+            if (formData[key] !== null && formData[key] !== '') { 
                 data.append(key, formData[key]);
             }
         });
 
-        console.log([...data.entries()]); // Log the form data entries to check
+        console.log([...data.entries()]); 
 
         try {
             const response = await axios.post('http://localhost:8000/api/register/', data);
