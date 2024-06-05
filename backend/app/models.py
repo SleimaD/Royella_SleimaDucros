@@ -72,11 +72,14 @@ class User(AbstractUser):
 #     name = models.CharField(max_length=100)
 
 
-# class PaymentPlan(models.Model):
-#     name = models.CharField(max_length=100)
-#     price = models.DecimalField(max_digits=6, decimal_places=2)
-#     features = models.TextField()
+class PaymentPlan(models.Model):
+    name = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+    image = models.ImageField(upload_to='payment_plans/')
+    features = models.ManyToManyField('Feature', related_name='payment_plans')
 
+class Feature(models.Model):
+    description = models.CharField(max_length=255)
 
 # class BannerHome(models.Model): 
 #     title = models.CharField(max_length=100)
