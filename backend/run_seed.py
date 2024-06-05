@@ -8,6 +8,7 @@ if __name__ == "__main__":
    # runManager()
    # runFacility()
    # run_payment_plans()
+   # run_faq()
    
 
     

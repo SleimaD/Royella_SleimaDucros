@@ -32,6 +32,8 @@ def runManager():
     print(pks) 
 
 
+
+#!facility
 facility_entries = [
     {
         'name': 'Room Services',
@@ -79,6 +81,8 @@ def runFacility():
 
 
 
+
+#!paymentplan
 def run_payment_plans():
     seeder = Seed.seeder()
 
@@ -136,3 +140,50 @@ def run_payment_plans():
         plan.features.set(plan_features)
 
 
+
+
+#! faq
+faq_entries = [
+    {
+        'question': "How can I book a room ?",
+        'answer': "You can book a room directly through our website or by contacting our reservations department."
+    },
+    {
+        'question': "What dining options are available ?",
+        'answer': "The hotel features several award-winning restaurants offering a variety of cuisines. We also offer 24-hour room service."
+    },
+    {
+        'question': "What is the hotel's cancellation policy ?",
+        'answer': "Our cancellation policy varies depending on the rate you booked. Please refer to your reservation confirmation email for specific details. In general, most cancellations must be made at least 24 hours prior to your arrival to avoid a penalty."
+    },
+    {
+        'question': "What is the check-in and check-out time?",
+        'answer': "Check-in is at 3 PM, and check-out is at 12 PM. Early check-in and late check-out can be arranged subject to availability."
+    },
+    {
+        'question': "Does the hotel offer luggage storage ?",
+        'answer': "Yes, we offer complimentary luggage storage for guests before check-in and after check-out. "
+    },
+    {
+        'question': "Does the hotel offer airport transportation ?",
+        'answer': "Yes, we offer airport transportation for a fee. Please contact the concierge to arrange your transportation."
+    },
+    {
+        'question': "Is there a currency exchange service at the hotel ?",
+        'answer': "Yes, we offer currency exchange services at the front desk. Please note that there may be a fee for this service."
+    },
+    {
+        'question': "Do you allow pets ?",
+        'answer': "Yes, our hotel is pet-friendly. Please contact us for more information about our pet policy."
+    }
+]
+
+def run_faq():
+    seeder = Seed.seeder()
+    for entry in faq_entries:
+        seeder.add_entity(FAQ, 1, {
+            'question': entry['question'],
+            'answer': entry['answer']
+        })
+    pks = seeder.execute()
+    print(pks)
