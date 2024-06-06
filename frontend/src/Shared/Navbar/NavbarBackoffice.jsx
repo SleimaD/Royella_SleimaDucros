@@ -1,12 +1,29 @@
 import { Link, NavLink } from "react-router-dom";
 import useScrollPosition from "./useScrollPosition";
-import { FaBars } from "react-icons/fa";
+import { FaBars, FaCaretDown  } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import { BiChevronDown, BiSun } from "react-icons/bi";
 import { IoMoonSharp } from "react-icons/io5";
 import { useEffect, useState } from "react";
+import { useAuth } from "./../../RolesRoutes/AuthProvider";
+
 
 const Navbar = () => {
+  const { user, logout } = useAuth();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+
+  const handleLogout = () => {
+    logout();
+    navigate('/'); 
+  }
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+ 
+
   // modal openar
   const [isOpen, setIsOpen] = useState(false);
   // dark mode toggle bar
@@ -203,12 +220,44 @@ const Navbar = () => {
                 />
               )}
             </span>
-            {/* <Link to="/find_room">
-              <button className="btn-secondary ">Booking Online</button>
-            </Link> */}
-            <NavLink to="/" className="p-3">
-                Home
-            </NavLink>
+            {user ? (
+              <div className="relative flex items-center p-3">
+              <img
+                src={user.photo || 'http://127.0.0.1:8000/media/users/avatar.jpg'}
+                alt="User Avatar"
+                className="w-8 h-8 rounded-full cursor-pointer"
+                onClick={toggleDropdown}
+              />
+              <FaCaretDown
+                className="ml-2 cursor-pointer text-white"
+                onClick={toggleDropdown} 
+              />
+              {dropdownOpen && (
+                <div className="absolute right-0 top-12 mt-2 py-2 w-48 bg-white rounded-md shadow-xl z-50">
+                  <div className="block px-4 py-2 text-sm text-blue ">{user.username}</div>
+                  {user.role === 'Admin' && (
+                    <NavLink
+                      to="/backoffice"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Backoffice
+                    </NavLink>
+                  )}
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center">
+              <NavLink to="/login" className="p-3 text-white">Sign In</NavLink>
+              <NavLink to="/register" className="p-3 text-white">Sign Up</NavLink>
+            </div>
+          )}
 
           </div>
         </div>

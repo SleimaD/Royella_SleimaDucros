@@ -1,13 +1,25 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate} from "react-router-dom";
 import useScrollPosition from "./useScrollPosition";
-import { FaBars } from "react-icons/fa";
+import { FaBars, FaCaretDown  } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import { BiChevronDown, BiSun } from "react-icons/bi";
 import { IoSettingsSharp, IoSettingsOutline } from "react-icons/io5";
 import { IoMoonSharp } from "react-icons/io5";
 import { useEffect, useState } from "react";
+import { useAuth } from "./../../RolesRoutes/AuthProvider";
+
 
 const Navbar = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout(); 
+    navigate('/'); 
+  }
+
+
   // modal openar
   const [isOpen, setIsOpen] = useState(false);
   // dark mode toggle bar
@@ -37,6 +49,10 @@ const Navbar = () => {
       document.documentElement.classList.remove("dark");
     }
   }, [isDarkMode]);
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
 
   return (
     <nav
@@ -113,50 +129,7 @@ const Navbar = () => {
             >
               <span className="flex items-center">
                 Home
-                {/* <BiChevronDown className="ml-1" /> */}
               </span>
-              {/* <div className="absolute pt-5 lg:pt-8 z-20">
-                <ul className="shadow-2xl hidden group-hover:block rounded-sm bg-white text-black w-[200px] text-left dark:bg-normalBlack dark:text-white transition-all duration-500 text-sm py-4 ">
-                  <div className=" px-5 group hover:bg-khaki hover:text-white">
-                    <li className="hover:ml-3 duration-300  ">
-                      <NavLink to="/" className="py-2 block">
-                        Hotel Booking
-                      </NavLink>
-                    </li>
-                  </div>
-                  <div className=" px-5 group hover:bg-khaki hover:text-white">
-                    <li className="hover:ml-3 duration-300  ">
-                      <NavLink to="/home2" className="py-2 block">
-                        Resort
-                      </NavLink>
-                    </li>
-                  </div>
-
-                  <div className=" px-5 group hover:bg-khaki hover:text-white">
-                    <li className="hover:ml-3 duration-300  ">
-                      <NavLink to="/home3" className="py-2 block">
-                        Hostel
-                      </NavLink>
-                    </li>
-                  </div>
-
-                  <div className=" px-5 group hover:bg-khaki hover:text-white">
-                    <li className="hover:ml-3 duration-300  ">
-                      <NavLink to="/home4" className="py-2 block">
-                        City Hotel
-                      </NavLink>
-                    </li>
-                  </div>
-
-                  <div className=" px-5 group hover:bg-khaki hover:text-white">
-                    <li className="hover:ml-3 duration-300  ">
-                      <NavLink to="/home5" className="py-2 block">
-                        Apartment
-                      </NavLink>
-                    </li>
-                  </div>
-                </ul>
-              </div> */}
             </NavLink>
             <NavLink
               className={`${({ isActive, isPending }) =>
@@ -182,33 +155,7 @@ const Navbar = () => {
               <NavLink to="/find_room" className="block ">
                 Find Room 
               </NavLink>
-                {/* <BiChevronDown className="ml-1" /> */}
               </span>
-              {/* <div className="absolute pt-5 lg:pt-8 z-20">
-                <ul className="shadow-2xl hidden group-hover:block rounded-sm bg-white text-black w-[200px] text-left dark:bg-normalBlack dark:text-white transition-all duration-500 text-sm py-4 ">
-                  <div className=" px-5 group hover:bg-khaki hover:text-white">
-                    <li className="hover:ml-3 duration-300  ">
-                      <NavLink to="/room" className="block py-2">
-                        Room
-                      </NavLink>
-                    </li>
-                  </div>
-                  <div className=" px-5 group hover:bg-khaki hover:text-white">
-                    <li className="hover:ml-3 duration-300  ">
-                      <NavLink to="/find_room" className="block py-2">
-                        Find Room
-                      </NavLink>
-                    </li>
-                  </div>
-                  <div className=" px-5 group hover:bg-khaki hover:text-white">
-                    <li className="hover:ml-3 duration-300  ">
-                      <NavLink to="/room_details" className="block py-2">
-                        Room Details
-                      </NavLink>
-                    </li>
-                  </div>
-                </ul>
-              </div> */}
             </NavLink>
             <NavLink
               className={`${({ isActive, isPending }) =>
@@ -225,45 +172,6 @@ const Navbar = () => {
                       </NavLink>
                 {/* <BiChevronDown className="ml-1" /> */}
               </span>
-              {/* <div className="absolute pt-5 lg:pt-8 z-20">
-                <ul className="shadow-2xl hidden group-hover:block rounded-sm bg-white text-black w-[200px] text-left dark:bg-normalBlack dark:text-white transition-all duration-500 text-sm py-4 ">
-                  <div className=" px-5 group hover:bg-khaki hover:text-white">
-                    <li className="hover:ml-3 duration-300  ">
-                      <NavLink to="/about" className="py-2 block">
-                        ABOUT US
-                      </NavLink>
-                    </li>
-                  </div>
-                  <div className=" px-5 group hover:bg-khaki hover:text-white">
-                    <li className="hover:ml-3 duration-300  ">
-                      <NavLink to="/services" className="py-2 block">
-                        SERVICE
-                      </NavLink>
-                    </li>
-                  </div>
-                  <div className=" px-5 group hover:bg-khaki hover:text-white">
-                    <li className="hover:ml-3 duration-300  ">
-                      <NavLink to="/service_details" className="py-2 block">
-                        SERVICE DETAILS
-                      </NavLink>
-                    </li>
-                  </div>
-                  <div className=" px-5 group hover:bg-khaki hover:text-white">
-                    <li className="hover:ml-3 duration-300  ">
-                      <NavLink to="/our_team" className="py-2 block">
-                        OUR TEAM
-                      </NavLink>
-                    </li>
-                  </div>
-                  <div className=" px-5 group hover:bg-khaki hover:text-white">
-                    <li className="hover:ml-3 duration-300  ">
-                      <NavLink to="/pricing" className="py-2 block">
-                        PRICING
-                      </NavLink>
-                    </li>
-                  </div>
-                </ul>
-              </div> */}
             </NavLink>
             {/* blog sub menu link */}
             <NavLink
@@ -314,17 +222,76 @@ const Navbar = () => {
             <Link to="/find_room">
               <button className="btn-secondary ">Booking Online</button>
             </Link>
-            <NavLink to="/login" className="p-3 text-white">
-                Sign In
-            </NavLink>
-            <NavLink to="/register" className="p-3 text-white">
-                Sign Up
-            </NavLink>
-            <NavLink to="/backoffice" className="p-3 text-white text-[2rem]">
-              {/* <IoSettingsSharp /> */}
-              <IoSettingsOutline />
-            </NavLink>
 
+            {user ? (
+              <div className="relative flex items-center p-3">
+              <img
+                src={user.photo || 'http://127.0.0.1:8000/media/users/avatar.jpg'}
+                alt="User Avatar"
+                className="w-8 h-8 rounded-full cursor-pointer"
+                onClick={toggleDropdown}
+              />
+              <FaCaretDown
+                className="ml-2 cursor-pointer text-white"
+                onClick={toggleDropdown} 
+              />
+              {dropdownOpen && (
+                <div className="absolute right-0 top-12 mt-2 py-2 w-48 bg-[#ffffffef] backdrop-blur-sm  rounded-md shadow-xl z-50">
+                  <div className="block px-4 py-2 text-sm text-gray-700">{user.username} <small>({user.role})</small></div>
+                  <NavLink
+                    to="/profile"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Profile
+                  </NavLink>
+                  {user.role === 'Admin' && (
+                    <div>
+                      <NavLink
+                      to="/backoffice"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Backoffice
+                    </NavLink>
+                    <NavLink
+                      to="/useraccounts"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      User Accounts
+                    </NavLink> 
+                    </div>
+                    
+                  )}
+                  {(user.role === 'Admin' || user.role === 'Webmaster')  && (
+                    <NavLink
+                      to="/mailbox"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Mailbox
+                    </NavLink>
+                  )}
+                  {(user.role === 'Webmaster' || user.role === 'Redacteur' || user.role === 'Admin')  && (
+                    <NavLink
+                      to="/blogmanagement"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Blog Management
+                    </NavLink>
+                  )}
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center">
+              <NavLink to="/login" className="p-3 text-white">Sign In</NavLink>
+              <NavLink to="/register" className="p-3 text-white">Sign Up</NavLink>
+            </div>
+          )}
           </div>
         </div>
       </div>

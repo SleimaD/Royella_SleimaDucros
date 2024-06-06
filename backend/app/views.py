@@ -1,35 +1,34 @@
 from django.shortcuts import render
-from rest_framework import viewsets
-from rest_framework import status
+from rest_framework import viewsets, status, generics, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import make_password
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from .models import *
 from .serializers import *
 import json
-from django.contrib.auth import login,logout
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
-from rest_framework import generics
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import *
-from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from django.contrib.auth import get_user_model
-from rest_framework import generics, permissions, status
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 import logging
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.conf import settings
-from django.core.mail import EmailMessage
+from .permissions import *
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.hashers import check_password
+from rest_framework.decorators import action
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+
 
 
 def index(request):
@@ -48,11 +47,6 @@ class FacilityViewSet(viewsets.ModelViewSet):
 
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer   
-
-    
 
 
 class UserCreateView(APIView):
@@ -84,28 +78,37 @@ class UserCreateView(APIView):
         return Response({'status': 'error', 'message': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)   
 
 
+
+
+
 class LoginView(APIView):
+    permission_classes = []
+
     def post(self, request):
-        username = request.data.get('username')
+        email = request.data.get('email')
         password = request.data.get('password')
-        print("Username:", username)
-        print("Password:", password)
+        UserModel = get_user_model()
 
-        if not username or not password:
-            return Response({'error': 'Le nom d’utilisateur et le mot de passe sont requis'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        user = authenticate(username=username, password=password)
-        
-        if user is not None:
-            refresh = RefreshToken.for_user(user)
-            return Response({
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
-                'user': UserSerializer(user).data
-            }, status=status.HTTP_200_OK)
-        else:
-            return Response({'error': 'LogIn pas bon '}, status=status.HTTP_400_BAD_REQUEST)
-
+        try:
+            user = UserModel.objects.get(email=email)
+            if check_password(password, user.password):
+               
+                refresh = RefreshToken.for_user(user)
+                return Response({
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                    'user': {
+                        'role': user.role,
+                        'username': user.username,
+                        'email': user.email,
+                    }
+                }, status=status.HTTP_200_OK)
+            else:
+               
+                return Response({'error': 'Identifiants invalides'}, status=status.HTTP_400_BAD_REQUEST)
+        except UserModel.DoesNotExist:
+           
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 
@@ -121,3 +124,40 @@ class FeatureViewSet(viewsets.ModelViewSet):
 class FAQViewSet(viewsets.ModelViewSet):
     queryset = FAQ.objects.all()
     serializer_class = FAQSerializer
+
+
+
+User = get_user_model()
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    @action(detail=True, methods=['patch'])
+    def update_role(self, request, pk=None):
+        try:
+            user = self.get_object()
+            logger.debug(f"Updating role for user {user.id}")
+            serializer = UserSerializer(user, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            else:
+                logger.error(f"Serializer errors: {serializer.errors}")
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f"Exception occurred: {str(e)}")
+            return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+class ProfileUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        user = request.user
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)

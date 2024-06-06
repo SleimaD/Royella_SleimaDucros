@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 // Home And Main Home1
 import Main from "../Main/Main";
@@ -22,12 +22,21 @@ import ErrorPage from "../Shared/ErrorPage/ErrorPage";
 import Backoffice from "../Pages/Backoffice/Backoffice";
 import LogIn from "../Shared/User/LogIn";
 import Register from "../Shared/User/Register"; 
+import { AuthProvider } from "./../RolesRoutes/AuthProvider";
+import PrivateRoute from "./../RolesRoutes/PrivateRoute";
+import Profile from "../Shared/User/Profile";
+import Mailbox from "../Pages/Backoffice/Mailbox";
+import BlogManagement from "../Pages/Backoffice/BlogManagement";
+import UserAccounts from "../Pages/Backoffice/UserAccounts";
+
+
 
 // Starting React Router.
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Main />,
+    // element: <Main />,
+    element:<AuthProvider> <Main /></AuthProvider>,
     errorElement: <ErrorPage />,
     children: [
       {
@@ -35,7 +44,7 @@ const router = createBrowserRouter([
         element: <Home1 />,
       },
       {
-        path: "/about",
+          path: "/about",
         element: <About />,
       },
       {
@@ -86,19 +95,38 @@ const router = createBrowserRouter([
         path: "/register",
         element: <Register />,
       },
+      {
+        path: "/profile",
+        element: <Profile />,
+      },
     ],
   },
   {
     path: "/",
-    element: <MainBackoffice />,
-    errorElement: <ErrorPage />,
+    element: (
+      <PrivateRoute allowedRoles={['ADMIN', 'Admin', 'WEBMASTER', 'REDACTEUR']}>
+        <MainBackoffice />
+      </PrivateRoute>
+    ),
     children: [
-      {
-        path: "/backoffice",
-        element: <Backoffice />,
+      { path: "/backoffice", 
+        element: <PrivateRoute allowedRoles={['ADMIN']}><Backoffice /></PrivateRoute> 
+      },
+      { path: "/mailbox", 
+        element: <PrivateRoute allowedRoles={['ADMIN', "WEBMASTER"]}><Mailbox /></PrivateRoute> 
+      },
+      { path: "/blogmanagement", 
+        element: <PrivateRoute allowedRoles={['ADMIN', "WEBMASTER", "REDACTEUR"]}><BlogManagement /></PrivateRoute> 
+      },
+      { path: "/useraccounts", 
+        element: <PrivateRoute allowedRoles={['ADMIN']}><UserAccounts /></PrivateRoute> 
       },
     ],
   },
 ]);
+
+const RootComponent = () => {
+  return <RouterProvider router={router} />;
+};
 
 export default router;

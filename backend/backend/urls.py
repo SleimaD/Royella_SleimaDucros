@@ -16,6 +16,7 @@ router.register(r'facilities', FacilityViewSet)
 router.register(r'paymentplans', PaymentPlanViewSet)
 router.register(r'features', FeatureViewSet)
 router.register(r'faqs', FAQViewSet)
+router.register(r'users', UserViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,6 +24,7 @@ urlpatterns = [
     path('', index, name='index'),
     path('api/register/', UserCreateView.as_view(), name='register'),
     path('api/login/', LoginView.as_view(), name='login'),
+    path('profile', ProfileUpdateView.as_view(), name='profile-update'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
  
