@@ -235,3 +235,100 @@ def run_service():
         })
     pks = seeder.execute()
     print(pks)
+
+
+#!service detail
+
+gym_service = Service.objects.get(title="Gym Training Grounds")
+pool_service = Service.objects.get(title="Swimming Pool")
+restaurant_service = Service.objects.get(title="The Restaurant Center")
+breakfast_service = Service.objects.get(title="Breakfast")
+
+service_detail_entries = [
+    {
+        'service': gym_service,
+        'title': "Equipment",
+        'description': "Our gym is equipped with state-of-the-art facilities including cardio machines, free weights, and a variety of fitness classes. Personal trainers are available for customized workout plans."
+    },
+    {
+        'service': pool_service,
+        'title': "Options",
+        'description': "Enjoy a refreshing swim in our temperature-controlled indoor pool. We offer swimming lessons, aqua aerobics, and dedicated lanes for lap swimming."
+    },
+    {
+        'service': restaurant_service,
+        'title': "Restaurant Rules",
+        'description': "At The Restaurant Center, we aim to provide an exceptional dining experience for all our guests. We kindly ask that you respect our smart casual dress code and maintain punctuality for reservations. To ensure a pleasant atmosphere, please keep mobile devices on silent and step outside for phone calls. Inform our staff of any dietary restrictions or allergies so we can accommodate your needs. Families with children are welcome, and we request that children remain supervised. We appreciate your cooperation in adhering to these guidelines to enhance everyone's enjoyment at The Restaurant Center."
+    },
+    {
+        'service': restaurant_service,
+        'title': "Dress Code",
+        'description': "We maintain a smart casual dress code to preserve the elegant ambiance of our establishment. Gentlemen are encouraged to wear collared shirts, and we kindly request no flip-flops or beachwear."
+    },
+    {
+        'service': restaurant_service,
+        'title': "Terrace",
+        'description': "Our Terrace offers a relaxed and elegant setting for you to enjoy your meals and drinks while soaking in the beautiful surroundings. "
+    },
+    {
+        'service': breakfast_service,
+        'title': "Hours",
+        'description': "Breakfast - 7.00 AM to 12.30 AM"
+    },
+    {
+        'service': breakfast_service,
+        'title': "Hours",
+        'description': "Lunch - not available "
+    },
+    {
+        'service': breakfast_service,
+        'title': "Hours",
+        'description': "Supper - not available "
+    },
+    {
+        'service': breakfast_service,
+        'title': "Hours",
+        'description': "Dinner -  not available "
+    },
+    {
+        'service': restaurant_service,
+        'title': "Hours",
+        'description': "Breakfast - 7.00 AM to 12.30 AM"
+    },
+    {
+        'service': restaurant_service,
+        'title': "Hours",
+        'description': "Lunch - 1.00 PM to 2.30 PM"
+    },
+    {
+        'service': restaurant_service,
+        'title': "Hours",
+        'description': "Supper - 6.00 PM to 7.00 PM"
+    },
+    {
+        'service': restaurant_service,
+        'title': "Hours",
+        'description': "Dinner - 8.30 PM to 10.00 PM"
+    },
+    {
+        'service': gym_service,
+        'title': "Hours",
+        'description': "5.00 AM to 11.30 pm"
+    },
+    {
+        'service': pool_service,
+        'title': "Hours",
+        'description': "7.00 AM to 10.30 pm"
+    },
+]
+
+def run_service_details():
+    seeder = Seed.seeder()
+    for entry in service_detail_entries:
+        seeder.add_entity(ServiceDetail, 1, {
+            'service': entry['service'],
+            'title': entry['title'],
+            'description': entry['description'],
+        })
+    pks = seeder.execute()
+    print(pks)

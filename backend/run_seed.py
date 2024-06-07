@@ -10,6 +10,7 @@ if __name__ == "__main__":
    # run_payment_plans()
    # run_faq()
    # run_service()
+   # run_service_details()
    
 
     
