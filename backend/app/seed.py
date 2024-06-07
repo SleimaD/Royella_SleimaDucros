@@ -187,3 +187,51 @@ def run_faq():
         })
     pks = seeder.execute()
     print(pks)
+
+
+#!service
+service_entries = [
+    {
+        'title': "Gym Training Grounds",
+        'subtitle': "Fitness",
+        'description': "The Gym Training Grounds is a modern and fully equipped space dedicated to physical training and well-being. Whether you are a seasoned athlete or a beginner looking to improve your fitness, our gym is designed to meet all your fitness needs.",
+        'image': 'services/gym.jpg',
+        'order': 1
+    },
+    {
+        'title': "Swimming Pool",
+        'subtitle': "Fitness",
+        'description': "Our Indoor Swimming Pool offers a serene and luxurious environment for swimmers of all levels. Whether you're looking to unwind with a leisurely swim or engage in a vigorous workout, our pool is the perfect place to enhance your physical and mental well-being.",
+        'image': 'services/pool.jpg',
+        'order': 2
+    },
+    {
+        'title': "The Restaurant Center",
+        'subtitle': "Foods",
+        'description': "Welcome to The Restaurant Center, where culinary excellence meets a warm and inviting atmosphere. Our restaurant offers a diverse menu crafted by our talented chefs, featuring both local and international cuisines to delight your taste buds. Whether you're here for a casual meal, a special occasion, or a business gathering, The Restaurant Center promises an exceptional dining experience.",
+        'image': 'services/restaurant.jpg',
+        'order': 3
+    },
+    {
+        'title': "Breakfast",
+        'subtitle': "Foods",
+        'description': "Start your day with a delightful breakfast experience at our establishment. We offer a wide range of breakfast options that cater to various tastes and dietary preferences, ensuring that you have a nutritious and satisfying start to your day. Whether you prefer a light continental breakfast or a hearty traditional meal, our breakfast menu has something for everyone.",
+        'image': 'services/breakfast.jpg',
+        'order': 4
+    },
+
+
+]
+
+def run_service():
+    seeder = Seed.seeder()
+    for entry in service_entries:
+        seeder.add_entity(Service, 1, {
+            'title': entry['title'],
+            'subtitle': entry['subtitle'],
+            'description': entry['description'],
+            'image': entry['image'],
+            'order': entry['order']
+        })
+    pks = seeder.execute()
+    print(pks)
