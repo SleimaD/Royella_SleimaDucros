@@ -173,10 +173,6 @@ class FAQ(models.Model):
 #     created_at = models.DateTimeField(auto_now_add=True)
 
 
-# class Services(models.Model):
-#     title = models.CharField(max_length=100)
-#     subtitle = models.CharField(max_length=100)
-#     image = models.ImageField(upload_to='services/')
 
 
 # class Gallery(models.Model):
@@ -201,3 +197,16 @@ class FAQ(models.Model):
 #     message = models.TextField()
 #     sent_on = models.DateTimeField(auto_now_add=True)
 
+
+class Service(models.Model):
+    title = models.CharField(max_length=100)
+    subtitle = models.CharField(max_length=100)
+    description = models.TextField()
+    image = models.ImageField(upload_to='services/')
+    order = models.IntegerField(default=0)
+
+
+# class ServiceDetail(models.Model):
+#     service = models.ForeignKey(Service, related_name='details', on_delete=models.CASCADE)
+#     title = models.CharField(max_length=100)
+#     description = models.TextField()
