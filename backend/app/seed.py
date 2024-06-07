@@ -332,3 +332,83 @@ def run_service_details():
         })
     pks = seeder.execute()
     print(pks)
+
+
+
+#!testimonials
+
+testimonial_entries = [
+{
+        'name': 'Melissa Brown',
+        'role': 'Utilisateur',
+        'feedback': 'The service at this hotel was exceptional. The staff were attentive and made us feel right at home. Highly recommend for a luxurious stay.',
+        'rating': 5,
+        'image': 'testimonials/image-4.jpg',
+        'location': 'Los Angeles, California'
+    },
+    {
+        'name': 'Adriana Alexon',
+        'role': 'Utilisateur',
+        'feedback': 'From the beautifully decorated rooms to the gourmet meals, everything was perfect. The attention to detail was impressive.',
+        'rating': 5,
+        'image': 'testimonials/image-2.jpg',
+        'location': 'Brussels, Belgium'
+    },
+    {
+        'name': 'Farjana Taleb',
+        'role': 'Utilisateur',
+        'feedback': "The hotel's amenities were top-notch. We especially loved the spa and the fitness center. A perfect place to relax and unwind.",
+        'rating': 5,
+        'image': 'testimonials/image-1.jpg',
+        'location': 'Rome, Italy'
+    },
+    {
+        'name': 'Mohamed Ali',
+        'role': 'Utilisateur',
+        'feedback': 'An unforgettable experience! The views from our room were breathtaking and the hospitality was second to none.',
+        'rating': 5,
+        'image': 'testimonials/img1.jpg',
+        'location': 'Milan, Italy'
+    },    
+    {
+        'name': "Carlos Garcia",
+        'role': "Utilisateur",
+        'feedback': "The restaurant served the most delicious meals. The variety and quality of the food were outstanding. Can't wait to come back!",
+        'rating': "4",
+        'image': 'testimonials/img2.jpg',
+        'location': "Paris, France"
+    },
+    {
+        'name': "Liam O'Connor",
+        'role': "Utilisateur",
+        'feedback': "A wonderful place to stay with family. The kids loved the pool and the playground, and we enjoyed the peaceful atmosphere.",
+        'rating': "5",
+        'image': 'testimonials/img3.jpg',
+        'location': "Abidjan, Ivory Coast"
+    },
+    {
+        'name': "Sophia Rossi",
+        'role': "Utilisateur",
+        'feedback': "the location was perfect. The staff went above and beyond to ensure we had a pleasant stay.",
+        'rating': "4",
+        'image': 'testimonials/image-3.jpg',
+        'location': "Rotterdam, Netherlands"
+    },
+
+]
+
+
+
+def run_testimonial():
+    seeder = Seed.seeder()
+    for entry in testimonial_entries:
+        seeder.add_entity(Testimonial, 1, {
+            'name': entry['name'],
+            'role': entry['role'],
+            'feedback': entry['feedback'],
+            'rating': entry['rating'],
+            'image': entry['image'],
+            'location': entry['location'],
+        })
+    pks = seeder.execute()
+    print(pks)

@@ -167,7 +167,13 @@ class ProfileUpdateView(APIView):
 class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Service.objects.all().order_by('order')
     serializer_class = ServiceSerializer
+    
 
 class ServiceDetailViewSet(viewsets.ModelViewSet):
     queryset = ServiceDetail.objects.all()
     serializer_class = ServiceDetailSerializer
+
+
+class TestimonialViewSet(viewsets.ModelViewSet):
+    queryset = Testimonial.objects.all()
+    serializer_class = TestimonialSerializer

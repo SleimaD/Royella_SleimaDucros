@@ -19,6 +19,7 @@ router.register(r'faqs', FAQViewSet)
 router.register(r'users', UserViewSet)
 router.register(r'services', ServiceViewSet)
 router.register(r'service_details', ServiceDetailViewSet)
+router.register(r'testimonials', TestimonialViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
