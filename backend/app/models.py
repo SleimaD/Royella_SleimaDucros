@@ -206,7 +206,7 @@ class Service(models.Model):
     order = models.IntegerField(default=0)
 
 
-# class ServiceDetail(models.Model):
-#     service = models.ForeignKey(Service, related_name='details', on_delete=models.CASCADE)
-#     title = models.CharField(max_length=100)
-#     description = models.TextField()
+class ServiceDetail(models.Model):
+    service = models.ForeignKey(Service, related_name='details', on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+    description = models.TextField()
