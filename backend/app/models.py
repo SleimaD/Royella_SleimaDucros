@@ -119,12 +119,13 @@ class Manager(models.Model):
 
 
 
-# class Testimonial(models.Model):
-#     author = models.CharField(max_length=100)
-#     position = models.CharField(max_length=100)
-#     testimonial = models.TextField()
-#     image = models.ImageField(upload_to='testimonials/')
-
+class Testimonial(models.Model):
+    name = models.CharField(max_length=100)
+    role = models.CharField(max_length=100)
+    feedback = models.TextField()
+    rating = models.IntegerField()
+    image = models.ImageField(upload_to='testimonials/')
+    location = models.CharField(max_length=100, blank=True, null=True)
 
 # class ContactInfo(models.Model):
 #     phone = models.CharField(max_length=20)
