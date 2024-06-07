@@ -161,3 +161,13 @@ class ProfileUpdateView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
+    
+
+
+class ServiceViewSet(viewsets.ModelViewSet):
+    queryset = Service.objects.all().order_by('order')
+    serializer_class = ServiceSerializer
+
+class ServiceDetailViewSet(viewsets.ModelViewSet):
+    queryset = ServiceDetail.objects.all()
+    serializer_class = ServiceDetailSerializer

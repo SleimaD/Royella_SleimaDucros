@@ -108,3 +108,17 @@ class UserAdminSerializer(serializers.ModelSerializer):
 
     def validate_password(self, value):
         return make_password(value)
+
+
+
+class ServiceDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServiceDetail
+        fields = '__all__'
+
+class ServiceSerializer(serializers.ModelSerializer):
+    details = ServiceDetailSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Service
+        fields = '__all__'
