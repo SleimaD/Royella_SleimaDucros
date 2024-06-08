@@ -128,3 +128,37 @@ class TestimonialSerializer(serializers.ModelSerializer):
     class Meta:
         model = Testimonial
         fields = '__all__'
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = "__all__"
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = "__all__"
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.StringRelatedField()
+    
+    class Meta:
+        model = Comment
+        fields ="__all__"
+
+class BlogDescriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlogDescription
+        fields = "__all__"
+
+class BlogSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(many=True)
+    tags = TagSerializer(many=True)
+    comments = CommentSerializer(many=True, read_only=True)
+    sections = BlogDescription(many=True)
+    author = serializers.StringRelatedField()
+    
+    class Meta:
+        model = Blog
+        fields = "__all__"
