@@ -56,20 +56,43 @@ class User(AbstractUser):
 #     date_posted = models.DateTimeField(auto_now_add=True)
 
 
-# class Blog(models.Model):
-#     title = models.CharField(max_length=200)
-#     content = models.TextField()
-#     author = models.ForeignKey(User, on_delete=models.CASCADE)
-#     posted_on = models.DateTimeField(auto_now_add=True)
-#     categories = models.ManyToManyField('Category')
-#     tags = models.ManyToManyField('Tag')
+class Blog(models.Model):
+    status_choix = (
+        ('draft', 'Draft'),
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    )
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    image = models.ImageField(upload_to='blogs/')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    posted_on = models.DateTimeField(auto_now_add=True)
+    category = models.ManyToManyField('Category')
+    tags = models.ManyToManyField('Tag')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=20, choices=status_choix, default='draft')
 
 
-# class Category(models.Model):
-#     name = models.CharField(max_length=100) 
+class Category(models.Model):
+    name = models.CharField(max_length=200) 
 
-# class Tag(models.Model):
-#     name = models.CharField(max_length=100)
+class Tag(models.Model):
+    name = models.CharField(max_length=200)
+
+
+
+class Comment(models.Model):
+    blog = models.ForeignKey(Blog, related_name='comments', on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class BlogDescription(models.Model):
+    blog = models.ForeignKey(Blog, related_name='sections', on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    content = models.TextField()
 
 
 class PaymentPlan(models.Model):

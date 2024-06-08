@@ -380,7 +380,7 @@ const About = () => {
                       </p>
                     </div>
                     <div className="flex items-center mt-10 lg:mt-[51px] p-3">
-                      <img src={testimonial.image} alt={testimonial.name} className="w-[80px] h-[80px]" />
+                      <img src={testimonial.image} alt={testimonial.name} className="w-[85px] h-[80px]" />
                       <div className="ml-5 md:ml-6">
                         <h4 className="text-lg sm:text-xl md:text-2xl leading-[28px] text-[#041341] dark:text-white font-medium font-Garamond">
                           {testimonial.name}

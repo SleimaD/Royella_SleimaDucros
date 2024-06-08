@@ -27,6 +27,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+import os
+import certifi
+
+os.environ['SSL_CERT_FILE'] = certifi.where()
 
 
 
@@ -63,21 +67,16 @@ class UserCreateView(APIView):
             to = user.email
 
             try:
-                send_mail(
-                    subject,
-                    plain_message,
-                    from_email,
-                    [to],
-                    html_message=html_message, 
-                    fail_silently=False,
-                )
-                return Response({'status': 'success', 'message': 'Utilisateur créé avec succès'},status=status.HTTP_201_CREATED)
+                os.environ['SSL_CERT_FILE'] = certifi.where() 
+                email = EmailMessage(subject, html_message, from_email, [to])
+                email.content_subtype = 'html'  
+                email.send()
+                return Response({'status': 'success', 'message': 'Utilisateur créé avec succès'}, status=status.HTTP_201_CREATED)
             except Exception as e:
+                logger.error(f'Error sending email: {e}')
                 return Response({'status': 'error', 'message': 'Utilisateur créé mais l\'email n\'a pas pu être envoyé'}, status=status.HTTP_201_CREATED)
-
-        return Response({'status': 'error', 'message': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)   
-
-
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -167,7 +166,7 @@ class ProfileUpdateView(APIView):
 class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Service.objects.all().order_by('order')
     serializer_class = ServiceSerializer
-    
+
 
 class ServiceDetailViewSet(viewsets.ModelViewSet):
     queryset = ServiceDetail.objects.all()
