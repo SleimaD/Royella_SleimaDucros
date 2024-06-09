@@ -130,6 +130,8 @@ class TestimonialSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -156,7 +158,7 @@ class BlogSerializer(serializers.ModelSerializer):
     category = CategorySerializer(many=True)
     tags = TagSerializer(many=True)
     comments = CommentSerializer(many=True, read_only=True)
-    sections = BlogDescription(many=True)
+    # sections = BlogDescription(many=True)
     author = serializers.StringRelatedField()
     
     class Meta:

@@ -91,8 +91,9 @@ class Comment(models.Model):
 
 class BlogDescription(models.Model):
     blog = models.ForeignKey(Blog, related_name='sections', on_delete=models.CASCADE)
-    title = models.CharField(max_length=200)
-    content = models.TextField()
+    title = models.CharField(max_length=200, null=True, blank=True)
+    content = models.TextField(null=True, blank=True)
+    image = models.ImageField(upload_to='blogs/', blank=True, null=True)
 
 
 class PaymentPlan(models.Model):

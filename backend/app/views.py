@@ -176,3 +176,54 @@ class ServiceDetailViewSet(viewsets.ModelViewSet):
 class TestimonialViewSet(viewsets.ModelViewSet):
     queryset = Testimonial.objects.all()
     serializer_class = TestimonialSerializer
+
+
+
+
+
+class BlogViewSet(viewsets.ModelViewSet):
+    queryset = Blog.objects.all()
+    serializer_class = BlogSerializer
+
+    def get_permissions(self):
+        if self.action in ['create']:
+            permission_classes = [IsAuthenticated, IsRedacteurUser | IsWebmasterUser | IsAdminUser]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            permission_classes = [IsAuthenticated, IsWebmasterUser | IsAdminUser]
+        else:
+            permission_classes = [permissions.AllowAny]
+        return [permission() for permission in permission_classes]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticated, IsAdminUser | IsWebmasterUser]
+
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = [IsAuthenticated, IsAdminUser | IsWebmasterUser]
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+    def get_permissions(self):
+        if self.action in ['create']:
+            permission_classes = [IsAuthenticated, IsRegisteredUser | IsRedacteurUser | IsWebmasterUser | IsAdminUser]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            permission_classes = [IsAuthenticated, IsWebmasterUser | IsAdminUser]
+        else:
+            permission_classes = [permissions.AllowAny]
+        return [permission() for permission in permission_classes]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+class BlogDescriptionViewSet(viewsets.ModelViewSet):
+    queryset = BlogDescription.objects.all()
+    serializer_class = BlogDescriptionSerializer
+    permission_classes = [IsAuthenticated, IsWebmasterUser | IsAdminUser]

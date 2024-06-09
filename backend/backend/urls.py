@@ -20,6 +20,12 @@ router.register(r'users', UserViewSet)
 router.register(r'services', ServiceViewSet)
 router.register(r'service_details', ServiceDetailViewSet)
 router.register(r'testimonials', TestimonialViewSet)
+router.register(r'blogs', BlogViewSet)
+router.register(r'categories', CategoryViewSet)
+router.register(r'tags', TagViewSet)
+router.register(r'comments', CommentViewSet)
+router.register(r'descriptions', BlogDescriptionViewSet)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),

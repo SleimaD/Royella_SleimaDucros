@@ -2,6 +2,8 @@ from django_seed import Seed
 from .models import *
 
 
+
+#region manager
 #!manager 
 manager_entries = [
     {
@@ -33,6 +35,9 @@ def runManager():
 
 
 
+
+
+#region facility
 #!facility
 facility_entries = [
     {
@@ -81,7 +86,7 @@ def runFacility():
 
 
 
-
+#region payment plan
 #!paymentplan
 def run_payment_plans():
     seeder = Seed.seeder()
@@ -189,6 +194,9 @@ def run_faq():
     print(pks)
 
 
+
+
+#region service
 #!service
 service_entries = [
     {
@@ -237,6 +245,8 @@ def run_service():
     print(pks)
 
 
+
+#region service detail
 #!service detail
 
 gym_service = Service.objects.get(title="Gym Training Grounds")
@@ -334,7 +344,7 @@ def run_service_details():
     print(pks)
 
 
-
+#region testimonials
 #!testimonials
 
 testimonial_entries = [
@@ -412,3 +422,226 @@ def run_testimonial():
         })
     pks = seeder.execute()
     print(pks)
+
+
+
+
+#region blog
+#! blog
+
+
+def create_categories():
+    categories_data = ["Travel", "Health", "Technology", "Lifestyle", "Luxury Hotels", "Restaurants", "SPA Center", "Health Club", "Industrial", "Foods", "Fashion", "Business"]
+    categories = []
+    
+    for name in categories_data:
+        category, created = Category.objects.get_or_create(name=name)
+        categories.append(category)
+    
+    return categories
+
+def create_tags():
+    tags_data = ["Summer", "Luxury", "Budget", "Family", "Adventure", "Relaxation", "Beach", "Mountain", "Party", "Extreme", "Wellness", "Innovation", "Trends","Paris", "Healthy", "Vacation", "Savings"]
+    tags = []
+    
+    for name in tags_data:
+        tag, created = Tag.objects.get_or_create(name=name)
+        tags.append(tag)
+    
+    return tags
+
+def create_blogs(admin_user, categories, tags):
+    blogs_data = [
+        {
+            'title': "Exploring the Mountains",
+            'content': "Embark on an unforgettable journey through the majestic peaks and serene valleys of the mountains. Discover the beauty of nature's untouched landscapes, from snow-capped summits to lush meadows teeming with wildflowers. Uncover hidden trails, encounter diverse wildlife, and immerse yourself in the tranquility of the wilderness. This guide will provide you with everything you need to know to plan your next mountain adventure, from choosing the right gear to packing the perfect backpack. Whether you're a seasoned mountaineer or a curious beginner, this blog post will inspire you to explore the wonders of the mountains and create memories that will last a lifetime.",
+            'image': "blogs/mountaintitle.jpg",
+            'status': 'approved',
+            'categories': "Travel",
+            'tags': ["Mountain", "Adventure", "Vacation"],            
+            'descriptions': [
+                {
+                    "image": "blogs/mountain_desc1.jpg"
+                },
+                {
+                    "image": "blogs/mountain_desc2.jpg"
+                },
+                {
+                    "title": "Allure of the Mountains",
+                    "content": "Mountains, with their towering peaks and serene valleys, offer an unforgettable journey through nature's untouched landscapes. Discover hidden trails, encounter diverse wildlife, immerse yourself in the tranquility of the wilderness. Embark on your mountain adventure today.", 
+                }
+            ]
+        },
+        {
+            'title': "Pre Booking Benifits for the Traveller on our Hotel",  
+            'content': "Planning your getaway? Book your stay in advance and unlock a world of benefits! Secure the perfect room type, enjoy exclusive discounts, and gain peace of mind knowing your accommodation is guaranteed. Plus, explore early booking perks like free breakfast or spa credits.  Book your stay today and get ready to experience all that Royella has to offer.",
+            'image': "blogs/prebooking.jpg",
+            'status': 'approved',
+            'categories': "Travel",
+            'tags': ["budget", "Summer", "Vacation"],
+            'descriptions': [
+                {
+                    "image": "blogs/book_desc1.jpg"
+                },
+                {
+                    "image": "blogs/book_desc2.jpg"
+                },
+                {
+                    "title": "Why Pre-Book? Unwind and Enjoy More", 
+                    "content": "ake the stress out of travel and pre-book your stay at [Hotel Name]. Secure the best rates, enjoy flexible cancellation options (if offered), and get priority access to your desired room type. Pre-booking lets you focus on what matters most - creating lasting vacation memories.", 
+                }
+            ]
+        },
+        {
+            'title': "Healthy Eating Tips",
+            'content': "Embark on a journey to a healthier and happier you with these simple and effective healthy eating tips. Discover how to make informed food choices, create a balanced diet, and nourish your body with the essential nutrients it needs to thrive. Learn how to navigate food labels, understand portion sizes, and incorporate delicious and nutritious meals into your lifestyle. With these tips, you'll be well on your way to achieving your wellness goals and feeling your best.",
+            'image': "blogs/healthy.jpg",
+            'status': 'approved',
+            'categories': "Health",
+            'tags': ["Healthy", "Budget"],  
+            'descriptions': [
+                {
+                    "title": "Fuel Your Body and Mind: Essential Tips for Healthy Eating", 
+                    "content": "Nourish your body and mind with these essential healthy eating tips. Learn how to make informed food choices that support your overall well-being. Discover simple strategies for creating a balanced diet rich in essential nutrients. Explore delicious and nutritious recipes that will tantalize your taste buds and fuel your body for optimal health.", 
+                },
+                {
+                    "image": "blogs/healthy_desc1.jpg"
+                },
+                {
+                    "image": "blogs/healthy_desc2.jpg"
+                }
+            ]
+        },
+        {
+            'title': "Luxury Hotels in Paris",
+            'content': "Paris is a city known for its elegance, romance, and rich history. It is also home to some of the most luxurious hotels in the world. These hotels offer guests an unparalleled level of comfort, service, and amenities. If you are looking for a truly unforgettable experience in Paris, then you should consider staying in one of these luxury hotels.",
+            'image': "blogs/hotelsparis.jpg",
+            'status': 'approved',
+            'categories': "Luxury Hotels",
+            'tags': ["Luxury", "Paris"],
+            'descriptions': [
+                {
+                    "title": "Paris in Opulence: Unveiling Luxury Stays", 
+                    "content": "Paris, the City of Lights, shimmers even brighter when experienced from a luxury hotel. Imagine waking up to iconic landmarks like the Eiffel Tower or Seine River just outside your window. Picture indulging in Michelin-starred cuisine and pampering yourself in opulent spas.  Luxury hotels offer more than just a place to stay – they're gateways to unforgettable experiences.", 
+                },
+                {
+                    "image": "blogs/paris_desc1.jpg"
+                },
+                {
+                    "image": "blogs/paris_desc2.jpg"
+                }
+            ]
+        },
+        {
+            'title': "Family Vacation Spots",
+            'content': "Craft unforgettable memories with your loved ones as you explore exciting family vacation spots. From sun-kissed beaches to enchanting mountain getaways, discover destinations that cater to every age and interest. Immerse yourselves in nature's wonders, explore vibrant cultures, and create bonds that will last a lifetime.",
+            'image': "blogs/familyvacation.jpg",
+            'status': 'approved',
+            'categories': "Travel",
+            'tags': ["Family", "Vacation"],
+            'descriptions': [
+                {
+                    "title": "Family Adventures: A Tapestry of Memories", 
+                    "content": "Embark on a journey of togetherness, where laughter echoes through sun-kissed beaches and shared experiences weave a tapestry of cherished memories. Explore bustling cities teeming with life, or venture into the wilderness where nature's wonders await. Let the excitement of family vacations ignite your spirit, strengthening bonds that will last a lifetime.", 
+                },
+                {
+                    "image": "blogs/family_desc1.jpg"
+                },
+                {
+                    "image": "blogs/family_desc2.jpg"
+                }
+            ]
+        },
+        {
+            'title': "Budget Travel Tips",
+            'content': "Traveling the world doesn't have to be an expensive endeavor. With a bit of planning and creativity, you can embark on unforgettable adventures without breaking the bank. Embrace the joy of budget travel by following these savvy tips and discover the world without emptying your wallet.",
+            'image': "blogs/budgettravel.jpg",
+            'status': 'approved',
+            'categories': "Travel",
+            'tags': ["Budget", "Savings"],
+            'descriptions': [
+                {
+                    "title": "Saving Money", 
+                    "content": "Create a budget that allocates your income towards essential expenses, savings goals, and a bit of fun. Budgeting apps can simplify this process.  Be realistic and track your progress to ensure you're staying on track. Even small adjustments to your spending can make a big difference over time.", 
+                },
+                {
+                    "image": "blogs/budget_desc1.jpg"
+                },
+                {
+                    "image": "blogs/budget_desc2.jpg"
+                }
+            ]
+        },
+        {
+            'title': "Relaxing Spa Retreats",
+            'content': "Step into a world of wellness, where soothing aromas and gentle sounds create an atmosphere of pure bliss. Indulge in a variety of pampering treatments, from rejuvenating massages to revitalizing facials. Let the expert hands of skilled therapists melt away your stress and tension, leaving you feeling refreshed and renewed.",
+            'image': "blogs/sparetreats.jpg",
+            'status': 'approved',
+            'categories': "SPA Center",
+            'tags': ["Relaxation", "Wellness"],
+            'descriptions': [
+                {
+                    "title": "Rediscover Balance and Inner Harmony",
+                    "content": "As you immerse yourself in the tranquility of a spa retreat, you'll find yourself rediscovering balance and inner harmony. The gentle rhythm of nature, the soothing ambiance, and the focus on self-care will guide you towards a state of deep relaxation. Allow yourself to let go of worries and concerns, and embrace the serenity that surrounds you.",
+                },
+                {
+                    "image": "blogs/spa_desc1.jpg"
+                },
+                {
+                    "image": "blogs/spa_desc2.jpg"
+                }
+            ]                                            
+
+        }
+    ]
+    
+    for blog_data in blogs_data:
+        blog = Blog.objects.create(
+            title=blog_data['title'],
+            content=blog_data['content'],
+            image=blog_data['image'],
+            author=admin_user,
+            status=blog_data['status']
+        )
+        blog_categories = Category.objects.filter(name__in=blog_data['categories'])
+        blog.category.set(blog_categories)
+
+        blog_tags = Tag.objects.filter(name__in=blog_data['tags'])
+        blog.tags.set(blog_tags)
+        
+        for desc_data in blog_data['descriptions']:
+            BlogDescription.objects.create(
+                blog=blog,
+                title=desc_data.get('title', ''),
+                content=desc_data.get('content', ''),
+                image=desc_data.get('image', None)
+            )
+
+def create_comments(admin_user):
+    blogs = Blog.objects.all()
+    comments_data = [
+        {"content": "Great post!", "author": admin_user, "blog": blogs[0]},
+        {"content": "Very informative.", "author": admin_user, "blog": blogs[1]},
+        {"content": "I loved this place!", "author": admin_user, "blog": blogs[3]},
+        {"content": "I disagree with some points.", "author": admin_user, "blog": blogs[2]},
+        {"content": "Would love to visit here.", "author": admin_user, "blog": blogs[4]},
+        {"content": "Good tips!", "author": admin_user, "blog": blogs[5]},
+        {"content": "Thanks for sharing.", "author": admin_user, "blog": blogs[6]},
+        {"content": "Amazing destination!", "author": admin_user, "blog": blogs[0]},
+        {"content": "Great post!", "author": admin_user, "blog": blogs[1]},
+        {"content": "Very informative.", "author": admin_user, "blog": blogs[2]},
+        {"content": "I loved this place!", "author": admin_user, "blog": blogs[3]},
+        {"content": "I disagree with some points.", "author": admin_user, "blog": blogs[4]},
+        {"content": "Would love to visit here.", "author": admin_user, "blog": blogs[5]},
+        {"content": "Good tips!", "author": admin_user, "blog": blogs[6]},
+        {"content": "Thanks for sharing.", "author": admin_user, "blog": blogs[6]},
+        {"content": "Amazing destination!", "author": admin_user, "blog": blogs[3]},
+    ]
+    
+    for comment_data in comments_data:
+        Comment.objects.create(
+            content=comment_data["content"],
+            author=comment_data["author"],
+            blog=comment_data["blog"]
+        )
+
