@@ -200,12 +200,12 @@ class BlogViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated, IsAdminUser | IsWebmasterUser]
+    # permission_classes = [IsAuthenticated, IsAdminUser | IsWebmasterUser]
 
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = [IsAuthenticated, IsAdminUser | IsWebmasterUser]
+    # permission_classes = [IsAuthenticated, IsAdminUser | IsWebmasterUser]
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
@@ -226,4 +226,4 @@ class CommentViewSet(viewsets.ModelViewSet):
 class BlogDescriptionViewSet(viewsets.ModelViewSet):
     queryset = BlogDescription.objects.all()
     serializer_class = BlogDescriptionSerializer
-    permission_classes = [IsAuthenticated, IsWebmasterUser | IsAdminUser]
+    # permission_classes = [IsAuthenticated, IsWebmasterUser | IsAdminUser]

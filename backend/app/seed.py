@@ -457,7 +457,7 @@ def create_blogs(admin_user, categories, tags):
             'content': "Embark on an unforgettable journey through the majestic peaks and serene valleys of the mountains. Discover the beauty of nature's untouched landscapes, from snow-capped summits to lush meadows teeming with wildflowers. Uncover hidden trails, encounter diverse wildlife, and immerse yourself in the tranquility of the wilderness. This guide will provide you with everything you need to know to plan your next mountain adventure, from choosing the right gear to packing the perfect backpack. Whether you're a seasoned mountaineer or a curious beginner, this blog post will inspire you to explore the wonders of the mountains and create memories that will last a lifetime.",
             'image': "blogs/mountaintitle.jpg",
             'status': 'approved',
-            'categories': "Travel",
+            'categories': ["Travel"],
             'tags': ["Mountain", "Adventure", "Vacation"],            
             'descriptions': [
                 {
@@ -477,7 +477,7 @@ def create_blogs(admin_user, categories, tags):
             'content': "Planning your getaway? Book your stay in advance and unlock a world of benefits! Secure the perfect room type, enjoy exclusive discounts, and gain peace of mind knowing your accommodation is guaranteed. Plus, explore early booking perks like free breakfast or spa credits.  Book your stay today and get ready to experience all that Royella has to offer.",
             'image': "blogs/prebooking.jpg",
             'status': 'approved',
-            'categories': "Travel",
+            'categories': ["Travel"],
             'tags': ["budget", "Summer", "Vacation"],
             'descriptions': [
                 {
@@ -497,7 +497,7 @@ def create_blogs(admin_user, categories, tags):
             'content': "Embark on a journey to a healthier and happier you with these simple and effective healthy eating tips. Discover how to make informed food choices, create a balanced diet, and nourish your body with the essential nutrients it needs to thrive. Learn how to navigate food labels, understand portion sizes, and incorporate delicious and nutritious meals into your lifestyle. With these tips, you'll be well on your way to achieving your wellness goals and feeling your best.",
             'image': "blogs/healthy.jpg",
             'status': 'approved',
-            'categories': "Health",
+            'categories': ["Health"],
             'tags': ["Healthy", "Budget"],  
             'descriptions': [
                 {
@@ -517,7 +517,7 @@ def create_blogs(admin_user, categories, tags):
             'content': "Paris is a city known for its elegance, romance, and rich history. It is also home to some of the most luxurious hotels in the world. These hotels offer guests an unparalleled level of comfort, service, and amenities. If you are looking for a truly unforgettable experience in Paris, then you should consider staying in one of these luxury hotels.",
             'image': "blogs/hotelsparis.jpg",
             'status': 'approved',
-            'categories': "Luxury Hotels",
+            'categories': ["Luxury Hotels"],
             'tags': ["Luxury", "Paris"],
             'descriptions': [
                 {
@@ -537,7 +537,7 @@ def create_blogs(admin_user, categories, tags):
             'content': "Craft unforgettable memories with your loved ones as you explore exciting family vacation spots. From sun-kissed beaches to enchanting mountain getaways, discover destinations that cater to every age and interest. Immerse yourselves in nature's wonders, explore vibrant cultures, and create bonds that will last a lifetime.",
             'image': "blogs/familyvacation.jpg",
             'status': 'approved',
-            'categories': "Travel",
+            'categories': ["Travel"],
             'tags': ["Family", "Vacation"],
             'descriptions': [
                 {
@@ -557,7 +557,7 @@ def create_blogs(admin_user, categories, tags):
             'content': "Traveling the world doesn't have to be an expensive endeavor. With a bit of planning and creativity, you can embark on unforgettable adventures without breaking the bank. Embrace the joy of budget travel by following these savvy tips and discover the world without emptying your wallet.",
             'image': "blogs/budgettravel.jpg",
             'status': 'approved',
-            'categories': "Travel",
+            'categories': ["Travel"],
             'tags': ["Budget", "Savings"],
             'descriptions': [
                 {
@@ -577,7 +577,7 @@ def create_blogs(admin_user, categories, tags):
             'content': "Step into a world of wellness, where soothing aromas and gentle sounds create an atmosphere of pure bliss. Indulge in a variety of pampering treatments, from rejuvenating massages to revitalizing facials. Let the expert hands of skilled therapists melt away your stress and tension, leaving you feeling refreshed and renewed.",
             'image': "blogs/sparetreats.jpg",
             'status': 'approved',
-            'categories': "SPA Center",
+            'categories':[ "SPA Center"],
             'tags': ["Relaxation", "Wellness"],
             'descriptions': [
                 {
@@ -590,8 +590,7 @@ def create_blogs(admin_user, categories, tags):
                 {
                     "image": "blogs/spa_desc2.jpg"
                 }
-            ]                                            
-
+            ]
         }
     ]
     
