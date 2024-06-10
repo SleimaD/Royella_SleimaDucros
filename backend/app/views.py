@@ -24,6 +24,8 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.hashers import check_password
 from rest_framework.decorators import action
 import logging
+from django.db.models import Count
+
 
 logger = logging.getLogger(__name__)
 
@@ -202,22 +204,33 @@ class BlogViewSet(viewsets.ModelViewSet):
         latest_blogs = Blog.objects.order_by('-posted_on')[:3]
         serializer = self.get_serializer(latest_blogs, many=True)
         return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'], url_path='popular')
+    def get_popular_posts(self, request):
+        blogs = Blog.objects.annotate(comment_count=Count('comments')).order_by('-comment_count')[:3]
+        serializer = self.get_serializer(blogs, many=True)
+        return Response(serializer.data)
 
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    # permission_classes = [IsAuthenticated, IsAdminUser | IsWebmasterUser]
 
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    # permission_classes = [IsAuthenticated, IsAdminUser | IsWebmasterUser]
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        queryset = Comment.objects.all()
+        blog_id = self.request.query_params.get('blog', None)
+        if blog_id is not None:
+            queryset = queryset.filter(blog=blog_id)
+        return queryset
 
     def get_permissions(self):
         if self.action in ['create']:
@@ -231,7 +244,21 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({
+            "request": self.request,
+        })
+        return context
+
+
 class BlogDescriptionViewSet(viewsets.ModelViewSet):
     queryset = BlogDescription.objects.all()
     serializer_class = BlogDescriptionSerializer
-    # permission_classes = [IsAuthenticated, IsWebmasterUser | IsAdminUser]
+
+    def get_queryset(self):
+        queryset = BlogDescription.objects.all()
+        blog_id = self.request.query_params.get('blog', None)
+        if blog_id is not None:
+            queryset = queryset.filter(blog_id=blog_id)
+        return queryset

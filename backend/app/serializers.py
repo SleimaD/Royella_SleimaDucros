@@ -143,11 +143,21 @@ class TagSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.StringRelatedField()
+    # author = serializers.StringRelatedField() 
+    author_photo = serializers.SerializerMethodField()
+    author_name = serializers.CharField(source='author.username', read_only=True)
+
     
     class Meta:
         model = Comment
         fields ="__all__"
+
+    def get_author_photo(self, obj):
+        request = self.context.get('request')
+        if obj.author.photo:
+            photo_url = obj.author.photo.url
+            return request.build_absolute_uri(photo_url)
+        return None
 
 class BlogDescriptionSerializer(serializers.ModelSerializer):
     class Meta:

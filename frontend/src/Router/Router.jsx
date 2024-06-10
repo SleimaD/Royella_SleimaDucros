@@ -80,7 +80,7 @@ const router = createBrowserRouter([
         element: <Blog />,
       },
       {
-        path: "/blog_details",
+        path: "/blog_details/:id",
         element: <BlogDetails />,
       },
       {
@@ -101,7 +101,7 @@ const router = createBrowserRouter([
       },
     ],
   },
-  {
+  { 
     path: "/",
     element: (
       <PrivateRoute allowedRoles={['ADMIN', 'Admin', 'WEBMASTER', 'REDACTEUR']}>

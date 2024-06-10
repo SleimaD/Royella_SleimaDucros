@@ -16,14 +16,14 @@ const BlogSideBar = ({ onFilter, popularPosts }) => {
   }, []);
 
   const fetchCategories = () => {
-    fetch('http://127.0.0.1:8000/api/categories/') 
+    fetch('http://127.0.0.1:8000/api/categories/')
       .then(response => response.json())
       .then(data => setCategories(data))
       .catch(error => console.error('Error fetching categories:', error));
   };
 
   const fetchTags = () => {
-    fetch('http://127.0.0.1:8000/api/tags/') 
+    fetch('http://127.0.0.1:8000/api/tags/')
       .then(response => response.json())
       .then(data => setTags(data))
       .catch(error => console.error('Error fetching tags:', error));
@@ -41,8 +41,8 @@ const BlogSideBar = ({ onFilter, popularPosts }) => {
   };
 
   const handleTagClick = (tag) => {
-    const newTags = selectedTags.includes(tag) 
-      ? selectedTags.filter(t => t !== tag) 
+    const newTags = selectedTags.includes(tag)
+      ? selectedTags.filter(t => t !== tag)
       : [...selectedTags, tag];
     setSelectedTags(newTags);
     onFilter(newTags, 'tag');
@@ -80,7 +80,7 @@ const BlogSideBar = ({ onFilter, popularPosts }) => {
           {popularPosts.map(post => (
             <Link
               key={post.id}
-              to="/blog_details"
+              to={`/blog_details/${post.id}`}
               className="flex items-center"
               data-aos="fade-up"
               data-aos-duration="1000"

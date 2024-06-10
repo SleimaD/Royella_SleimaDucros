@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
             console.log('Retrieved user:', savedUserJSON); 
             if (savedUserJSON) {
                 const savedUser = JSON.parse(savedUserJSON);
-                if (savedUser && typeof savedUser === 'object') { // Check if parsed data is an object
+                if (savedUser && typeof savedUser === 'object') { //? Check if parsed data is an object
                     setUser(savedUser);
                 }
             }
@@ -44,3 +44,4 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+export { AuthContext };

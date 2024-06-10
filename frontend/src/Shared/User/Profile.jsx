@@ -20,7 +20,7 @@ const Profile = () => {
     setMessage("");
 
     try {
-      const response = await fetch("/api/profile", {
+      const response = await fetch("http://127.0.0.1:8000/api/profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -31,7 +31,6 @@ const Profile = () => {
 
       if (response.ok) {
         const updatedUser = await response.json();
-        // Update the user in context
         login(updatedUser);
         setMessage("Profile updated successfully!");
       } else {

@@ -26,13 +26,13 @@ const Blog = () => {
       .catch(error => console.error('Error fetching blogs:', error));
   };
 
-const fetchPopularPosts = (blogsData) => {
-  const popular = blogsData
-    .filter(blog => blog.comments.length > 0) 
-    .sort((a, b) => b.comments.length - a.comments.length) 
-    .slice(0, 3); 
-  setPopularPosts(popular);
-};
+  const fetchPopularPosts = (blogsData) => {
+    const popular = blogsData
+      .filter(blog => blog.comments.length > 0) 
+      .sort((a, b) => b.comments.length - a.comments.length) 
+      .slice(0, 3); 
+    setPopularPosts(popular);
+  };
 
   const handleFilter = (filter, type) => {
     let filtered = blogs;
@@ -75,6 +75,10 @@ const fetchPopularPosts = (blogsData) => {
     }
   };
 
+  if (!popularPosts || popularPosts.length === 0) {
+    return <div>Loading...</div>; 
+  }
+
   return (
     <div>
       <BreadCrumb title="Blog" />
@@ -106,14 +110,14 @@ const fetchPopularPosts = (blogsData) => {
                           {blog.category.map(cat => cat.name).join(', ')}
                         </p>
                       </div>
-                      <Link to="/blog_details" state={{ blog }}>
+                      <Link to={`/blog_details/${blog.id}`} state={{ blog }}>
                         <h2 className="text-xl md:text-[22px] xl:text-2xl 2xl:text-[26px] leading-[34px] font-semibold text-lightBlack dark:text-white py-2 sm:py-3 md:py-4 hover:underline underline-offset-2">
                           {blog.title}
                         </h2>
                       </Link>
                     </div>
                     <div className="border-t-[1px] border-[#ddd] dark:border-gray py-2 sm:py-3 md:py-4 xl:py-5">
-                      <Link to="/blog_details" state={{ blog }} className="px-[30px] flex items-center justify-between">
+                      <Link to={`/blog_details/${blog.id}`} state={{ blog }} className="px-[30px] flex items-center justify-between">
                         <div className="">
                           <span className="text-sm sm:text-base flex items-center">
                             <span className="ml-[10px] leading-[38px] uppercase text-lightBlack dark:text-white font-medium group-hover:text-khaki hover:underline underline-offset-1">

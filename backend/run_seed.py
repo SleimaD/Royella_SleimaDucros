@@ -14,7 +14,7 @@ if __name__ == "__main__":
    # run_testimonial()
    # admin_user = User.objects.first()
    # if not admin_user:
-   #    print("Il n'y a pas de user dans la base de données.")
+   #    print("Il n'y a pas de user dans la db")
    # else:
    #      categories = create_categories()
    #      tags = create_tags()
