@@ -196,6 +196,14 @@ class BlogViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+    
+    @action(detail=False, methods=['get'])
+    def latest(self, request):
+        latest_blogs = Blog.objects.order_by('-posted_on')[:3]
+        serializer = self.get_serializer(latest_blogs, many=True)
+        return Response(serializer.data)
+
+
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
