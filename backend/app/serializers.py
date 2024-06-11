@@ -8,6 +8,7 @@ class ManagerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Manager
         fields = '__all__'
+
     
 
 class FacilitySerializer(serializers.ModelSerializer):
@@ -46,11 +47,15 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
     
 
+    
+
 
 class FeatureSerializer(serializers.ModelSerializer):
     class Meta:
         model = Feature
         fields = '__all__'
+
+
 
 
 class PaymentPlanSerializer(serializers.ModelSerializer):
@@ -59,6 +64,8 @@ class PaymentPlanSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentPlan
         fields = ['id', 'name', 'price', 'image', 'features']
+
+
 
 
 class FAQSerializer(serializers.ModelSerializer):
@@ -116,12 +123,15 @@ class ServiceDetailSerializer(serializers.ModelSerializer):
         model = ServiceDetail
         fields = '__all__'
 
+
+
 class ServiceSerializer(serializers.ModelSerializer):
     details = ServiceDetailSerializer(many=True, read_only=True)
 
     class Meta:
         model = Service
         fields = '__all__'
+
 
 
 class TestimonialSerializer(serializers.ModelSerializer):
@@ -137,10 +147,14 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = "__all__"
 
+
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = "__all__"
+
+
 
 class CommentSerializer(serializers.ModelSerializer):
     # author = serializers.StringRelatedField() 
@@ -158,11 +172,15 @@ class CommentSerializer(serializers.ModelSerializer):
             photo_url = obj.author.photo.url
             return request.build_absolute_uri(photo_url)
         return None
+    
+
 
 class BlogDescriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogDescription
         fields = "__all__"
+
+
 
 class BlogSerializer(serializers.ModelSerializer):
     category = CategorySerializer(many=True)
@@ -174,3 +192,29 @@ class BlogSerializer(serializers.ModelSerializer):
     class Meta:
         model = Blog
         fields = "__all__"
+
+
+
+class AmenitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Amenity
+        fields = '__all__'
+
+
+
+class RoomSerializer(serializers.ModelSerializer):
+    amenities = AmenitySerializer(many=True)
+    
+    class Meta:
+        model = Room
+        fields = '__all__'
+
+        
+
+class BookingSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    room = RoomSerializer()
+
+    class Meta:
+        model = Booking
+        fields = '__all__'
