@@ -262,3 +262,23 @@ class BlogDescriptionViewSet(viewsets.ModelViewSet):
         if blog_id is not None:
             queryset = queryset.filter(blog_id=blog_id)
         return queryset
+
+
+
+class AmenityViewSet(viewsets.ModelViewSet):
+    queryset = Amenity.objects.all()
+    serializer_class = AmenitySerializer
+
+
+
+class RoomViewSet(viewsets.ModelViewSet):
+    queryset = Room.objects.all()
+    serializer_class = RoomSerializer
+
+
+
+class BookingViewSet(viewsets.ModelViewSet):
+    queryset = Booking.objects.all()
+    serializer_class = BookingSerializer
+
+    
