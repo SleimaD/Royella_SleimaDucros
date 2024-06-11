@@ -19,33 +19,32 @@ class User(AbstractUser):
 
 
 
-# class Amenity(models.Model):
-#     name = models.CharField(max_length=100)
-#     icon = models.ImageField(upload_to='amenities/', blank=True)  
+class Amenity(models.Model):
+    name = models.CharField(max_length=100)
+    icon = models.ImageField(upload_to='amenities/', blank=True)
 
+class Room(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+    image = models.ImageField(upload_to='rooms/')
+    available = models.BooleanField(default=True)
+    max_guests = models.IntegerField(default=2)
+    amenities = models.ManyToManyField(Amenity, related_name='rooms')
+    stars = models.IntegerField(default=1)
+    beds = models.CharField(max_length=255)
+    dimensions = models.CharField(max_length=255)
 
-# class Room(models.Model):
-#     name = models.CharField(max_length=100)
-#     description = models.TextField()
-#     price = models.DecimalField(max_digits=6, decimal_places=2)
-#     image = models.ImageField(upload_to='rooms/')
-#     available = models.BooleanField(default=True)    
-#     max_guests = models.IntegerField(default=2)
-#     amenities = models.ManyToManyField(Amenity, related_name='rooms')
-
-
-  
-# class Booking(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     room = models.ForeignKey(Room, on_delete=models.CASCADE)
-#     room_nbr = models.IntegerField()   
-#     start_date = models.DateField()
-#     end_date = models.DateField()
-#     guest_count = models.IntegerField()
-#     status = models.CharField(max_length=10, choices=[('PENDING', 'Pending'), ('CONFIRMED', 'Confirmed'), ('CANCELLED', 'Cancelled')]) 
-#     room_details = JSONField(default=dict)
-#     booking_group = models.CharField(max_length=100, blank=True, null=True) #? dans le cas où je veux grouper les reservations
-
+class Booking(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    room_nbr = models.IntegerField()
+    start_date = models.DateField()
+    end_date = models.DateField()
+    guest_count = models.IntegerField()
+    status = models.CharField(max_length=10, choices=[('PENDING', 'Pending'), ('CONFIRMED', 'Confirmed'), ('CANCELLED', 'Cancelled')])
+    room_details = models.JSONField(default=dict)
+    booking_group = models.CharField(max_length=100, blank=True, null=True)
 
 
 # class Review(models.Model):
