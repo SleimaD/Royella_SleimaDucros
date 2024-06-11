@@ -25,6 +25,9 @@ router.register(r'categories', CategoryViewSet)
 router.register(r'tags', TagViewSet)
 router.register(r'comments', CommentViewSet)
 router.register(r'descriptions', BlogDescriptionViewSet)
+router.register(r'amenities', AmenityViewSet)
+router.register(r'rooms', RoomViewSet)
+router.register(r'bookings', BookingViewSet)
 
 
 urlpatterns = [
