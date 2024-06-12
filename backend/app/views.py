@@ -377,3 +377,8 @@ class OfferViewSet(viewsets.ModelViewSet):
     queryset = Offer.objects.filter(is_active=True, end_date__gte=timezone.now())
     serializer_class = OfferSerializer
 
+
+
+class MemberViewSet(viewsets.ModelViewSet):
+    queryset = Member.objects.all()
+    serializer_class = MemberSerializer

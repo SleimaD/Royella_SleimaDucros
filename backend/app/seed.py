@@ -1007,3 +1007,87 @@ def run_offers():
         offer.save()
         print(f'Successfully seeded offer for room: {random_room.name}')
 
+
+
+#region Members
+#!member
+
+members_entries = [
+
+    {
+        'name': 'Emma Thompson',
+        'position': 'Head Chef',
+        'image': 'members/emma.jpg',
+        'email': 'emma@gmail.com',
+        'is_designated': False,
+        'facebook': 'https://molengeek.com/',
+        'twitter': 'https://molengeek.com/',
+        'linkedin': 'https://molengeek.com/',
+        'pinterest': 'https://molengeek.com/',
+    },
+    {
+        'name': 'Michael  Carter',
+        'position': 'Director of Sales',
+        'image': 'members/michael.jpg',
+        'email': 'michael@gmail.com',
+        'is_designated': False,
+        'facebook': 'https://molengeek.com/',
+        'twitter': 'https://molengeek.com/',
+        'linkedin': 'https://molengeek.com/',
+        'pinterest': 'https://molengeek.com/',
+    },
+    {
+        'name': 'Sophia Johnson',
+        'position': 'Guest Relations Manager',
+        'image': 'members/sophia.jpg',
+        'email': 'sophia@gmail.com',
+        'is_designated': False,
+        'facebook': 'https://molengeek.com/',
+        'twitter': 'https://molengeek.com/',
+        'linkedin': 'https://molengeek.com/',
+        'pinterest': 'https://molengeek.com/',
+    },
+    {
+        'name': 'Daniel Kim',
+        'position': 'Events Manager',
+        'image': 'members/daniel.jpg',
+        'email': 'daniel@gmail.com',
+        'is_designated': False,  
+        'facebook': 'https://molengeek.com/',
+        'twitter': 'https://molengeek.com/',
+        'linkedin': 'https://molengeek.com/',
+        'pinterest': 'https://molengeek.com/',
+    },
+    {
+        'name': 'Linda Garcia',
+        'position': 'Head of Housekeeping',
+        'image': 'members/linda.jpg',
+        'email': 'linda@gmail.com',
+        'is_designated': False,
+        'facebook': 'https://molengeek.com/',
+        'twitter': 'https://molengeek.com/',
+        'linkedin': 'https://molengeek.com/',
+        'pinterest': 'https://molengeek.com/',
+    },
+    {
+        'name': 'David Allen',
+        'position': 'Chief Engineer',
+        'image': 'members/david.jpg',
+        'email': 'david@gmail.com',
+        'is_designated': True,
+        'facebook': 'https://molengeek.com/',
+        'twitter': 'https://molengeek.com/',
+        'linkedin': 'https://molengeek.com/',
+        'pinterest': 'https://molengeek.com/',
+    },
+]
+
+
+
+def runMembers():
+    seeder = Seed.seeder()
+    for entry in members_entries:
+        seeder.add_entity(Member, 1, entry)
+    pks = seeder.execute()
+    print(pks)
+
