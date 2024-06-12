@@ -20,7 +20,12 @@ if __name__ == "__main__":
    #      tags = create_tags()
    #      create_blogs(admin_user, categories, tags)
    #      create_comments(admin_user)
-   #      print("Seeding completed.")         
+   #      print("Seeding completed.")  
+   # run_amenity()
+   # run_room()
+   # run_room_image()
+   # run_offers()
+
    
 
     

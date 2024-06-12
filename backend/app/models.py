@@ -20,8 +20,10 @@ class User(AbstractUser):
 
 
 class Amenity(models.Model):
-    name = models.CharField(max_length=100)
-    icon = models.ImageField(upload_to='amenities/', blank=True)
+    name = models.CharField(max_length=200)
+    icon_name = models.CharField(max_length=100, null=True)  
+
+
 
 class Room(models.Model):
     name = models.CharField(max_length=100)
@@ -35,6 +37,19 @@ class Room(models.Model):
     beds = models.CharField(max_length=255)
     dimensions = models.CharField(max_length=255)
 
+
+class RoomImage(models.Model):
+    room = models.ForeignKey(Room, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='rooms/')
+
+
+class RoomDescription(models.Model):
+    room = models.ForeignKey(Room, related_name='descriptions', on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+
+
+
 class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
@@ -47,12 +62,18 @@ class Booking(models.Model):
     booking_group = models.CharField(max_length=100, blank=True, null=True)
 
 
-# class Review(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     room = models.ForeignKey(Room, on_delete=models.CASCADE)
-#     rating = models.IntegerField()
-#     comment = models.TextField()
-#     date_posted = models.DateTimeField(auto_now_add=True)
+
+class Offer(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='offers')
+    discount_percentage = models.DecimalField(max_digits=5, decimal_places=2)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    is_active = models.BooleanField(default=True)
+
+    def discounted_price(self):
+        return self.room.price * (1 - self.discount_percentage / 100)
+
+
 
 
 class Blog(models.Model):
@@ -137,13 +158,6 @@ class Manager(models.Model):
 
 
 
-# class Offer(models.Model):
-#     title = models.CharField(max_length=200)
-#     description = models.TextField()
-#     valid_from = models.DateField()
-#     valid_to = models.DateField()
-#     discount = models.FloatField()
-
 
 
 class Testimonial(models.Model):
@@ -183,10 +197,6 @@ class Testimonial(models.Model):
 #     image = models.ImageField(upload_to='members/')
 
 
-# class Feedback(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     content = models.TextField()
-#     response = models.TextField(blank=True)
 
 
 class FAQ(models.Model):

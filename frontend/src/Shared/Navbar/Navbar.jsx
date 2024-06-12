@@ -269,6 +269,14 @@ const Navbar = () => {
                       Mailbox
                     </NavLink>
                   )}
+                  {(user.role === 'Receptionniste' || user.role === 'Utilisateur' || user.role === 'Admin' || user.role === 'Webmaster')  && (
+                    <NavLink
+                      to="/reservations"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Reservations
+                    </NavLink>
+                  )}
                   {(user.role === 'Webmaster' || user.role === 'Redacteur' || user.role === 'Admin')  && (
                     <NavLink
                       to="/blogmanagement"

@@ -28,6 +28,7 @@ router.register(r'descriptions', BlogDescriptionViewSet)
 router.register(r'amenities', AmenityViewSet)
 router.register(r'rooms', RoomViewSet)
 router.register(r'bookings', BookingViewSet)
+router.register(r'offers', OfferViewSet)
 
 
 urlpatterns = [
@@ -36,7 +37,6 @@ urlpatterns = [
     path('', index, name='index'),
     path('api/register/', UserCreateView.as_view(), name='register'),
     path('api/login/', LoginView.as_view(), name='login'),
-    path('profile', ProfileUpdateView.as_view(), name='profile-update'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
  

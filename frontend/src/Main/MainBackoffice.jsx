@@ -20,7 +20,8 @@ const MainBackoffice = () => {
       {/* <HelmetChanger title="Hotel Booking" />
       <ScrollToTop />
       <GoToTop />*/}
-      <NavbarBackoffice /> 
+      {/* <NavbarBackoffice />  */}
+      <Navbar />
       <div className="w-full mt-[8rem]">
         <Outlet />
       </div>

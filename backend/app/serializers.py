@@ -18,22 +18,27 @@ class FacilitySerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True, required=False)
     role = serializers.ChoiceField(choices=User.role_choix)
     class Meta:
         model = User
         fields = '__all__'
         extra_kwargs = {
-            'password': {'write_only': True},
+            'password': {'write_only': True, 'required': False},
             'photo': {'required': False},
             'credit_card_info': {'required': False},
         }
     def update(self, instance, validated_data):
-        if 'password' in validated_data:
-            instance.set_password(validated_data['password'])
-        return super().update(instance, validated_data)
+        # Update the instance with validated data
+        instance.email = validated_data.get('email', instance.email)
+        instance.credit_card_info = validated_data.get('credit_card_info', instance.credit_card_info)
 
+        # Handle photo update if provided
+        if 'photo' in validated_data:
+            instance.photo = validated_data['photo']
 
+        instance.save()
+        return instance
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -195,6 +200,7 @@ class BlogSerializer(serializers.ModelSerializer):
 
 
 
+
 class AmenitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Amenity
@@ -202,19 +208,37 @@ class AmenitySerializer(serializers.ModelSerializer):
 
 
 
+class RoomDescriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RoomDescription
+        fields = '__all__'
+
+
+class RoomImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RoomImage
+        fields = "__all__"
+
 class RoomSerializer(serializers.ModelSerializer):
-    amenities = AmenitySerializer(many=True)
-    
+    descriptions = RoomDescriptionSerializer(many=True, read_only=True)
+    amenities = AmenitySerializer(many=True, read_only=True)
+    images = RoomImageSerializer(many=True, read_only=True)
+
     class Meta:
         model = Room
         fields = '__all__'
 
-        
+
 
 class BookingSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    class Meta:
+        model = Booking
+        fields = '__all__'
+
+
+class OfferSerializer(serializers.ModelSerializer):
     room = RoomSerializer()
 
     class Meta:
-        model = Booking
+        model = Offer
         fields = '__all__'

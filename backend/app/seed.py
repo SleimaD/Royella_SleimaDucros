@@ -1,5 +1,7 @@
 from django_seed import Seed
 from .models import *
+from datetime import datetime, timedelta
+import random
 
 
 
@@ -643,4 +645,365 @@ def create_comments(admin_user):
             author=comment_data["author"],
             blog=comment_data["blog"]
         )
+
+
+
+#region amenity
+#!amenity
+
+
+amenity_entries = [
+    {
+        'name': 'Wi-Fi',
+        'icon_name': 'FaWifi',
+    },
+    {
+        'name': 'Air Conditioning',
+        'icon_name': 'FaSnowflake',
+    },
+    {
+        'name': 'Breakfast',
+        'icon_name': 'FaCoffee',
+    },
+    {
+        'name': 'Swimming Pool',
+        'icon_name': 'FaSwimmer',
+    },
+    {
+        'name': 'Gym',
+        'icon_name': 'FaDumbbell',
+    },
+    {
+        'name': 'Parking',
+        'icon_name': 'FaParking',
+    },
+    {
+        'name': 'Pet Friendly',
+        'icon_name': 'FaPaw',
+    },
+    {
+        'name': 'Non-smoking Rooms',
+        'icon_name': 'FaBan',
+    },
+    {
+        'name': 'Room Service',
+        'icon_name': 'FaConciergeBell',
+    },
+    {
+        'name': 'Mini Bar',
+        'icon_name': 'FaGlassMartiniAlt',
+    },
+    {
+        'name': 'Safe Deposit Box',
+        'icon_name': 'FaLock',
+    },
+    {
+        'name': 'Flat Screen TV',
+        'icon_name': 'FaTv',
+    },
+    {
+        'name': 'Hair Dryer',
+        'icon_name': 'FaWind',
+    },
+    {
+        'name': 'Bathrobe and Slippers',
+        'icon_name': 'FaBath',
+    },
+    {
+        'name': 'Iron and Ironing Board',
+        'icon_name': 'FaTshirt',
+    },
+    {
+        'name': 'Desk and Chair',
+        'icon_name': 'FaChair',
+    },
+    {
+        'name': 'Complimentary Toiletries',
+        'icon_name': 'FaSoap',
+    },
+    {
+        'name': 'Blackout Curtains',
+        'icon_name': 'FaWindowClose',
+    },
+    {
+        'name': 'Private Balcony',
+        'icon_name': 'FaUmbrellaBeach',
+    },
+    {
+        'name': 'Electric Kettle',
+        'icon_name': 'FaMugHot',
+    },
+    {
+        'name': 'USB Charging Ports',
+        'icon_name': 'FaUsb',
+    },
+    {
+        'name': 'Bluetooth Speakers',
+        'icon_name': 'FaVolumeUp',
+    },
+    {
+        'name': 'Direct Dial Telephone',
+        'icon_name': 'FaPhone',
+    },
+    {
+        'name': 'Walk-in Shower',
+        'icon_name': 'FaShower',
+    },
+    {
+        'name': 'Couch',
+        'icon_name': 'FaCouch',
+    }
+
+]
+
+def run_amenity():
+    seeder = Seed.seeder()
+    for entry in amenity_entries:
+        seeder.add_entity(Amenity, 1, {
+            'name': entry['name'],
+            'icon_name': entry['icon_name']
+        })
+    pks = seeder.execute()
+
+
+
+
+#region room
+#!room
+
+room_entries = [
+    {
+        'name': 'Standard Room',
+        'description': 'Our Standard Room offers a comfortable and cozy atmosphere perfect for both business and leisure travelers. Equipped with a plush queen-size bed, modern bathroom, and all essential amenities including free Wi-Fi and air conditioning. Enjoy your stay with our 24/7 room service and daily housekeeping. The room is designed with a contemporary style and offers a serene view of the garden. A perfect retreat after a long day of work or exploration.',
+        'price': 100.00,
+        'image': 'rooms/standard.jpg',
+        'available': True,
+        'max_guests': 2,
+        'stars': 3,
+        'beds': '1 Queen Bed',
+        'dimensions': '800 SQ.FT',
+        'amenities': ['Wi-Fi', 'Room Service', 'Hair Dryer'],
+        'descriptions': [
+            {'title': 'House Rules', 'content': 'No smoking.'},
+            {'title': 'Check-in & Check-out', 'content': 'Check-in from 4:00 PM, check-out by 10:00 AM.'},
+            {'title': 'Children & Extra Beds', 'content': 'No extra beds available.'}
+        ]
+    },
+    {
+        'name': 'Deluxe Room',
+        'description': 'The Deluxe Room provides a spacious and luxurious setting with premium furnishings and decor. Featuring a king-size bed, a large bathroom with a rain shower, and a private balcony with a stunning city view. Guests can enjoy complimentary breakfast, high-speed Wi-Fi, and a wide range of in-room entertainment options. This room also includes a work desk, perfect for business travelers. The deluxe experience is complemented by our attentive staff and top-notch amenities.',
+        'price': 150.00,
+        'image': 'rooms/deluxeroom.jpg',
+        'available': True,
+        'max_guests': 3,
+        'stars': 4,
+        'beds': '1 King Bed, 1 Queen Bed',
+        'dimensions': '1400 SQ.FT',
+        'amenities': ['Wi-Fi', 'Air Conditioning', 'Coffee Maker', 'Safe Deposit Box'],
+        'descriptions': [
+            {'title': 'House Rules', 'content': 'No smoking, no pets.'},
+            {'title': 'Check-in & Check-out', 'content': 'Check-in from 3:00 PM, check-out by 11:00 AM.'},
+            {'title': 'Children & Extra Beds', 'content': 'All children are welcome.'}
+        ]
+    },
+    {
+        'name': 'Luxury Room',
+        'description': 'Experience unparalleled luxury in our Luxury Room, featuring opulents king-size beds, marble bathroom with a jacuzzi, and a spacious living area. This room offers panoramic views of the city skyline, high-speed Wi-Fi, and exclusive access to the executive lounge. Guests can enjoy a complimentary minibar, premium toiletries, and a dedicated concierge service. The Luxury Room is designed to provide the utmost comfort and sophistication, making it the perfect choice for discerning travelers.',
+        'price': 450.00,
+        'image': 'rooms/luxury.jpg',
+        'available': True,
+        'max_guests': 4,
+        'stars': 5,
+        'beds': 'King Bed',
+        'dimensions': '1900 SQ.FT',
+        'amenities': ['Wi-Fi', 'Air Conditioning', 'Breakfast', 'Flat-screen TV', 'Mini Bar'],
+        'descriptions': [
+            {'title': 'House Rules', 'content': 'No smoking, no pets, no loud noises after 10 PM.'},
+            {'title': 'Check-in & Check-out', 'content': 'Check-in from 2:00 PM, check-out by 12:00 PM.'},
+            {'title': 'Children & Extra Beds', 'content': 'All children are welcome. Extra beds are available upon request.'}
+        ]
+    },
+    {
+        'name': 'Superior Bed Room',
+        'description': 'Our Superior Bed Room is designed for ultimate comfort and relaxation. It features a large king-size bed, elegant furnishings, and a spacious bathroom with a soaking tub. The room includes modern amenities such as free Wi-Fi, air conditioning, and a flat-screen TV. Guests can also enjoy a private balcony with a view of the pool or garden. Ideal for couples or solo travelers looking for a serene and luxurious stay.',
+        'price': 180.00,
+        'image': 'rooms/superior.jpg',
+        'available': True,
+        'max_guests': 3,
+        'stars': 4,
+        'beds': '2 Queen Beds',
+        'dimensions': '1200 SQ.FT',
+        'amenities': ['Wi-Fi', 'Air Conditioning', 'Room Service', 'Gym'],
+        'descriptions': [
+            {'title': 'House Rules', 'content': 'No smoking.'},
+            {'title': 'Check-in & Check-out', 'content': 'Check-in from 2:00 PM, check-out by 11:00 AM.'},
+            {'title': 'Children & Extra Beds', 'content': 'All children are welcome.'}
+        ]
+    },
+    {
+        'name': 'Family Room', 
+        'description': 'The Family Room is designed to accommodate families with children, offering plenty of space and comfort. It features a king-size bed and two single beds, a large bathroom with a shower and tub, and a separate seating area. The room includes amenities such as free Wi-Fi, air conditioning, and a flat-screen TV. Enjoy a relaxing stay with our complimentary breakfast and access to the children’s play area and swimming pool.',
+        'price': 220.00,
+        'image': 'rooms/fam.jpg',
+        'available': True,
+        'max_guests': 5,
+        'stars': 5,
+        'beds': '1 King Bed, 2 Single Beds',
+        'dimensions': '1600 SQ.FT',
+        'amenities': ['Wi-Fi', 'Air Conditioning', 'Breakfast', 'Swimming Pool', 'Mini Bar'],
+        'descriptions': [
+            {'title': 'House Rules', 'content': 'No smoking, no pets.'},
+            {'title': 'Check-in & Check-out', 'content': 'Check-in from 3:00 PM, check-out by 12:00 PM.'},
+            {'title': 'Children & Extra Beds', 'content': 'All children are welcome. Extra beds are available upon request.'}
+        ]
+    },
+    {
+        'name': 'Deluxe Family Room',
+        'description': 'Our Deluxe Family Rooms are perfect for families or groups, offering ample space and multiple sleeping arrangements. The room includes two queen-size beds, a separate living area, and a fully equipped kitchenette. Guests can enjoy complimentary breakfast, high-speed Wi-Fi, and access to the swimming pool and gym. The room is designed with families in mind, providing a comfortable and convenient stay for all members.',
+        'price': 250.00,
+        'image': 'rooms/deluxefam.jpg',
+        'available': True,
+        'max_guests': 5,
+        'stars': 5,
+        'beds': '2 King Beds, 1 Sofa Bed',
+        'dimensions': '1700 SQ.FT',
+        'amenities': ['Wi-Fi', 'Air Conditioning', 'Breakfast', 'Swimming Pool', 'Mini Bar'],
+        'descriptions': [
+            {'title': 'House Rules', 'content': 'No smoking, no pets.'},
+            {'title': 'Check-in & Check-out', 'content': 'Check-in from 3:00 PM, check-out by 12:00 PM.'},
+            {'title': 'Children & Extra Beds', 'content': 'All children are welcome. Extra beds are available upon request.'}
+        ]
+    },
+    {
+        'name': 'Suite Room',
+        'description': 'Our Suite Room offers a luxurious and spacious setting with elegant decor and top-notch amenities. It features a king-size bed, a large bathroom with a jacuzzi, a living room with a sofa bed, and a private balcony with a city view. Guests can enjoy high-speed Wi-Fi, complimentary breakfast, and access to the executive lounge. The Suite Room is ideal for both business and leisure travelers looking for an exceptional stay.',
+        'price': 300.00,
+        'image': 'rooms/suite.jpg',
+        'available': True,
+        'max_guests': 6,
+        'stars': 5,
+        'beds': '1 King Bed, 1 Sofa Bed',
+        'dimensions': '1700 SQ.FT',
+        'amenities': ['Wi-Fi', 'Air Conditioning', 'Breakfast', 'Mini Bar', 'Private Balcony'],
+        'descriptions': [
+            {'title': 'House Rules', 'content': 'No smoking, no pets, no loud noises after 10 PM.'},
+            {'title': 'Check-in & Check-out', 'content': 'Check-in from 2:00 PM, check-out by 1:00 PM.'},
+            {'title': 'Children & Extra Beds', 'content': 'All children are welcome. Extra beds are available upon request.'}
+        ]
+    },
+    {
+        'name': 'Double Suite Room',
+        'description': 'Our Double Suite Rooms offer luxury and comfort with two separate sleeping areas, each with a king-size bed. The room features a spacious living area, two bathrooms, and a private balcony with a breathtaking view. Guests can enjoy high-speed Wi-Fi, complimentary breakfast, and exclusive access to the executive lounge. Perfect for business travelers or families seeking a high-end accommodation experience.',
+        'price': 360.00,
+        'image': 'rooms/doublesuite.jpg',
+        'available': True,
+        'max_guests': 6,
+        'stars': 5,
+        'beds': '2 King Beds, 1 Queen Bed',
+        'dimensions': '2000 SQ.FT',
+        'amenities': ['Wi-Fi', 'Air Conditioning', 'Breakfast', 'Mini Bar', 'Private Balcony'],
+        'descriptions': [
+            {'title': 'House Rules', 'content': 'No smoking, no pets, no loud noises after 10 PM.'},
+            {'title': 'Check-in & Check-out', 'content': 'Check-in from 2:00 PM, check-out by 1:00 PM.'},
+            {'title': 'Children & Extra Beds', 'content': 'All children are welcome. Extra beds are available upon request.'}
+        ]
+    }
+]
+
+
+def run_room():
+    seeder = Seed.seeder()
+
+    for entry in room_entries:
+        amenities = entry.pop('amenities', [])
+        descriptions = entry.pop('descriptions', [])
+        room = Room.objects.create(**entry)
+        for amenity_name in amenities:
+            amenity, created = Amenity.objects.get_or_create(name=amenity_name)
+            room.amenities.add(amenity)
+        for desc in descriptions:
+            RoomDescription.objects.create(room=room, **desc)
+        room.save()
+
+
+
+#region imageRoom
+#!imageRoom
+
+room_images_entries = {
+    1: ['rooms/standard.jpg', 'rooms/standard.jpg'],
+    2: ['rooms/deluxeroom.jpg', 'rooms/deluxeroom.jpg'],
+    3: ['rooms/luxury.jpg', 'rooms/luxury.jpg'],
+    4: ['rooms/superior.jpg', 'rooms/superior.jpg'],
+    5: ['rooms/fam.jpg', 'rooms/fam.jpg'],
+    6: ['rooms/deluxefam.jpg', 'rooms/deluxefam.jpg'],
+    7: ['rooms/suite.jpg', 'rooms/suite.jpg'],
+    8: ['rooms/doublesuite.jpg', 'rooms/doublesuite.jpg']
+}
+
+def run_room_image():
+    seeder = Seed.seeder()
+
+    for room_id, images in room_images_entries.items():
+        try:
+            room = Room.objects.get(id=room_id)
+            for img in images:
+                seeder.add_entity(RoomImage, 1, {
+                    'room': lambda x: room,
+                    'image': lambda x: img,
+                })
+        except Room.DoesNotExist:
+            print(f"Room with ID {room_id} does not exist.")
+
+    pks = seeder.execute()
+    print(pks)
+
+
+#region offers
+#!offers
+
+offer_entries = [
+    {
+        'discount_percentage': 10,
+        'start_date': datetime.now(),
+        'end_date': datetime.now() + timedelta(days=5),
+        'is_active': True,
+    },
+    {
+        'discount_percentage': 25,
+        'start_date': datetime.now(),
+        'end_date': datetime.now() + timedelta(days=15),
+        'is_active': True,
+    },
+    {
+        'discount_percentage': 30,
+        'start_date': datetime.now(),
+        'end_date': datetime.now() + timedelta(days=20),
+        'is_active': True,
+    },
+    {
+        'discount_percentage': 35,
+        'start_date': datetime.now(),
+        'end_date': datetime.now() + timedelta(days=25),
+        'is_active': True,
+    },
+]
+
+def run_offers():
+    rooms = list(Room.objects.all())
+    if not rooms:
+        print("No rooms found. Please verif before seeding offers.")
+        return
+
+    for entry in offer_entries:
+        random_room = random.choice(rooms)
+        offer = Offer(
+            room=random_room,
+            discount_percentage=entry['discount_percentage'],
+            start_date=entry['start_date'],
+            end_date=entry['end_date'],
+            is_active=entry['is_active']
+        )
+        offer.save()
+        print(f'Successfully seeded offer for room: {random_room.name}')
 

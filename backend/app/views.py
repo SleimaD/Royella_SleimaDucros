@@ -25,6 +25,13 @@ from django.contrib.auth.hashers import check_password
 from rest_framework.decorators import action
 import logging
 from django.db.models import Count
+from rest_framework.pagination import PageNumberPagination
+from rest_framework import viewsets, filters
+from django.utils import timezone
+from datetime import timedelta
+from rest_framework.exceptions import ValidationError
+from django.db.models import Q
+import random
 
 
 logger = logging.getLogger(__name__)
@@ -133,6 +140,7 @@ User = get_user_model()
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsOwner]
 
     @action(detail=True, methods=['patch'])
     def update_role(self, request, pk=None):
@@ -149,20 +157,28 @@ class UserViewSet(viewsets.ModelViewSet):
         except Exception as e:
             logger.error(f"Exception occurred: {str(e)}")
             return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-class ProfileUpdateView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def put(self, request):
-        user = request.user
-        serializer = UserSerializer(user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
+        
     
+    @action(detail=True, methods=['patch'], url_path='profile-update')
+    def update_profile(self, request, pk=None):
+        try:
+            user = self.get_object()
+            logger.debug(f"Request user: {request.user.username}, Target user: {user.username}")
+            if user!= request.user:
+                logger.warning(f"User {request.user.username} tried to update profile of {user.username}")
+                return Response({"detail": "Not allowed to update another user's profile"}, status=403)
+
+            serializer = UserSerializer(user, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            else:
+                logger.error(f"Serializer errors: {serializer.errors}")
+                return Response(serializer.errors, status=400)
+        except Exception as e:
+            logger.error(f"Exception occurred: {str(e)}")
+            return Response({"detail": str(e)}, status=500)
+
 
 
 class ServiceViewSet(viewsets.ModelViewSet):
@@ -265,20 +281,99 @@ class BlogDescriptionViewSet(viewsets.ModelViewSet):
 
 
 
+
+
+
+
+
 class AmenityViewSet(viewsets.ModelViewSet):
     queryset = Amenity.objects.all()
     serializer_class = AmenitySerializer
 
-
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 6
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
 class RoomViewSet(viewsets.ModelViewSet):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
+    pagination_class = StandardResultsSetPagination
 
+    @action(detail=False, methods=['get'])
+    def available(self, request):
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+        adults = int(request.query_params.get('adults', 0))
+        children = int(request.query_params.get('children', 0))
+
+        if not start_date or not end_date:
+            return Response({'error': 'Please provide both start_date and end_date'}, status=status.HTTP_400_BAD_REQUEST)
+
+        guest_count = adults + children
+
+        rooms = Room.objects.filter(
+            Q(booking__start_date__gt=end_date) | Q(booking__end_date__lt=start_date) | Q(booking__isnull=True),
+            max_guests__gte=guest_count
+        ).distinct()
+
+        logger.info(f"Filtered rooms: {rooms.count()} found for the date range {start_date} to {end_date} for {guest_count} guests.")
+
+        page = self.paginate_queryset(rooms)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            response = self.get_paginated_response(serializer.data)
+            logger.info(f"Paginated response: {response.data}")
+            return response
+
+        serializer = RoomSerializer(rooms, many=True)
+        return Response(serializer.data)
+    
+    
+    
 
 
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
 
+    def create(self, request, *args, **kwargs):
+        if not request.user.credit_card_info:
+            return Response({'error': 'No credit card information provided.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+
+        room_id = request.data.get('room')
+        start_date = request.data.get('start_date')
+        end_date = request.data.get('end_date')
+        guest_count = request.data.get('guest_count')
+
+        room = Room.objects.get(id=room_id)
+        if room.available == False:
+            return Response({'error': 'Room is not available.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        overlapping_bookings = Booking.objects.filter(
+            room=room,
+            start_date__lt=end_date,
+            end_date__gt=start_date
+        )
+
+        if overlapping_bookings.exists():
+            return Response({'error': 'Room is already booked for the selected dates.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        booking = Booking.objects.create(
+            user=request.user,
+            room=room,
+            start_date=start_date,
+            end_date=end_date,
+            guest_count=guest_count,
+            status='PENDING',
+            room_details=request.data.get('room_details', {})
+        )
+        return Response(self.get_serializer(booking).data, status=status.HTTP_201_CREATED)
     
+
+
+class OfferViewSet(viewsets.ModelViewSet):
+    queryset = Offer.objects.filter(is_active=True, end_date__gte=timezone.now())
+    serializer_class = OfferSerializer
+

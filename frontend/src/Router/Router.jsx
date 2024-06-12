@@ -28,6 +28,7 @@ import Profile from "../Shared/User/Profile";
 import Mailbox from "../Pages/Backoffice/Mailbox";
 import BlogManagement from "../Pages/Backoffice/BlogManagement";
 import UserAccounts from "../Pages/Backoffice/UserAccounts";
+import Reservations from "../Pages/Backoffice/Reservations";
 
 
 
@@ -104,7 +105,7 @@ const router = createBrowserRouter([
   { 
     path: "/",
     element: (
-      <PrivateRoute allowedRoles={['ADMIN', 'Admin', 'WEBMASTER', 'REDACTEUR']}>
+      <PrivateRoute allowedRoles={['ADMIN', 'Admin', 'WEBMASTER', 'REDACTEUR', 'RECEPTIONIST', 'UTILISATEUR']}>
         <MainBackoffice />
       </PrivateRoute>
     ),
@@ -120,6 +121,9 @@ const router = createBrowserRouter([
       },
       { path: "/useraccounts", 
         element: <PrivateRoute allowedRoles={['ADMIN']}><UserAccounts /></PrivateRoute> 
+      },
+      { path: "/reservations",
+      element: <PrivateRoute allowedRoles={['ADMIN', "RECEPTIONIST", "UTILISATEUR", "WEBMASTER"]}><Reservations /></PrivateRoute>
       },
     ],
   },

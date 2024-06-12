@@ -1,88 +1,203 @@
-import { BiChevronDown } from "react-icons/bi";
+import React, { useState, useEffect } from 'react';
+import { BiChevronDown, BiCalendar } from "react-icons/bi";
 import BreadCrumb from "../../BreadCrumb/BreadCrumb";
-import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { FaStar } from "react-icons/fa6";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { BsArrowRight } from "react-icons/bs";
-import { MdEmail, MdOutlineShareLocation } from "react-icons/md";
-import { IoIosCall } from "react-icons/io";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import axios from 'axios';
+import { IoIosCall } from 'react-icons/io';
+import {MdEmail, MdOutlineShareLocation } from "react-icons/md";
 
 const FindRoom = () => {
-  //  room info
-  const location = useLocation();
-  const roomsData = location.state && location.state;
+  const [rooms, setRooms] = useState([]);
+  const [filteredRooms, setFilteredRooms] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [open, setOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
   const [room, setRoom] = useState(1);
   const [adult, setAdult] = useState(1);
   const [children, setChildren] = useState(0);
-  const [selectedInDate, setSelectedInDate] = useState("");
-  const [selectedOutDate, setSelectedOutDate] = useState("");
+  const [selectedInDate, setSelectedInDate] = useState(null);
+  const [selectedOutDate, setSelectedOutDate] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleCheckInDate = (e) => {
-    let newDate = e.target.value;
-    setSelectedInDate(newDate);
+  useEffect(() => {
+    const state = location.state;
+    if (state) {
+      setSelectedInDate(state.checkInDate);
+      setSelectedOutDate(state.checkOutDate);
+      setRoom(state.room);
+      setAdult(state.adult);
+      setChildren(state.children);
+      fetchAvailableRooms(1, state.checkInDate, state.checkOutDate, state.adult, state.children);
+    } else {
+      fetchAllRooms(1);
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    if (selectedInDate && selectedOutDate && adult >= 1) {
+      fetchAvailableRooms(currentPage);
+    } else {
+      setFilteredRooms(rooms);
+    }
+  }, [selectedInDate, selectedOutDate, adult, children, rooms]);
+
+  const fetchAllRooms = async (page) => {
+    setLoading(true);
+    try {
+      const response = await axios.get('http://localhost:8000/api/rooms/', {
+        params: {
+          page: page,
+        }
+      });
+      setRooms(response.data.results);
+      setFilteredRooms(response.data.results);
+      setTotalPages(Math.ceil(response.data.count / 6));
+    } catch (error) {
+      console.error('Error fetching all rooms:', error);
+    }
+    setLoading(false);
   };
-  const handleCheckOutDate = (e) => {
-    let newDate = e.target.value;
-    setSelectedOutDate(newDate);
+
+  const fetchAvailableRooms = async (page, checkInDate = selectedInDate, checkOutDate = selectedOutDate, adultCount = adult, childrenCount = children) => {
+    setLoading(true);
+    try {
+      const response = await axios.get('http://localhost:8000/api/rooms/available/', {
+        params: {
+          start_date: formatDate(checkInDate),
+          end_date: formatDate(checkOutDate),
+          adults: adultCount,
+          children: childrenCount,
+          page: page,
+        }
+      });
+      setFilteredRooms(response.data.results);
+      setTotalPages(Math.ceil(response.data.count / 6));
+    } catch (error) {
+      console.error('Error fetching available rooms:', error);
+    }
+    setLoading(false);
   };
-  const bookingInfo = {
-    ...roomsData,
-    selectedInDate,
-    selectedOutDate,
-    room,
-    adult,
-    children,
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    let month = '' + (d.getMonth() + 1);
+    let day = '' + d.getDate();
+    const year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+  };
+
+  const handleCheckInDate = (date) => {
+    setSelectedInDate(date);
+  };
+
+  const handleCheckOutDate = (date) => {
+    setSelectedOutDate(date);
+  };
+
+  const handleBooking = (room) => {
+    if (!selectedInDate || !selectedOutDate) {
+      alert('Please select check-in and check-out dates.');
+      return;
+    }
+    if (adult < 1) {
+      alert('At least one adult must be selected.');
+      return;
+    }
+    navigate('/room_details', { state: { room, selectedInDate, selectedOutDate, adult, children } });
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    if (selectedInDate && selectedOutDate && adult >= 1) {
+      fetchAvailableRooms(page);
+    } else {
+      fetchAllRooms(page);
+    }
+  };
+
+  const renderPagination = () => {
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`mx-1 px-4 py-2 ${currentPage === i ? 'bg-khaki text-white' : 'bg-white text-khaki'} rounded`}
+        >
+          {i}
+        </button>
+      );
+    }
+    return pages;
+  };
+
+  const handleClearFilters = () => {
+    setSelectedInDate(null);
+    setSelectedOutDate(null);
+    setAdult(1);
+    setChildren(0);
+    setRoom(1);
+    fetchAllRooms(1);
   };
 
   return (
     <section>
       <BreadCrumb title="Find Room" />
-      {/* Check Availability */}
       <div className="bg-whiteSmoke dark:bg-normalBlack py-20 2xl:py-[120px]">
         <h1 className="text-[22px] sm:text-2xl md:text-3xl 2xl:text-[34px] leading-7 sm:leading-8 md:leading-9 lg:leading-10 2xl:leading-[44px] text-lightBlack dark:text-white  mb-5  md:mb-8 lg:mb-10 font-Garamond font-semibold uppercase text-center">
           CHECK Availability
         </h1>
-        {/* Date and rome info */}
         <div
           className="Container bg-white dark:bg-lightBlack  grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-5 items-center justify-center font-Lora py-3 lg:py-4 xl:py-5 2xl:py-6 border-t-[3px] border-t-khaki  px-5 md:px-7 2xl:px-10"
           data-aos="zoom-in-up"
           data-aos-duration="1000"
         >
-          <div className="p-3">
+          <div className="p-3 relative">
             <p className="text-sm text-gray dark:text-lightGray">Check In</p>
-            <div className="flex items-center pt-[6px] ">
-              <input
-                type="date"
-                required
-                className="border-none pl-0 bg-transparent focus:outline-transparent focus:border-transparent text-lightBlack dark:text-white focus:border-none outline-0  text-sm lg:text-base focus:ring-transparent"
-                value={selectedInDate}
+            <div className="flex items-center pt-[6px] relative">
+              <BiCalendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray dark:text-lightGray" />
+              <DatePicker
+                selected={selectedInDate}
                 onChange={handleCheckInDate}
+                className="border-none pl-8 bg-transparent focus:outline-transparent focus:border-transparent text-lightBlack dark:text-white focus:border-none outline-0 text-sm lg:text-base focus:ring-transparent w-full"
+                placeholderText="Select check-in date"
+                dateFormat="yyyy-MM-dd"
               />
             </div>
           </div>
-          <div className="p-3">
+          <div className="p-3 relative">
             <p className="text-sm text-gray dark:text-lightGray">Check Out</p>
-            <div className="flex items-center pt-[6px] ">
-              <input
-                type="date"
-                required
-                className="border-none pl-0 bg-transparent focus:outline-transparent focus:border-transparent text-lightBlack dark:text-white focus:border-none outline-0  text-sm lg:text-base focus:ring-transparent"
-                value={selectedOutDate}
+            <div className="flex items-center pt-[6px] relative">
+              <BiCalendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray dark:text-lightGray" />
+              <DatePicker
+                selected={selectedOutDate}
                 onChange={handleCheckOutDate}
+                className="border-none pl-8 bg-transparent focus:outline-transparent focus:border-transparent text-lightBlack dark:text-white focus:border-none outline-0 text-sm lg:text-base focus:ring-transparent w-full"
+                placeholderText="Select check-out date"
+                dateFormat="yyyy-MM-dd"
               />
             </div>
           </div>
           <div className="p-3">
             <div
-              className={` px-3 py-2 w-full block transition-all duration-300 group relative `}
-              to="#"
+              className={`px-3 py-2 w-full block transition-all duration-300 group relative`}
             >
               <span
                 className="flex items-center justify-between text-sm text-gray dark:text-lightGray cursor-pointer"
                 onClick={() => setOpen(!open)}
-                title="click hear to open and close rooms extender"
+                title="click here to open and close rooms extender"
               >
                 Rooms
                 <BiChevronDown className="" />
@@ -90,11 +205,9 @@ const FindRoom = () => {
               <div className="text-sm pt-[6px] lightBlack dark:text-white">
                 {room} Room
               </div>
-              <div className="absolute pt-5  z-20">
+              <div className="absolute pt-5 z-20">
                 <div
-                  className={`shadow-2xl ${
-                    open ? "" : "hidden"
-                  } rounded-sm bg-white text-black w-60 text-left dark:bg-normalBlack dark:text-white transition-all duration-500 text-sm py-4 `}
+                  className={`shadow-2xl ${open ? "" : "hidden"} rounded-sm bg-white text-black w-60 text-left dark:bg-normalBlack dark:text-white transition-all duration-500 text-sm py-4`}
                 >
                   <div className="py-2 px-5 group cursor-pointer">
                     <li className="flex items-center justify-between">
@@ -105,6 +218,7 @@ const FindRoom = () => {
                         <button
                           className="w-5 h-5 md:w-6 md:h-6 bg-khaki text-white"
                           onClick={() => setRoom(room + 1)}
+                          disabled={room >= Math.ceil((adult + children) / 2)}
                         >
                           +
                         </button>
@@ -125,25 +239,22 @@ const FindRoom = () => {
 
           <div className="p-3">
             <div
-              className={`text-lightBlack lg:text-white dark:text-white  lg:border-b-0 px-3 py-2 w-full block transition-all duration-300 group relative `}
-              to="#"
+              className={`text-lightBlack lg:text-white dark:text-white  lg:border-b-0 px-3 py-2 w-full block transition-all duration-300 group relative`}
             >
               <span
                 className="flex items-center justify-between text-sm text-gray dark:text-lightGray cursor-pointer"
                 onClick={() => setGuestOpen(!guestOpen)}
-                title="click hear to open and close Adult And Children extender"
+                title="click here to open and close Adult And Children extender"
               >
                 Guests
                 <BiChevronDown className="" />
               </span>
-              <div className="pt-[6px] text-sm  text-lightBlack dark:text-white">
+              <div className="pt-[6px] text-sm text-lightBlack dark:text-white">
                 {adult} Adult, {children} Child
               </div>
-              <div className="absolute pt-5  z-20 right-0 md:left-5">
+              <div className="absolute pt-5 z-20 right-0 md:left-5">
                 <div
-                  className={`shadow-2xl ${
-                    guestOpen ? "" : "hidden"
-                  } rounded-sm bg-white text-black w-60 text-left dark:bg-normalBlack dark:text-white transition-all duration-500 text-sm py-4 `}
+                  className={`shadow-2xl ${guestOpen ? "" : "hidden"} rounded-sm bg-white text-black w-60 text-left dark:bg-normalBlack dark:text-white transition-all duration-500 text-sm py-4`}
                 >
                   <div className="py-2 px-5 group cursor-pointer">
                     <li className="flex items-center justify-between">
@@ -187,246 +298,99 @@ const FindRoom = () => {
               </div>
             </div>
           </div>
-          <Link to="/room_details" state={bookingInfo ? bookingInfo : ""}>
-            <button className="w-[142px] h-[50px] text-[15px] bg-khaki font-Garamond text-white">
-              Checkout Now
-            </button>
-          </Link>
+          <button
+            onClick={() => handlePageChange(1)}
+            className="w-[142px] h-[50px] text-[15px] bg-khaki font-Garamond text-white"
+          >
+            Check Availability
+          </button>
+          <button
+            onClick={handleClearFilters}
+            className="w-[142px] h-[50px] text-[15px] bg-gray-300 font-Garamond text-black ml-2"
+          >
+            Clear Filters
+          </button>
         </div>
-        {/* Room Details */}
-        <div className="mt-14 2xl:mt-[60px] grid items-center grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 xl:gap-[30px] Container">
-          {/* Room - 1 */}
-          <div data-aos="zoom-in-up" data-aos-duration="1000">
-            <div className="overflow-x-hidden 3xl:w-[410px] group relative">
-              <div className="relative">
-                <div className="overflow-hidden">
-                  <img
-                    src="/images/home-1/room-1.jpg "
-                    className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300"
-                    alt=""
-                  />
-                </div>
-                <Link to={"/room_details"}>
-                  <button className="flex items-center justify-center text-[15px] leading-[38px] bg-lightBlack absolute bottom-0 -left-40 px-5 text-white  group-hover:left-0 transition-all duration-300 hover:bg-khaki">
-                    View Details{" "}
-                    <BsArrowRight className="w-4 h-4 ml-2  text-white" />{" "}
-                  </button>
-                </Link>
-              </div>
-              <div className="font-Garamond">
-                <div className="px-5 3xl:px-6 py-2 inline-flex bg-khaki text-sm  items-center justify-center text-white  absolute top-[10px] right-[10px] font-Lora font-normal leading-[26px]">
-                  <span className="">$560</span>
-                  <span className="mx-2">|</span>
-                  <span>Night</span>
-                </div>
-
-                <div className=" border-[1px] border-[#e8e8e8] dark:border-[#424242] border-t-0">
-                  <div className="py-6 px-[30px]">
-                    <h4 className="text-sm leading-[26px] text-khaki uppercase font-semibold">
-                      Luxury Room
-                    </h4>
-                    <Link to="/room_details">
-                      <h2 className="text-2xl lg:text-[28px] leading-[26px] font-semibold text-lightBlack dark:text-white py-4">
-                        Double Suite Rooms
-                      </h2>
-                    </Link>
-                    <p className="text-sm font-normal text-gray  dark:text-lightGray font-Lora">
-                      1500 SQ.FT/Rooms
-                    </p>
-                  </div>
-                  <div className="  border-t-[1px] border-[#e8e8e8] dark:border-[#424242] py-5">
-                    <div className="px-[30px] flex items-center justify-between">
-                      <div className="">
-                        <span className="font-Lora text-base flex items-center ">
-                          <img
-                            src="/images/home-1/room-bottom-icon.png"
-                            alt=""
-                          />
-                          <span className="ml-[10px] text-gray dark:text-lightGray">
-                            2 King Bed
-                          </span>
-                        </span>
+        {loading ? (
+          <div className="text-center text-khaki mt-10">Loading...</div>
+        ) : (
+          <>
+            <div className="mt-14 2xl:mt-[60px] grid items-center grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 xl:gap-[30px] Container">
+              {filteredRooms.map((room) => (
+                <div key={room.id} data-aos="zoom-in-up" data-aos-duration="1000">
+                  <div className="overflow-x-hidden 3xl:w-[410px] group relative">
+                    <div className="relative">
+                      <div className="overflow-hidden">
+                        <img
+                          src={room.image}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300"
+                          alt={room.name}
+                        />
                       </div>
-                      <span className="w-[1px] h-[25px] bg-[#ddd] dark:bg-gray"></span>
-                      <ul className="flex items-center text-khaki space-x-[5px]">
-                        <li>
-                          <FaStar />
-                        </li>
-                        <li>
-                          <FaStar />
-                        </li>
-                        <li>
-                          <FaStar />
-                        </li>
-                        <li>
-                          <FaStar />
-                        </li>
-                        <li>
-                          <FaStar />
-                        </li>
-                      </ul>
+                      <button
+                        className="flex items-center justify-center text-[15px] leading-[38px] bg-lightBlack absolute bottom-0 -left-40 px-5 text-white group-hover:left-0 transition-all duration-300 hover:bg-khaki"
+                        onClick={() => handleBooking(room)}
+                      >
+                        View Details{" "}
+                        <BsArrowRight className="w-4 h-4 ml-2 text-white" />{" "}
+                      </button>
+                    </div>
+                    <div className="font-Garamond">
+                      <div className="px-5 3xl:px-6 py-2 inline-flex bg-khaki text-sm items-center justify-center text-white absolute top-[10px] right-[10px] font-Lora font-normal leading-[26px]">
+                        <span className="">${room.price}</span>
+                        <span className="mx-2">|</span>
+                        <span>Night</span>
+                      </div>
+
+                      <div className="border-[1px] border-[#e8e8e8] dark:border-[#424242] border-t-0">
+                        <div className="py-6 px-[30px]">
+                          <h4 className="text-sm leading-[26px] text-khaki uppercase font-semibold">
+                            {room.name}
+                          </h4>
+                          <Link to="/room_details">
+                            <h2 className="text-2xl lg:text-[28px] leading-[26px] font-semibold text-lightBlack dark:text-white py-4">
+                              {room.name}
+                            </h2>
+                          </Link>
+                          <p className="text-sm font-normal text-gray dark:text-lightGray font-Lora">
+                            {room.dimensions}
+                          </p>
+                        </div>
+                        <div className="border-t-[1px] border-[#e8e8e8] dark:border-[#424242] py-5">
+                          <div className="px-[30px] flex items-center justify-between">
+                            <div className="">
+                              <span className="font-Lora text-base flex items-center ">
+                                <img
+                                  src="/images/home-1/room-bottom-icon.png"
+                                  alt=""
+                                />
+                                <span className="ml-[10px] text-gray dark:text-lightGray">
+                                  {room.beds}
+                                </span>
+                              </span>
+                            </div>
+                            <span className="w-[1px] h-[25px] bg-[#ddd] dark:bg-gray"></span>
+                            <ul className="flex items-center text-khaki space-x-[5px]">
+                              {[...Array(room.stars)].map((_, i) => (
+                                <li key={i}>
+                                  <FaStar />
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
-          </div>
-          <div data-aos="zoom-in-up" data-aos-duration="1000">
-            {/* Room - 2 */}
-            <div className="overflow-x-hidden 3xl:w-[410px] group relative">
-              <div className="relative">
-                <div className="overflow-hidden">
-                  <img
-                    src="/images/home-1/room-2.jpg "
-                    className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300"
-                    alt=""
-                  />
-                </div>
-                <Link to={"/room_details"}>
-                  <button className="flex items-center justify-center text-[15px] leading-[38px] bg-lightBlack absolute bottom-0 -left-40 px-5 text-white  group-hover:left-0 transition-all duration-300 hover:bg-khaki">
-                    View Details{" "}
-                    <BsArrowRight className="w-4 h-4 ml-2  text-white" />{" "}
-                  </button>
-                </Link>
-              </div>
-              <div className="font-Garamond">
-                <div className="px-5 3xl:px-6 py-2 inline-flex bg-khaki text-sm  items-center justify-center font-Lora font-normal leading-[26px] text-white  absolute top-[10px] right-[10px] ">
-                  <span className="">$560</span>
-                  <span className="mx-2">|</span>
-                  <span>Night</span>
-                </div>
-
-                <div className=" border-[1px] border-[#e8e8e8] dark:border-[#424242] border-t-0">
-                  <div className="py-6 px-[30px]">
-                    <h4 className="text-sm leading-[26px] text-khaki uppercase font-semibold">
-                      Luxury Room
-                    </h4>
-                    <Link to="/room_details">
-                      <h2 className="text-2xl lg:text-[28px] leading-[26px] font-semibold text-lightBlack dark:text-white py-4">
-                        Delux Family Rooms
-                      </h2>
-                    </Link>
-                    <p className="text-sm font-normal text-gray  dark:text-lightGray font-Lora">
-                      1500 SQ.FT/Rooms
-                    </p>
-                  </div>
-                  <div className="  border-t-[1px] border-[#e8e8e8] dark:border-[#424242] py-5">
-                    <div className="px-[30px] flex items-center justify-between">
-                      <div className="">
-                        <span className="font-Lora text-base flex items-center ">
-                          <img
-                            src="/images/home-1/room-bottom-icon.png"
-                            alt=""
-                          />
-                          <span className="ml-[10px] text-gray dark:text-lightGray">
-                            2 King Bed
-                          </span>
-                        </span>
-                      </div>
-                      <span className="w-[1px] h-[25px] bg-[#ddd] dark:bg-gray"></span>
-                      <ul className="flex items-center text-khaki space-x-[5px]">
-                        <li>
-                          <FaStar />
-                        </li>
-                        <li>
-                          <FaStar />
-                        </li>
-                        <li>
-                          <FaStar />
-                        </li>
-                        <li>
-                          <FaStar />
-                        </li>
-                        <li>
-                          <FaStar />
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div data-aos="zoom-in-up" data-aos-duration="1000">
-            {/* Room - 3 */}
-            <div className="overflow-x-hidden 3xl:w-[410px] group relative">
-              <div className="relative">
-                <div className="overflow-hidden">
-                  <img
-                    src="/images/home-1/room-3.jpg "
-                    className="w-full h-full object-cover group-hover:scale-110 transition-all duration-300"
-                    alt=""
-                  />
-                </div>
-                <Link to={"/room_details"}>
-                  <button className="flex items-center justify-center text-[15px] leading-[38px] bg-lightBlack absolute bottom-0 -left-40 px-5 text-white  group-hover:left-0 transition-all duration-300 hover:bg-khaki">
-                    View Details{" "}
-                    <BsArrowRight className="w-4 h-4 ml-2  text-white" />{" "}
-                  </button>
-                </Link>
-              </div>
-              <div className="font-Garamond">
-                <div className="px-5 3xl:px-6 py-2 inline-flex bg-khaki text-sm  items-center justify-center font-Lora font-normal leading-[26px] text-white  absolute top-[10px] right-[10px] ">
-                  <span className="">$560</span>
-                  <span className="mx-2">|</span>
-                  <span>Night</span>
-                </div>
-
-                <div className=" border-[1px] border-[#e8e8e8] dark:border-[#424242] border-t-0">
-                  <div className="py-6 px-[30px]">
-                    <h4 className="text-sm leading-[26px] text-khaki uppercase font-semibold">
-                      Luxury Room
-                    </h4>
-                    <Link to="/room_details">
-                      <h2 className="text-2xl lg:text-[28px] leading-[26px] font-semibold text-lightBlack dark:text-white py-4">
-                        Suprior Bed Rooms
-                      </h2>
-                    </Link>
-                    <p className="text-sm font-normal text-gray  dark:text-lightGray font-Lora">
-                      1500 SQ.FT/Rooms
-                    </p>
-                  </div>
-                  <div className="  border-t-[1px] border-[#e8e8e8] dark:border-[#424242] py-5">
-                    <div className="px-[30px] flex items-center justify-between">
-                      <div className="">
-                        <span className="font-Lora text-base flex items-center ">
-                          <img
-                            src="/images/home-1/room-bottom-icon.png"
-                            alt=""
-                          />
-                          <span className="ml-[10px] text-gray dark:text-lightGray">
-                            2 King Bed
-                          </span>
-                        </span>
-                      </div>
-                      <span className="w-[1px] h-[25px] bg-[#ddd] dark:bg-gray"></span>
-                      <ul className="flex items-center text-khaki space-x-[5px]">
-                        <li>
-                          <FaStar />
-                        </li>
-                        <li>
-                          <FaStar />
-                        </li>
-                        <li>
-                          <FaStar />
-                        </li>
-                        <li>
-                          <FaStar />
-                        </li>
-                        <li>
-                          <FaStar />
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+            <div className="mt-10 flex justify-center">{renderPagination()}</div>
+          </>
+        )}
       </div>
-      {/* Contact form */}
-      <div className="py-20 2xl:py-[120px] dark:bg-lightBlack">
+            {/* Contact form */}
+            <div className="py-20 2xl:py-[120px] dark:bg-lightBlack">
         <div className="Container border border-lightGray dark:border-gray px-2 sm:px-7 md:px-10 lg:px-14 2xl:px-20 py-10 md:py-14 lg:py-18 xl:py-20 2xl:py-[100px]">
           <div className="flex items-center flex-col md:flex-row">
             <div
@@ -586,6 +550,7 @@ const FindRoom = () => {
           </div>
         </div>
       </div>
+
     </section>
   );
 };

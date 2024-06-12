@@ -171,7 +171,6 @@ const BlogDetails = () => {
                   </Link>
                 </div>
               </div>
-
               {/* Comment Section */}
               <div className="my-10 2xl:my-[60px] 3xl:my-[80px]">
                 <h3 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl 2xl:text-[32px] text-lightBlack dark:text-white font-semibold font-Garamond mb-5 2xl:mb-[30px]">
