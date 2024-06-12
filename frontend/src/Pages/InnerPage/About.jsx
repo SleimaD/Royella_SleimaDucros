@@ -259,7 +259,6 @@ const About = () => {
                     <FaFacebookF className="" />
                     <BsTwitter className="" />
                     <FaLinkedinIn className="" />
-                    <FaPinterestP className="" />
                   </div>
                   <p className="text-white font-medium leading-10 text-xl lg:text-[22px] font-Garamond">
                     example@gmail.com
@@ -291,7 +290,6 @@ const About = () => {
                     <FaFacebookF className="" />
                     <BsTwitter className="" />
                     <FaLinkedinIn className="" />
-                    <FaPinterestP className="" />
                   </div>
                   <p className="text-white font-medium leading-10 text-xl lg:text-[22px] font-Garamond">
                     example@gmail.com
@@ -323,7 +321,6 @@ const About = () => {
                     <FaFacebookF className="" />
                     <BsTwitter className="" />
                     <FaLinkedinIn className="" />
-                    <FaPinterestP className="" />
                   </div>
                   <p className="text-white font-medium leading-10 text-xl lg:text-[22px] font-Garamond">
                     example@gmail.com

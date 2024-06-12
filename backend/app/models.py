@@ -129,14 +129,6 @@ class PaymentPlan(models.Model):
 class Feature(models.Model):
     description = models.CharField(max_length=255)
 
-# class BannerHome(models.Model): 
-#     title = models.CharField(max_length=100)
-#     image = models.ImageField(upload_to='banners/')
-
-
-# class Banner(models.Model):  
-#     title = models.CharField(max_length=100)
-#     image = models.ImageField(upload_to='banners/')
     
 
 
@@ -168,6 +160,54 @@ class Testimonial(models.Model):
     image = models.ImageField(upload_to='testimonials/')
     location = models.CharField(max_length=100, blank=True, null=True)
 
+
+
+
+class FAQ(models.Model):
+    question = models.CharField(max_length=255) 
+    answer = models.TextField()
+
+
+
+
+class Service(models.Model):
+    title = models.CharField(max_length=100)
+    subtitle = models.CharField(max_length=100)
+    description = models.TextField()
+    image = models.ImageField(upload_to='services/')
+    order = models.IntegerField(default=0)
+
+
+class ServiceDetail(models.Model):
+    service = models.ForeignKey(Service, related_name='details', on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+
+
+
+class Member(models.Model):
+    name = models.CharField(max_length=100)
+    position = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='members/', blank=True, null=True)
+    email = models.EmailField()
+    is_designated = models.BooleanField(default=False)
+    facebook = models.URLField(max_length=200, blank=True, null=True)
+    twitter = models.URLField(max_length=200, blank=True, null=True)
+    linkedin = models.URLField(max_length=200, blank=True, null=True)
+
+
+
+
+# class BannerHome(models.Model): 
+#     title = models.CharField(max_length=100)
+#     image = models.ImageField(upload_to='banners/')
+
+
+# class Banner(models.Model):  
+#     title = models.CharField(max_length=100)
+#     image = models.ImageField(upload_to='banners/')
+
+
 # class ContactInfo(models.Model):
 #     phone = models.CharField(max_length=20)
 #     email = models.EmailField()
@@ -188,20 +228,6 @@ class Testimonial(models.Model):
 #     image = models.ImageField(upload_to='images/')
 #     total_rooms = models.IntegerField()
 #     rating = models.FloatField()
-
-
-# class Member(models.Model):
-#     name = models.CharField(max_length=100)
-#     role = models.CharField(max_length=100)
-#     bio = models.TextField()
-#     image = models.ImageField(upload_to='members/')
-
-
-
-
-class FAQ(models.Model):
-    question = models.CharField(max_length=255) 
-    answer = models.TextField()
 
 
 # class Comment(models.Model):
@@ -234,17 +260,3 @@ class FAQ(models.Model):
 #     subject = models.CharField(max_length=150)
 #     message = models.TextField()
 #     sent_on = models.DateTimeField(auto_now_add=True)
-
-
-class Service(models.Model):
-    title = models.CharField(max_length=100)
-    subtitle = models.CharField(max_length=100)
-    description = models.TextField()
-    image = models.ImageField(upload_to='services/')
-    order = models.IntegerField(default=0)
-
-
-class ServiceDetail(models.Model):
-    service = models.ForeignKey(Service, related_name='details', on_delete=models.CASCADE)
-    title = models.CharField(max_length=100)
-    description = models.TextField()
