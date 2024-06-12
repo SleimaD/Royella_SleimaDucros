@@ -198,14 +198,20 @@ class Member(models.Model):
 
 
 
-# class BannerHome(models.Model): 
-#     title = models.CharField(max_length=100)
-#     image = models.ImageField(upload_to='banners/')
+class HomeBanner(models.Model):
+    title = models.CharField(max_length=255)
+    image = models.ImageField(upload_to='homebanners/')
+    stars = models.IntegerField()
+    order = models.IntegerField()
 
 
-# class Banner(models.Model):  
-#     title = models.CharField(max_length=100)
-#     image = models.ImageField(upload_to='banners/')
+class PageBanner(models.Model):
+    page_name = models.CharField(max_length=50)  
+    title = models.CharField(max_length=255)
+    image = models.ImageField(upload_to='pagebanners/')
+
+    
+
 
 
 # class ContactInfo(models.Model):
@@ -228,13 +234,6 @@ class Member(models.Model):
 #     image = models.ImageField(upload_to='images/')
 #     total_rooms = models.IntegerField()
 #     rating = models.FloatField()
-
-
-# class Comment(models.Model):
-#     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     content = models.TextField()
-#     created_at = models.DateTimeField(auto_now_add=True)
 
 
 

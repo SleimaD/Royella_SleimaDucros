@@ -153,7 +153,7 @@ const Navbar = () => {
             >
               <span className="flex items-center justify-center">
               <NavLink to="/find_room" className="block ">
-                Find Room 
+                Rooms 
               </NavLink>
               </span>
             </NavLink>
