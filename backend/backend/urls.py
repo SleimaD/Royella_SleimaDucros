@@ -29,6 +29,7 @@ router.register(r'amenities', AmenityViewSet)
 router.register(r'rooms', RoomViewSet)
 router.register(r'bookings', BookingViewSet)
 router.register(r'offers', OfferViewSet)
+router.register(r'members', MemberViewSet)
 
 
 urlpatterns = [

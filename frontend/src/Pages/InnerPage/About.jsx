@@ -6,9 +6,8 @@ import {
   BsPlay,
   BsTwitter,
 } from "react-icons/bs";
-import { FaFacebookF, FaLinkedinIn, FaPinterestP } from "react-icons/fa6";
+import { FaFacebookF, FaLinkedinIn, FaPinterestP, FaStar } from "react-icons/fa6";
 import { useState, useEffect } from "react";
-import { FaStar } from "react-icons/fa";
 import "../../Components4/Testimonial/testimonials.css";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
@@ -16,11 +15,12 @@ import { Link } from "react-router-dom";
 import FsLightbox from "fslightbox-react";
 import axios from "axios";
 
+
 const About = () => {
   const [setCurrentSlide] = useState(0);
   const [testimonials, setTestimonials] = useState([]);
-  // const [setLoaded] = useState(false);
   const [toggler, setToggler] = useState(false);
+  const [members, setMembers] = useState([]);
   const [sliderRef] = useKeenSlider({
     breakpoints: {
       "(min-width: 320px)": {
@@ -49,7 +49,7 @@ const About = () => {
         const response = await axios.get("http://127.0.0.1:8000/api/testimonials/");
         const allTestimonials = response.data;
         const shuffled = allTestimonials.sort(() => 0.5 - Math.random());
-        const selectedTestimonials = shuffled.slice(0, 3); // Select 3 random testimonials
+        const selectedTestimonials = shuffled.slice(0, 3); 
         setTestimonials(selectedTestimonials);
       } catch (error) {
         console.error("Error fetching testimonials:", error);
@@ -57,6 +57,24 @@ const About = () => {
     };
 
     fetchTestimonials();
+  }, []);
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/members/");
+        const allMembers = response.data;
+        const designatedMember = allMembers.find(member => member.is_designated);
+        const otherMembers = allMembers.filter(member => !member.is_designated);
+        const shuffled = otherMembers.sort(() => 0.5 - Math.random());
+        const selectedMembers = [shuffled[0], designatedMember, shuffled[1]];
+        setMembers(selectedMembers);
+      } catch (error) {
+        console.error("Error fetching members:", error);
+      }
+    };
+
+    fetchMembers();
   }, []);
 
   const [latestBlogs, setLatestBlogs] = useState([]);
@@ -235,99 +253,40 @@ const About = () => {
 
           {/* Section Content */}
           <div className="mt-[60px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[30px] ">
-            {/* Member one */}
-            <div
-              className="member group"
-              data-aos="fade-up"
-              data-aos-duration="1000"
-            >
-              <img src="/images/inner/member-1.jpg" className="w-full" alt="" />
-              <div className="relative">
-                <div className="px-4  lg:px-[30px] pt-5 ">
-                  <h3 className="text-xl sm:text-2xl lg:text-2xl xl:text-[28px] leading-7 md:leading-8 lg:leading-10 text-lightBlack dark:text-white font-semibold font-Garamond text-center hover:opacity-0">
-                    Valentina Kerry
-                  </h3>
-                  <p className="text-sm md:text-base leading-[26px] text-Gray dark:text-lightGray font-normal font-Lora text-center group-hover:text-white dark:hover:text-white hover:opacity-0">
-                    General Manager
-                  </p>
-                </div>
-                <div
-                  className="p-[30px] bg-khaki grid items-center justify-center absolute bottom-[-150px] sm:bottom-[-170px] md:bottom-[-150px] group-hover:bottom-[-38px] lg:group-hover:bottom-[-30px] transition-all
-                 duration-500 left-0 right-0"
-                >
-                  <div className="flex items-center justify-center space-x-4 text-white">
-                    <FaFacebookF className="" />
-                    <BsTwitter className="" />
-                    <FaLinkedinIn className="" />
+            {members.map((member, index) => (
+              <div
+                key={index}
+                className="member group"
+                data-aos="fade-up"
+                data-aos-duration="1000"
+              >
+                <img src={member.image} className="w-full" alt={member.name} />
+                <div className="relative">
+                  <div className="px-4  lg:px-[30px] pt-5 ">
+                    <h3 className="text-xl sm:text-2xl lg:text-2xl xl:text-[28px] leading-7 md:leading-8 lg:leading-10 text-lightBlack dark:text-white font-semibold font-Garamond text-center hover:opacity-0">
+                      {member.name}
+                    </h3>
+                    <p className="text-sm md:text-base leading-[26px] text-Gray dark:text-lightGray font-normal font-Lora text-center group-hover:text-white dark:hover:text-white hover:opacity-0">
+                      {member.position}
+                    </p>
                   </div>
-                  <p className="text-white font-medium leading-10 text-xl lg:text-[22px] font-Garamond">
-                    example@gmail.com
-                  </p>
+                  <div
+                    className="p-[30px] bg-khaki grid items-center justify-center absolute bottom-[-150px] sm:bottom-[-170px] md:bottom-[-150px] group-hover:bottom-[-38px] lg:group-hover:bottom-[-30px] transition-all
+                    duration-500 left-0 right-0"
+                  >
+                    <div className="flex items-center justify-center space-x-4 text-white">
+                      {member.facebook && <a href={member.facebook}><FaFacebookF /></a>}
+                      {member.twitter && <a href={member.twitter}><BsTwitter /></a>}
+                      {member.linkedin && <a href={member.linkedin}><FaLinkedinIn /></a>}
+                      {member.pinterest && <a href={member.pinterest}><FaPinterestP /></a>}
+                    </div>
+                    <p className="text-white font-medium leading-10 text-xl lg:text-[22px] font-Garamond">
+                      {member.email}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-            {/* Member two */}
-            <div
-              className="member group"
-              data-aos="fade-down"
-              data-aos-duration="1000"
-            >
-              <img src="/images/inner/member-2.jpg" className="w-full" alt="" />
-              <div className="relative">
-                <div className="px-4  lg:px-[30px] pt-5 ">
-                  <h3 className="text-xl sm:text-2xl lg:text-2xl xl:text-[28px] leading-7 md:leading-8 lg:leading-10 text-lightBlack dark:text-white font-semibold font-Garamond text-center hover:opacity-0">
-                    Leary Mart
-                  </h3>
-                  <p className="text-sm md:text-base leading-[26px] text-Gray dark:text-lightGray font-normal font-Lora text-center group-hover:text-white dark:hover:text-white hover:opacity-0">
-                    Product Manager
-                  </p>
-                </div>
-                <div
-                  className="p-[30px] bg-khaki grid items-center justify-center absolute bottom-[-150px] sm:bottom-[-170px] md:bottom-[-150px] group-hover:bottom-[-38px] lg:group-hover:bottom-[-30px] transition-all
-                 duration-500 left-0 right-0"
-                >
-                  <div className="flex items-center justify-center space-x-4 text-white">
-                    <FaFacebookF className="" />
-                    <BsTwitter className="" />
-                    <FaLinkedinIn className="" />
-                  </div>
-                  <p className="text-white font-medium leading-10 text-xl lg:text-[22px] font-Garamond">
-                    example@gmail.com
-                  </p>
-                </div>
-              </div>
-            </div>
-            {/* Member three */}
-            <div
-              className="member group"
-              data-aos="fade-up"
-              data-aos-duration="1000"
-            >
-              <img src="/images/inner/member-3.jpg" className="w-full" alt="" />
-              <div className="relative">
-                <div className="px-4  lg:px-[30px] pt-5 ">
-                  <h3 className="text-xl sm:text-2xl lg:text-2xl xl:text-[28px] leading-7 md:leading-8 lg:leading-10 text-lightBlack dark:text-white font-semibold font-Garamond text-center hover:opacity-0">
-                    Samantha Shen
-                  </h3>
-                  <p className="text-sm md:text-base leading-[26px] text-Gray dark:text-lightGray font-normal font-Lora text-center group-hover:text-white dark:hover:text-white hover:opacity-0">
-                    General Manager
-                  </p>
-                </div>
-                <div
-                  className="p-[30px] bg-khaki grid items-center justify-center absolute bottom-[-150px] sm:bottom-[-170px] md:bottom-[-150px] group-hover:bottom-[-38px] lg:group-hover:bottom-[-30px] transition-all
-                 duration-500 left-0 right-0"
-                >
-                  <div className="flex items-center justify-center space-x-4 text-white">
-                    <FaFacebookF className="" />
-                    <BsTwitter className="" />
-                    <FaLinkedinIn className="" />
-                  </div>
-                  <p className="text-white font-medium leading-10 text-xl lg:text-[22px] font-Garamond">
-                    example@gmail.com
-                  </p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>

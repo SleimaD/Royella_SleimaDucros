@@ -1023,7 +1023,6 @@ members_entries = [
         'facebook': 'https://molengeek.com/',
         'twitter': 'https://molengeek.com/',
         'linkedin': 'https://molengeek.com/',
-        'pinterest': 'https://molengeek.com/',
     },
     {
         'name': 'Michael  Carter',
@@ -1034,7 +1033,6 @@ members_entries = [
         'facebook': 'https://molengeek.com/',
         'twitter': 'https://molengeek.com/',
         'linkedin': 'https://molengeek.com/',
-        'pinterest': 'https://molengeek.com/',
     },
     {
         'name': 'Sophia Johnson',
@@ -1045,7 +1043,6 @@ members_entries = [
         'facebook': 'https://molengeek.com/',
         'twitter': 'https://molengeek.com/',
         'linkedin': 'https://molengeek.com/',
-        'pinterest': 'https://molengeek.com/',
     },
     {
         'name': 'Daniel Kim',
@@ -1056,7 +1053,6 @@ members_entries = [
         'facebook': 'https://molengeek.com/',
         'twitter': 'https://molengeek.com/',
         'linkedin': 'https://molengeek.com/',
-        'pinterest': 'https://molengeek.com/',
     },
     {
         'name': 'Linda Garcia',
@@ -1067,7 +1063,6 @@ members_entries = [
         'facebook': 'https://molengeek.com/',
         'twitter': 'https://molengeek.com/',
         'linkedin': 'https://molengeek.com/',
-        'pinterest': 'https://molengeek.com/',
     },
     {
         'name': 'David Allen',
@@ -1078,7 +1073,6 @@ members_entries = [
         'facebook': 'https://molengeek.com/',
         'twitter': 'https://molengeek.com/',
         'linkedin': 'https://molengeek.com/',
-        'pinterest': 'https://molengeek.com/',
     },
 ]
 
