@@ -382,3 +382,15 @@ class OfferViewSet(viewsets.ModelViewSet):
 class MemberViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.all()
     serializer_class = MemberSerializer
+
+
+
+class HomeBannerViewSet(viewsets.ModelViewSet):
+    queryset = HomeBanner.objects.all().order_by('order')
+    serializer_class = HomeBannerSerializer
+
+    
+
+class PageBannerViewSet(viewsets.ModelViewSet):
+    queryset = PageBanner.objects.all()
+    serializer_class = PageBannerSerializer

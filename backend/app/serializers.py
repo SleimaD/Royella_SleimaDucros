@@ -248,3 +248,17 @@ class MemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
         fields = '__all__'
+
+
+
+class HomeBannerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HomeBanner
+        fields = '__all__'
+
+        
+
+class PageBannerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PageBanner
+        fields = '__all__'

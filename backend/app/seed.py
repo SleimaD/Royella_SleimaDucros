@@ -1085,3 +1085,69 @@ def runMembers():
     pks = seeder.execute()
     print(pks)
 
+
+
+#region banners
+#!banners
+
+
+home_banners = [
+    {
+        'title': 'Welcome to royella Hotel',
+        'image': 'homebanners/banner1.jpg',
+        'stars': 5,
+        'order': 1,
+    },
+    {
+        'title': 'Diverse Luxurious Facilities and Services',
+        'image': 'homebanners/banner2.jpg',
+        'stars': 5,
+        'order': 2,
+    },
+    {
+        'title': 'Our pool by the sea',
+        'image': 'homebanners/banner3.jpg',
+        'stars': 5,
+        'order': 3,
+    }
+] 
+
+page_banners = [
+    {
+        'page_name': 'about',
+        'title': 'About Us',
+        'image': 'pagebanners/about.jpg',
+    },
+    {
+        'page_name': 'find_rooms',
+        'title': 'Find Room',
+        'image': 'pagebanners/rooms.jpg',
+    },
+    {
+        'page_name': 'pricing',
+        'title': 'Pricing',
+        'image': 'pagebanners/pricing.jpg',
+    },
+    {
+        'page_name': 'blog',
+        'title': 'Blog',
+        'image': 'pagebanners/blog.jpg',
+    },
+    {
+        'page_name': 'contact',
+        'title': 'Contact',
+        'image': 'pagebanners/about.jpg',
+    },
+]
+
+def run_banners():
+    seeder = Seed.seeder()
+
+    for banner in home_banners:
+        seeder.add_entity(HomeBanner, 1, banner)
+
+    for banner in page_banners:
+        seeder.add_entity(PageBanner, 1, banner)
+
+    pks = seeder.execute()
+    print(pks)
