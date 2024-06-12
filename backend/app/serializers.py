@@ -256,9 +256,16 @@ class HomeBannerSerializer(serializers.ModelSerializer):
         model = HomeBanner
         fields = '__all__'
 
-        
+
 
 class PageBannerSerializer(serializers.ModelSerializer):
     class Meta:
         model = PageBanner
+        fields = '__all__'
+
+
+
+class HotelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hotel
         fields = '__all__'
