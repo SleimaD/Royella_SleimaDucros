@@ -5,7 +5,7 @@ import { IoIosCall } from "react-icons/io";
 const Contact = () => {
   return (
     <div>
-      <BreadCrumb title="Contact " />
+      <BreadCrumb title="Contact " pageName="contact" />
 
       {/* Contact */}
       {/* Contact with Us */}

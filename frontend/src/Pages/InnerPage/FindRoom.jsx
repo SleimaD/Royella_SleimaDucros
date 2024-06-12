@@ -154,7 +154,7 @@ const FindRoom = () => {
 
   return (
     <section>
-      <BreadCrumb title="Find Room" />
+      <BreadCrumb title="Find Room" pageName="find_rooms" />
       <div className="bg-whiteSmoke dark:bg-normalBlack py-20 2xl:py-[120px]">
         <h1 className="text-[22px] sm:text-2xl md:text-3xl 2xl:text-[34px] leading-7 sm:leading-8 md:leading-9 lg:leading-10 2xl:leading-[44px] text-lightBlack dark:text-white  mb-5  md:mb-8 lg:mb-10 font-Garamond font-semibold uppercase text-center">
           CHECK Availability

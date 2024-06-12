@@ -88,8 +88,8 @@ const About = () => {
 
   return (
     <section className="">
-      <BreadCrumb title="About Us" home={""} />
-
+      <BreadCrumb title="About Us" pageName="about" />
+      
       {/* about content */}
       <section className="dark:bg-mediumBlack">
         <div className="Container py-20 2xl:py-[120px] sm:overflow-hidden lg:overflow-auto">

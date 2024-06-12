@@ -31,7 +31,7 @@ router.register(r'bookings', BookingViewSet)
 router.register(r'offers', OfferViewSet)
 router.register(r'members', MemberViewSet)
 router.register(r'home-banners', HomeBannerViewSet)
-router.register(r'page-banners', PageBannerViewSet)
+router.register(r'banners', PageBannerViewSet)
 
 
 urlpatterns = [

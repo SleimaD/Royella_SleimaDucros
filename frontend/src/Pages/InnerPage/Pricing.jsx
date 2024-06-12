@@ -17,7 +17,7 @@ const Pricing = () => {
 
   return (
     <div>
-      <BreadCrumb title="Pricing" />
+      <BreadCrumb title="Pricing" pageName="pricing" />
       {/* Pricing  */}
       <div className="dark:bg-normalBlack py-20 2xl:py-[120px]">
         <div className="Container">

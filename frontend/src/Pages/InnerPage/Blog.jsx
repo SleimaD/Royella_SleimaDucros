@@ -81,7 +81,7 @@ const Blog = () => {
 
   return (
     <div>
-      <BreadCrumb title="Blog" />
+      <BreadCrumb title="Blog" pageName="blog" />
       <div className="dark:bg-lightBlack py-20 2xl:py-[120px]">
         <div className="Container grid grid-cols-6 md:grid-cols-7 lg:grid-cols-6 gap-5">
           <div className="col-span-6 md:col-span-4">

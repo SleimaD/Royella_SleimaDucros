@@ -389,7 +389,7 @@ class HomeBannerViewSet(viewsets.ModelViewSet):
     queryset = HomeBanner.objects.all().order_by('order')
     serializer_class = HomeBannerSerializer
 
-    
+
 
 class PageBannerViewSet(viewsets.ModelViewSet):
     queryset = PageBanner.objects.all()
