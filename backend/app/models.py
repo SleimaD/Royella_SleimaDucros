@@ -212,6 +212,15 @@ class PageBanner(models.Model):
 
     
 
+class Hotel(models.Model):
+    title = models.CharField(max_length=255)
+    subtitle = models.CharField(max_length=255)
+    description = models.TextField()
+    image = models.ImageField(upload_to='hotel/', blank=True, null=True)
+    room_count = models.IntegerField()
+    customer_rating = models.DecimalField(max_digits=3, decimal_places=2)
+
+
 
 
 # class ContactInfo(models.Model):
@@ -225,16 +234,6 @@ class PageBanner(models.Model):
 # class SocialMedia(models.Model):
 #     name = models.CharField(max_length=100)
 #     url = models.URLField()
-
-
-# class Hotel(models.Model):
-#     title = models.CharField(max_length=100)
-#     subtitle = models.CharField(max_length=100)
-#     description = models.TextField()
-#     image = models.ImageField(upload_to='images/')
-#     total_rooms = models.IntegerField()
-#     rating = models.FloatField()
-
 
 
 
