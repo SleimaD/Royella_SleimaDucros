@@ -46,8 +46,18 @@ const HeroSection = () => {
             <div
               className="w-full h-[700px] md:h-[800px] xl:h-[850px] 3xl:h-[950px] bg-[rgba(30,30,30,0.4)] bg-opacity-40 grid items-center bg-cover justify-center text-white relative pb-[150px] lg:pb-16 xl:pb-0"
               data-aos="fade-down"
-              style={{ backgroundImage: `url(${banner.image})` }}
             >
+            <div
+                className="absolute inset-0 bg-no-repeat bg-cover bg-center z-[-1]"
+                style={{
+                  backgroundImage: `url(${banner.image})`,
+                  backgroundSize: "cover",
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "center",
+                  filter: "brightness(0.7)" 
+                }}
+              />     
+
               <div className="font-Garamond 2xl:w-[720px] text-center">
                 <div className="flex space-x-2 items-center justify-center mb-5 lg:mb-6">
                   {[...Array(banner.stars)].map((_, i) => (
