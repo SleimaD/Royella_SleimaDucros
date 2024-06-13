@@ -28,6 +28,7 @@ if __name__ == "__main__":
    # runMembers()
    # run_banners()
    # run_hotel()
+   # run_gallery()
    
 
     

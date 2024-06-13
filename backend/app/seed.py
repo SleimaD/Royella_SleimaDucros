@@ -1181,3 +1181,51 @@ def run_hotel():
     })
 
     seeder.execute()
+
+
+
+#region gallery
+#!gallery
+
+
+Gallery_entries = [
+    {
+        'image': 'gallery/gallery-1.jpg',
+    },
+    {
+        'image': 'gallery/gallery-2.jpg',
+    },
+    {
+        'image': 'gallery/gallery-3.jpg',
+    },
+    {
+        'image': 'gallery/gallery-4.jpg',
+    },
+    {
+        'image': 'gallery/gallery-5.jpg',
+    },
+    {
+        'image': 'gallery/gallery-6.jpg',
+    },
+    {
+        'image': 'gallery/gallery-7.jpg',
+    },
+    {
+        'image': 'gallery/gallery-8.jpg',
+    },
+    {
+        'image': 'gallery/gallery-9.jpg',
+    },
+    {
+        'image': 'gallery/gallery-10.jpg',
+    },
+]
+
+def run_gallery():
+    seeder = Seed.seeder()
+
+    for entry in Gallery_entries:
+        seeder.add_entity(Gallery, 1, entry)
+
+    pks = seeder.execute()
+    print(pks)
