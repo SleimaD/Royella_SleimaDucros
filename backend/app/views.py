@@ -465,3 +465,7 @@ class GalleryViewSet(viewsets.ModelViewSet):
     queryset = Gallery.objects.all()
     serializer_class = GallerySerializer
 
+
+class NewsletterSubscriberViewSet(viewsets.ModelViewSet):
+    queryset = NewsletterSubscriber.objects.all()
+    serializer_class = NewsletterSubscriberSerializer

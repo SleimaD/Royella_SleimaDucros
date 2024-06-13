@@ -34,6 +34,7 @@ router.register(r'home-banners', HomeBannerViewSet)
 router.register(r'banners', PageBannerViewSet)
 router.register(r'hotels', HotelViewSet)
 router.register(r'galleries', GalleryViewSet)
+router.register(r'newsletter-subscribers', NewsletterSubscriberViewSet)
 
 
 urlpatterns = [
