@@ -4,7 +4,40 @@ import Brand from "../../Components/Brand/Brand";
 import { BiEnvelope, BiLogoLinkedin } from "react-icons/bi";
 import { FaFacebookF, FaPinterestP, FaTwitter } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+
 const Footer = () => {
+  const [gallery, setGallery] = useState([]);
+  const [randomGallery, setRandomGallery] = useState([]);
+
+  useEffect(() => {
+    const fetchGallery = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/galleries/");
+        setGallery(response.data);
+      } catch (error) {
+        console.error("Error fetching gallery:", error);
+      }
+    };
+
+    fetchGallery();
+  }, []);
+
+  useEffect(() => {
+    if (gallery.length > 0) {
+      const selectRandomImages = (images, count) => {
+        const shuffled = images.sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, count);
+      };
+
+      setRandomGallery(selectRandomImages(gallery, 6));
+    }
+  }, [gallery]);
+
+
+
   return (
     <>
       <Brand />
@@ -120,12 +153,11 @@ const Footer = () => {
                 GALLERY
               </h1>
               <div className="grid grid-cols-3 gap-2 mt-[45px] w-[250px] sm:w-[300px] lg:w-full  content-center ">
-                <img src="/images/home-1/gallery-1.jpg" alt="" />
-                <img src="/images/home-1/gallery-2.jpg" alt="" />
-                <img src="/images/home-1/gallery-3.jpg" alt="" />
-                <img src="/images/home-1/gallery-4.jpg" alt="" />
-                <img src="/images/home-1/gallery-5.jpg" alt="" />
-                <img src="/images/home-1/gallery-6.jpg" alt="" />
+                {randomGallery.map((gallery, index) => (
+                  <div key={index} className="w-[250px] sm:w-[300px] lg:w-full">
+                    <img className="w-[130px] h-[80px] " src={gallery.image} alt="" />
+                  </div>
+                ))} 
               </div>
             </div>
             {/* footer content-4 */}
