@@ -121,7 +121,7 @@ const Contact = () => {
                 <form onSubmit={handleSubmit} className="grid items-center grid-cols-1 gap-2 mt-8">
                   <input
                     type="text"
-                    className="w-full h-12 md:h-13 lg:h-[59px] px-4 border border-gray dark:border-lightGray text-gray dark:text-lightGray outline-none bg-transparent mt-4 focus:ring-0 placeholder:text-gray focus:border-gray dark:focus:border-lightGray focus:outline-none"
+                    className="w-full h-12 md:h-13 lg:h-[59px] px-4 border border-gray dark:border-lightGray text-white dark:text-lightGray outline-none bg-transparent mt-4 focus:ring-0 placeholder:text-gray focus:border-gray dark:focus:border-lightGray focus:outline-none"
                     placeholder="Your Name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -129,14 +129,14 @@ const Contact = () => {
                   />
                   <input
                     type="email"
-                    className="w-full h-12 md:h-13 lg:h-[59px] px-4 border border-gray dark:border-lightGray text-gray dark:text-lightGray outline-none bg-transparent mt-4 focus:ring-0 placeholder:text-gray focus:border-gray dark:focus:border-lightGray focus:outline-none"
+                    className="w-full h-12 md:h-13 lg:h-[59px] px-4 border border-gray dark:border-lightGray text-white dark:text-lightGray outline-none bg-transparent mt-4 focus:ring-0 placeholder:text-gray focus:border-gray dark:focus:border-lightGray focus:outline-none"
                     placeholder="Enter E-mail"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                   <select
-                    className="w-full h-12 md:h-13 lg:h-[59px] px-4 border border-gray dark:border-lightGray text-gray dark:text-lightGray outline-none bg-transparent mt-4 focus:ring-0 focus:border-gray dark:focus:border-lightGray focus:outline-none"
+                    className="w-full h-12 md:h-13 lg:h-[59px] px-4 border border-gray dark:border-lightGray text-white dark:text-lightGray outline-none bg-transparent mt-4 focus:ring-0 focus:border-gray dark:focus:border-lightGray focus:outline-none"
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
                     required
@@ -152,7 +152,7 @@ const Contact = () => {
                   {subject === 'other' && (
                     <input
                       type="text"
-                      className="w-full h-12 md:h-13 lg:h-[59px] px-4 border border-gray dark:border-lightGray text-gray dark:text-lightGray outline-none bg-transparent mt-4 focus:ring-0 placeholder:text-gray focus:border-gray dark:focus:border-lightGray focus:outline-none"
+                      className="w-full h-12 md:h-13 lg:h-[59px] px-4 border border-gray dark:border-lightGray text-white dark:text-lightGray outline-none bg-transparent mt-4 focus:ring-0 placeholder:text-gray focus:border-gray dark:focus:border-lightGray focus:outline-none"
                       placeholder="Other Subject"
                       value={otherSubject}
                       onChange={(e) => setOtherSubject(e.target.value)}
@@ -163,7 +163,7 @@ const Contact = () => {
                     name="message"
                     cols="30"
                     rows="10"
-                    className="w-full h-[121px] px-4 border border-gray dark:border-lightGray text-gray dark:text-lightGray outline-none bg-transparent mt-4 focus:ring-0 placeholder:text-gray resize-none focus:border-gray dark:focus:border-lightGray focus:outline-none"
+                    className="w-full h-[121px] px-4 border border-gray dark:border-lightGray text-white dark:text-lightGray outline-none bg-transparent mt-4 focus:ring-0 placeholder:text-gray resize-none focus:border-gray dark:focus:border-lightGray focus:outline-none"
                     placeholder="Write Message:"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}

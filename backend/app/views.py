@@ -163,25 +163,31 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     
-    @action(detail=True, methods=['patch'], url_path='profile-update')
-    def update_profile(self, request, pk=None):
-        try:
-            user = self.get_object()
-            logger.debug(f"Request user: {request.user.username}, Target user: {user.username}")
-            if user!= request.user:
-                logger.warning(f"User {request.user.username} tried to update profile of {user.username}")
-                return Response({"detail": "Not allowed to update another user's profile"}, status=403)
+    @action(detail=False, methods=['post'], url_path='profile-update')
+    def profile_update(self, request):
+        username = request.data.get('username')
+        
+        if not username:
+            return Response({'message': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-            serializer = UserSerializer(user, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            else:
-                logger.error(f"Serializer errors: {serializer.errors}")
-                return Response(serializer.errors, status=400)
-        except Exception as e:
-            logger.error(f"Exception occurred: {str(e)}")
-            return Response({"detail": str(e)}, status=500)
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({'message': 'Sorry, user not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        user.first_name = request.data.get('first_name', user.first_name)
+        user.last_name = request.data.get('last_name', user.last_name)
+        user.email = request.data.get('email', user.email)
+        user.credit_card_info = request.data.get('credit_card_info', user.credit_card_info)
+        
+        if request.FILES.get('photo') is not None:
+            user.photo = request.FILES.get('photo')
+
+        user.save()
+        
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 
@@ -190,9 +196,13 @@ class ServiceViewSet(viewsets.ModelViewSet):
     serializer_class = ServiceSerializer
 
 
+
+
 class ServiceDetailViewSet(viewsets.ModelViewSet):
     queryset = ServiceDetail.objects.all()
     serializer_class = ServiceDetailSerializer
+
+
 
 
 class TestimonialViewSet(viewsets.ModelViewSet):
@@ -271,9 +281,13 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
+
+
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
@@ -306,6 +320,8 @@ class CommentViewSet(viewsets.ModelViewSet):
         return context
 
 
+
+
 class BlogDescriptionViewSet(viewsets.ModelViewSet):
     queryset = BlogDescription.objects.all()
     serializer_class = BlogDescriptionSerializer
@@ -321,12 +337,12 @@ class BlogDescriptionViewSet(viewsets.ModelViewSet):
 
 
 
-
-
-
 class AmenityViewSet(viewsets.ModelViewSet):
     queryset = Amenity.objects.all()
     serializer_class = AmenitySerializer
+
+
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 6
@@ -439,9 +455,11 @@ class BookingViewSet(viewsets.ModelViewSet):
     
 
 
+
 class OfferViewSet(viewsets.ModelViewSet):
     queryset = Offer.objects.filter(is_active=True, end_date__gte=timezone.now())
     serializer_class = OfferSerializer
+
 
 
 
@@ -475,9 +493,11 @@ class HotelViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+
 class GalleryViewSet(viewsets.ModelViewSet):
     queryset = Gallery.objects.all()
     serializer_class = GallerySerializer
+
 
 
 class NewsletterSubscriberViewSet(viewsets.ModelViewSet):
@@ -485,10 +505,12 @@ class NewsletterSubscriberViewSet(viewsets.ModelViewSet):
     serializer_class = NewsletterSubscriberSerializer
 
 
+
 class GetInTouchSubjectViewSet(viewsets.ModelViewSet):
     queryset = GetInTouchSubject.objects.all()
     serializer_class = GetInTouchSubjectSerializer
     http_method_names = ['get']
+
 
 
 class GetInTouchViewSet(viewsets.ModelViewSet):

@@ -23,6 +23,7 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
+
     const login = (userData) => {
         try {
             console.log("Login userData received:", userData)

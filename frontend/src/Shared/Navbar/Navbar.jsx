@@ -54,6 +54,12 @@ const Navbar = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
+  const getImageUrl = (photo) => {
+    if (!photo) return "";
+    if (photo.startsWith("http")) return photo;
+    return `http://127.0.0.1:8000${photo}`;
+  };
+
   return (
     <nav
       className={` w-full lg:fixed font-Lora z-10  lg:px-5 lg:py-2  transition-all duration-300 ${navbarBgColor} `}
@@ -226,7 +232,7 @@ const Navbar = () => {
             {user ? (
               <div className="relative flex items-center p-3">
               <img
-                src={user.photo || 'http://127.0.0.1:8000/media/users/avatar.jpg'}
+                src={getImageUrl(user.photo)}
                 alt="User Avatar"
                 className="w-8 h-8 rounded-full cursor-pointer"
                 onClick={toggleDropdown}

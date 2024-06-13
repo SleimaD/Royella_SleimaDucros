@@ -29,14 +29,10 @@ class UserSerializer(serializers.ModelSerializer):
             'credit_card_info': {'required': False},
         }
     def update(self, instance, validated_data):
-        # Update the instance with validated data
         instance.email = validated_data.get('email', instance.email)
         instance.credit_card_info = validated_data.get('credit_card_info', instance.credit_card_info)
-
-        # Handle photo update if provided
         if 'photo' in validated_data:
             instance.photo = validated_data['photo']
-
         instance.save()
         return instance
 
