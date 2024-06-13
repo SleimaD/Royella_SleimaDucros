@@ -483,3 +483,15 @@ class GalleryViewSet(viewsets.ModelViewSet):
 class NewsletterSubscriberViewSet(viewsets.ModelViewSet):
     queryset = NewsletterSubscriber.objects.all()
     serializer_class = NewsletterSubscriberSerializer
+
+
+class GetInTouchSubjectViewSet(viewsets.ModelViewSet):
+    queryset = GetInTouchSubject.objects.all()
+    serializer_class = GetInTouchSubjectSerializer
+    http_method_names = ['get']
+
+
+class GetInTouchViewSet(viewsets.ModelViewSet):
+    queryset = GetInTouch.objects.all()
+    serializer_class = GetInTouchSerializer
+    http_method_names = ['post']
