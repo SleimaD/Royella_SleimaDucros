@@ -32,6 +32,7 @@ from datetime import timedelta
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q
 import random
+from django.db.models import Avg
 
 
 logger = logging.getLogger(__name__)
@@ -195,6 +196,30 @@ class TestimonialViewSet(viewsets.ModelViewSet):
     queryset = Testimonial.objects.all()
     serializer_class = TestimonialSerializer
 
+    def perform_create(self, serializer):
+        serializer.save()
+        self.update_hotel_info()
+
+    def perform_update(self, serializer):
+        serializer.save()
+        self.update_hotel_info()
+
+    def perform_destroy(self, instance):
+        instance.delete()
+        self.update_hotel_info()
+
+    def update_hotel_info(self):
+        total_rooms = Room.objects.count()
+        room_avg_rating = Room.objects.aggregate(Avg('stars'))['stars__avg'] or 0
+        testimonial_avg_rating = Testimonial.objects.aggregate(Avg('rating'))['rating__avg'] or 0
+
+        overall_rating = (room_avg_rating + testimonial_avg_rating) / 2 if total_rooms > 0 else 0
+
+        hotel_info, created = Hotel.objects.get_or_create(id=1)
+        hotel_info.room_count = total_rooms
+        hotel_info.customer_rating = overall_rating
+        hotel_info.save()
+
 
 
 
@@ -296,7 +321,7 @@ class StandardResultsSetPagination(PageNumberPagination):
     max_page_size = 100
 
 class RoomViewSet(viewsets.ModelViewSet):
-    queryset = Room.objects.all()
+    queryset = Room.objects.all().order_by('id')
     serializer_class = RoomSerializer
     pagination_class = StandardResultsSetPagination
 
@@ -328,6 +353,30 @@ class RoomViewSet(viewsets.ModelViewSet):
 
         serializer = RoomSerializer(rooms, many=True)
         return Response(serializer.data)
+    
+    def perform_create(self, serializer):
+        serializer.save()
+        self.update_hotel_info()
+
+    def perform_update(self, serializer):
+        serializer.save()
+        self.update_hotel_info()
+
+    def perform_destroy(self, instance):
+        instance.delete()
+        self.update_hotel_info()
+
+    def update_hotel_info(self):
+        total_rooms = Room.objects.count()
+        room_avg_rating = Room.objects.aggregate(Avg('stars'))['stars__avg'] or 0
+        testimonial_avg_rating = Testimonial.objects.aggregate(Avg('rating'))['rating__avg'] or 0
+
+        overall_rating = (room_avg_rating + testimonial_avg_rating) / 2 if total_rooms > 0 else 0
+
+        hotel_info, created = Hotel.objects.get_or_create(id=1)
+        hotel_info.room_count = total_rooms
+        hotel_info.customer_rating = overall_rating
+        hotel_info.save()
     
     
     
@@ -394,3 +443,21 @@ class HomeBannerViewSet(viewsets.ModelViewSet):
 class PageBannerViewSet(viewsets.ModelViewSet):
     queryset = PageBanner.objects.all()
     serializer_class = PageBannerSerializer
+
+
+
+
+
+# class HotelViewSet(viewsets.ModelViewSet):
+#     queryset = Hotel.objects.all()
+#     serializer_class = HotelSerializer
+
+#     def retrieve(self, request, *args, **kwargs):
+#         instance = self.get_object()
+#         serializer = self.get_serializer(instance)
+#         return Response(serializer.data)
+
+
+class HotelViewSet(viewsets.ModelViewSet):
+    queryset = Hotel.objects.all()
+    serializer_class = HotelSerializer

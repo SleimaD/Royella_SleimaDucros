@@ -32,6 +32,7 @@ router.register(r'offers', OfferViewSet)
 router.register(r'members', MemberViewSet)
 router.register(r'home-banners', HomeBannerViewSet)
 router.register(r'banners', PageBannerViewSet)
+router.register(r'hotels', HotelViewSet)
 
 
 urlpatterns = [

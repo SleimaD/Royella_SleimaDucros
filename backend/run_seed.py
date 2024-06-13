@@ -27,6 +27,7 @@ if __name__ == "__main__":
    # run_offers()
    # runMembers()
    # run_banners()
+   # run_hotel()
    
 
     

@@ -2,6 +2,7 @@ from django_seed import Seed
 from .models import *
 from datetime import datetime, timedelta
 import random
+from django.db.models import Avg 
 
 
 
@@ -1151,3 +1152,32 @@ def run_banners():
 
     pks = seeder.execute()
     print(pks)
+
+
+
+
+#region Hotel
+#!hotel
+
+def run_hotel():
+    seeder = Seed.seeder()
+
+    total_rooms = Room.objects.count()
+    room_avg_rating = Room.objects.aggregate(Avg('stars'))['stars__avg'] or 0
+    testimonial_avg_rating = Testimonial.objects.aggregate(Avg('rating'))['rating__avg'] or 0
+
+    if total_rooms > 0:
+        overall_rating = (room_avg_rating + testimonial_avg_rating) / 2
+    else:
+        overall_rating = 0
+
+    seeder.add_entity(Hotel, 1, {
+        'title': 'LUXURY BEST HOTEL IN CITY CALIFORNIA, USA',
+        'subtitle': 'LUXURY HOTEL AND RESORT',
+        'description': 'Rapidiously myocardinate cross-platform intellectual capital after marketing model. Appropriately create interactive infrastructures after maintainable are Holisticly facilitate stand-alone inframe Compellingly create premier open data through economically.',
+        'image': 'hotel/hotel.jpg',
+        'room_count': total_rooms,
+        'customer_rating': overall_rating,
+    })
+
+    seeder.execute()
