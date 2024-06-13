@@ -281,3 +281,16 @@ class NewsletterSubscriberSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewsletterSubscriber
         fields = '__all__'
+
+
+
+class GetInTouchSubjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GetInTouchSubject
+        fields = "__all__"
+
+
+class GetInTouchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GetInTouch
+        fields = "__all__"
