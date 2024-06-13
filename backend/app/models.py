@@ -232,6 +232,18 @@ class NewsletterSubscriber(models.Model):
     date_subscribed = models.DateTimeField(auto_now_add=True)
 
 
+class GetInTouchSubject(models.Model):
+    subject = models.CharField(max_length=255)
+
+
+class GetInTouch(models.Model):
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+    subject = models.ForeignKey(GetInTouchSubject, on_delete=models.SET_NULL, null=True, blank=True)
+    other_subject = models.CharField(max_length=255, blank=True, null=True)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
 
 # class ContactInfo(models.Model):
