@@ -451,16 +451,17 @@ class PageBannerViewSet(viewsets.ModelViewSet):
 
 
 
-# class HotelViewSet(viewsets.ModelViewSet):
-#     queryset = Hotel.objects.all()
-#     serializer_class = HotelSerializer
-
-#     def retrieve(self, request, *args, **kwargs):
-#         instance = self.get_object()
-#         serializer = self.get_serializer(instance)
-#         return Response(serializer.data)
-
-
 class HotelViewSet(viewsets.ModelViewSet):
     queryset = Hotel.objects.all()
     serializer_class = HotelSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+
+class GalleryViewSet(viewsets.ModelViewSet):
+    queryset = Gallery.objects.all()
+    serializer_class = GallerySerializer
+
