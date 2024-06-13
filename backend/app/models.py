@@ -222,8 +222,8 @@ class Hotel(models.Model):
 
 
 
-# class Gallery(models.Model):
-#     image = models.ImageField(upload_to='gallery/', blank=True, null=True)
+class Gallery(models.Model):
+    image = models.ImageField(upload_to='gallery/', blank=True, null=True)
 
 
 
