@@ -227,18 +227,20 @@ class Gallery(models.Model):
 
 
 
+class NewsletterSubscriber(models.Model):
+    email = models.EmailField(unique=True)
+    date_subscribed = models.DateTimeField(auto_now_add=True)
+
+
 # class ContactInfo(models.Model):
 #     phone = models.CharField(max_length=20)
 #     email = models.EmailField()
 #     address = models.CharField(max_length=255)
 #     latitude = models.FloatField(blank=True, null=True)
 #     longitude = models.FloatField(blank=True, null=True)
-
-
-# class SocialMedia(models.Model):
-#     name = models.CharField(max_length=100)
-#     url = models.URLField()
-
+#     facebook = models.URLField(blank=True, null=True)
+#     twitter = models.URLField(blank=True, null=True)
+#     linkedin = models.URLField(blank=True, null=True)
 
 
 
@@ -248,12 +250,8 @@ class Gallery(models.Model):
 #     longitude = models.FloatField(blank=True, null=True)
 
 
-# class Subscriber(models.Model):
-#     email = models.EmailField(unique=True)
-#     subscribed_on = models.DateTimeField(auto_now_add=True)
 
-
-# class ContactMessage(models.Model):
+# class GetInTouch(models.Model):
 #     name = models.CharField(max_length=100)
 #     email = models.EmailField()
 #     subject = models.CharField(max_length=150)
