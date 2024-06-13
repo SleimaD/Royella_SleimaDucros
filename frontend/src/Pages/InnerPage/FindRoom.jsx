@@ -26,6 +26,50 @@ const FindRoom = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [subject, setSubject] = useState('');
+  const [otherSubject, setOtherSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [subjects, setSubjects] = useState([]);
+  const [feedback, setFeedback] = useState('');
+
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/contact-subjects/');
+        setSubjects(response.data);
+      } catch (error) {
+        console.error('Error fetching subjects:', error);
+      }
+    };
+
+    fetchSubjects();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/contact-messages/', {
+        name,
+        email,
+        subject: subject === 'other' ? null : subject,
+        other_subject: subject === 'other' ? otherSubject : '',
+        message
+      });
+      setFeedback('Message sent successfully!');
+      setName('');
+      setEmail('');
+      setSubject('');
+      setOtherSubject('');
+      setMessage('');
+    } catch (error) {
+      setFeedback('Failed to send message. Please try again.');
+      console.error('Error sending message:', error);
+    }
+  };
+
 
   useEffect(() => {
     const state = location.state;
@@ -475,76 +519,62 @@ const FindRoom = () => {
                 <h2 className="font-Garamond text-[22px] sm:text-2xl md:text-[28px] leading-7 md:leading-8 lg:leading-9 xl:leading-10 2xl:leading-[44px] text-white font-semibold text-center">
                   GET IN TOUCH
                 </h2>
-                <form className="grid items-center grid-cols-1 gap-2 mt-8">
+                <form onSubmit={handleSubmit} className="grid items-center grid-cols-1 gap-2 mt-8">
                   <input
                     type="text"
-                    className="w-full h-12 md:h-13 lg:h-[59px] px-4 border border-gray dark:border-lightGray  outline-none  bg-transparent mt-4 focus:ring-0 placeholder:text-gray focus:outline-none focus:border-lightGray text-lightGray"
+                    className="w-full h-12 md:h-13 lg:h-[59px] px-4 border border-gray dark:border-lightGray text-gray dark:text-lightGray outline-none bg-transparent mt-4 focus:ring-0 placeholder:text-gray focus:border-gray dark:focus:border-lightGray focus:outline-none"
                     placeholder="Your Name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     required
                   />
                   <input
                     type="email"
-                    className="w-full h-12 md:h-13 lg:h-[59px] px-4 border  border-gray dark:border-lightGray  outline-none  bg-transparent mt-4 focus:ring-0 placeholder:text-gray focus:outline-none focus:border-lightGray text-lightGray"
+                    className="w-full h-12 md:h-13 lg:h-[59px] px-4 border border-gray dark:border-lightGray text-gray dark:text-lightGray outline-none bg-transparent mt-4 focus:ring-0 placeholder:text-gray focus:border-gray dark:focus:border-lightGray focus:outline-none"
                     placeholder="Enter E-mail"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                   <select
-                    className="w-full h-12 md:h-13 lg:h-[59px] px-4 border border-gray dark:border-lightGray  outline-none  bg-transparent mt-4 focus:ring-0 focus:outline-none focus:border-lightGray  text-lightGray"
-                    onFocus={(e) => {
-                      e.target.size = 6;
-                    }}
-                    onBlur={(e) => {
-                      e.target.size = 0;
-                    }}
-                    onChange={(e) => {
-                      e.target.size = 1;
-                      e.target.blur();
-                    }}
+                    className="w-full h-12 md:h-13 lg:h-[59px] px-4 border border-gray dark:border-lightGray text-gray dark:text-lightGray outline-none bg-transparent mt-4 focus:ring-0 focus:border-gray dark:focus:border-lightGray focus:outline-none"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    required
                   >
-                    <option
-                      className="bg-khaki text-white px-3 py-3"
-                      value=""
-                      disabled
-                    >
-                      Select Subject
-                    </option>
-                    <option
-                      className="bg-whiteSmoke dark:bg-normalBlack text-lightBlack dark:text-white px-3 py-3"
-                      value="option1"
-                    >
-                      Subject One
-                    </option>
-                    <option
-                      className="bg-whiteSmoke dark:bg-normalBlack text-lightBlack dark:text-white px-3 py-3"
-                      value="option2"
-                    >
-                      Subject Two
-                    </option>
-                    <option
-                      className="bg-whiteSmoke dark:bg-normalBlack text-lightBlack dark:text-white px-3 py-3"
-                      value="option3"
-                    >
-                      Select Three
-                    </option>
-                    <option
-                      className="bg-whiteSmoke dark:bg-normalBlack text-lightBlack dark:text-white px-3 py-3"
-                      value="option4"
-                    >
-                      Select Four
-                    </option>
+                    <option value="" disabled>Select Subject</option>
+                    {subjects.map((subj) => (
+                      <option key={subj.id} value={subj.id}>
+                        {subj.subject}
+                      </option>
+                    ))}
+                    <option value="other">Other</option>
                   </select>
+                  {subject === 'other' && (
+                    <input
+                      type="text"
+                      className="w-full h-12 md:h-13 lg:h-[59px] px-4 border border-gray dark:border-lightGray text-gray dark:text-lightGray outline-none bg-transparent mt-4 focus:ring-0 placeholder:text-gray focus:border-gray dark:focus:border-lightGray focus:outline-none"
+                      placeholder="Other Subject"
+                      value={otherSubject}
+                      onChange={(e) => setOtherSubject(e.target.value)}
+                      required
+                    />
+                  )}
                   <textarea
-                    name=""
-                    id=""
+                    name="message"
                     cols="30"
                     rows="10"
-                    className="w-full h-[121px] px-4 border border-gray dark:border-lightGray  outline-none  bg-transparent mt-4 focus:ring-0 placeholder:text-gray focus:outline-none focus:border-lightGray  text-lightGray resize-none"
+                    className="w-full h-[121px] px-4 border border-gray dark:border-lightGray text-gray dark:text-lightGray outline-none bg-transparent mt-4 focus:ring-0 placeholder:text-gray resize-none focus:border-gray dark:focus:border-lightGray focus:outline-none"
                     placeholder="Write Message:"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    required
                   ></textarea>
-                  <button className="w-full bg-khaki text-white text-center h-10 2xl:h-[55px] mt-5 hover-animBg after:bg-normalBlack dark:after:bg-lightBlack after:rounded-none">
+                  <button className="w-full bg-khaki text-white text-center h-10 2xl:h-[55px] mt-5">
                     SEND MESSAGE
                   </button>
                 </form>
+                {feedback && <p className="mt-4 text-center text-white">{feedback}</p>}
               </div>
             </div>
           </div>
