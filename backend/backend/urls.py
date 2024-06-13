@@ -35,6 +35,8 @@ router.register(r'banners', PageBannerViewSet)
 router.register(r'hotels', HotelViewSet)
 router.register(r'galleries', GalleryViewSet)
 router.register(r'newsletter-subscribers', NewsletterSubscriberViewSet)
+router.register(r'contact-messages', GetInTouchViewSet)
+router.register(r'contact-subjects', GetInTouchSubjectViewSet)
 
 
 urlpatterns = [
