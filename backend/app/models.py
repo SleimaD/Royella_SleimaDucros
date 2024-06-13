@@ -222,6 +222,10 @@ class Hotel(models.Model):
 
 
 
+# class Gallery(models.Model):
+#     image = models.ImageField(upload_to='gallery/', blank=True, null=True)
+
+
 
 # class ContactInfo(models.Model):
 #     phone = models.CharField(max_length=20)
@@ -236,9 +240,6 @@ class Hotel(models.Model):
 #     url = models.URLField()
 
 
-
-# class Gallery(models.Model):
-#     image = models.ImageField(upload_to='gallery/')
 
 
 # class GoogleMaps(models.Model):

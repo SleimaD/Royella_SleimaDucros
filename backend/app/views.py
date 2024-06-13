@@ -223,7 +223,6 @@ class TestimonialViewSet(viewsets.ModelViewSet):
 
 
 
-
 class BlogViewSet(viewsets.ModelViewSet):
     queryset = Blog.objects.all()
     serializer_class = BlogSerializer
@@ -355,15 +354,18 @@ class RoomViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
     
     def perform_create(self, serializer):
-        serializer.save()
+        room = serializer.save()
+        logger.info(f'Room created: {room}')
         self.update_hotel_info()
 
     def perform_update(self, serializer):
-        serializer.save()
+        room = serializer.save()
+        logger.info(f'Room updated: {room}')
         self.update_hotel_info()
 
     def perform_destroy(self, instance):
         instance.delete()
+        logger.info(f'Room deleted: {instance}')
         self.update_hotel_info()
 
     def update_hotel_info(self):
@@ -373,13 +375,14 @@ class RoomViewSet(viewsets.ModelViewSet):
 
         overall_rating = (room_avg_rating + testimonial_avg_rating) / 2 if total_rooms > 0 else 0
 
+        logger.info(f'Total rooms: {total_rooms}, Room avg rating: {room_avg_rating}, Testimonial avg rating: {testimonial_avg_rating}, Overall rating: {overall_rating}')
+
         hotel_info, created = Hotel.objects.get_or_create(id=1)
         hotel_info.room_count = total_rooms
         hotel_info.customer_rating = overall_rating
         hotel_info.save()
-    
-    
-    
+        logger.info(f'Updated Hotel Info: Rooms: {hotel_info.room_count}, Rating: {hotel_info.customer_rating}')    
+
 
 
 class BookingViewSet(viewsets.ModelViewSet):
