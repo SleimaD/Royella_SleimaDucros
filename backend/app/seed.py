@@ -1229,3 +1229,26 @@ def run_gallery():
 
     pks = seeder.execute()
     print(pks)
+
+
+
+#region getintouch subjects
+#!getintouchsubjects
+
+def runSubjects():
+    seeder = Seed.seeder()
+    
+    subjects = [
+        "General Inquiry",
+        "Booking Issues",
+        "Feedback",
+        "Support",
+        "Other"
+    ]
+    
+    for subject in subjects:
+        seeder.add_entity(GetInTouchSubject, 1, {
+            'subject': subject
+        })
+    pks = seeder.execute()
+    print(pks)

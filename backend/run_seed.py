@@ -29,6 +29,7 @@ if __name__ == "__main__":
    # run_banners()
    # run_hotel()
    # run_gallery()
+   # runSubjects()
    
 
     

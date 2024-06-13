@@ -141,3 +141,4 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'hotelroyella@gmail.com'
 # EMAIL_HOST_PASSWORD = 'hotelroyella1!'  
 EMAIL_HOST_PASSWORD = 'ruak bnas qdve laks'  
+# CONTACT_EMAIL_RECEIVER = 'hotelroyella@gmail.com' 

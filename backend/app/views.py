@@ -495,3 +495,36 @@ class GetInTouchViewSet(viewsets.ModelViewSet):
     queryset = GetInTouch.objects.all()
     serializer_class = GetInTouchSerializer
     http_method_names = ['post']
+
+    def perform_create(self, serializer):
+        message = serializer.save()
+        self.send_contact_email(message)
+
+    def send_contact_email(self, message):
+        subject = f"New Contact Message from {message.name}"
+        if message.subject:
+            subject += f" - {message.subject.subject}"
+        else:
+            subject += f" - {message.other_subject}"
+        message_body = f"""
+        You have received a new contact message:
+
+        Name: {message.name}
+        Email: {message.email}
+        Subject: {message.subject.subject if message.subject else message.other_subject}
+        Message: {message.message}
+        """
+        send_mail(
+            subject,
+            message_body,
+            settings.EMAIL_HOST_USER,  
+            ['hotelroyella@gmail.com'],
+            fail_silently=False,
+        )
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
