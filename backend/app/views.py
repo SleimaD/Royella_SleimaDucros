@@ -48,6 +48,9 @@ os.environ['SSL_CERT_FILE'] = certifi.where()
 def index(request):
     return render(request, 'registration_email.html')
 
+def newssubscriber(request):
+    return render(request, 'newsletter_email.html')
+
 
 class ManagerViewSet(viewsets.ModelViewSet):
     queryset = Manager.objects.all()
@@ -250,6 +253,17 @@ class BlogViewSet(viewsets.ModelViewSet):
         blogs = Blog.objects.annotate(comment_count=Count('comments')).order_by('-comment_count')[:3]
         serializer = self.get_serializer(blogs, many=True)
         return Response(serializer.data)
+    
+    def send_newsletter(self, blog):
+        subscribers = NewsletterSubscriber.objects.all()
+        subject = 'New Blog Post: ' + blog.title
+        html_message = render_to_string('newsletter_email.html', {'blog': blog})
+        plain_message = strip_tags(html_message)
+        from_email = settings.EMAIL_HOST_USER
+        recipient_list = [subscriber.email for subscriber in subscribers]
+
+        send_mail(subject, plain_message, from_email, recipient_list, html_message=html_message)
+
 
 
 

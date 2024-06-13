@@ -41,6 +41,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('', index, name='index'),
+    path('newssubscriber', newssubscriber, name='newssubscriber'),
     path('api/register/', UserCreateView.as_view(), name='register'),
     path('api/login/', LoginView.as_view(), name='login'),
 

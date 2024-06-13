@@ -232,6 +232,8 @@ class NewsletterSubscriber(models.Model):
     date_subscribed = models.DateTimeField(auto_now_add=True)
 
 
+
+
 # class ContactInfo(models.Model):
 #     phone = models.CharField(max_length=20)
 #     email = models.EmailField()
@@ -251,9 +253,3 @@ class NewsletterSubscriber(models.Model):
 
 
 
-# class GetInTouch(models.Model):
-#     name = models.CharField(max_length=100)
-#     email = models.EmailField()
-#     subject = models.CharField(max_length=150)
-#     message = models.TextField()
-#     sent_on = models.DateTimeField(auto_now_add=True)
