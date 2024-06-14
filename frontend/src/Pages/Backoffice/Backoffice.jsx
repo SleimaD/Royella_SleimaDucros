@@ -29,7 +29,7 @@ function Backoffice() {
   };
 
   return (
-  <div className='flex w-full h-screen'>
+  <div className='flex w-full h-screen overflow-x-hidden'>
       <div className="w-[20%] h-full ">
         <Sidebarr setCurrentComponent={setCurrentComponent} currentComponent={currentComponent} />
       </div>      

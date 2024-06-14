@@ -69,9 +69,9 @@ const HeroSectionBack = () => {
     };
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-8 flex justify-center items-center gap-3 flex-wrap">
             {banners.sort((a, b) => a.order - b.order).map((banner) => (
-                <div key={banner.id} className="mb-4 p-4 shadow rounded">
+                <div key={banner.id} className="mb-4 p-4 shadow rounded  w-[30rem]">
                     {editingId === banner.id ? (
                         <form onSubmit={(e) => {
                             e.preventDefault();
@@ -82,15 +82,21 @@ const HeroSectionBack = () => {
                             <input type="number" value={banner.order} onChange={e => handleChange(banner.id, 'order', parseInt(e.target.value, 10))} className="block w-full" />
                             <input type="file" onChange={e => handleFileChange(banner.id, e.target.files)} className="block w-full" />
                             <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Save</button>
-                            <button type="button" onClick={() => setEditingId(null)} className="ml-2 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Cancel</button>
+                            <button type="button" onClick={() => setEditingId(null)} className="ml-2 bg-red-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Cancel</button>
                         </form>
                     ) : (
                         <div>
-                            <h3>{banner.title}</h3>
-                            <p>Stars: {banner.stars}</p>
-                            <p>Order: {banner.order}</p>
-                            {banner.image && <img src={banner.image} alt="Banner" className="w-32 h-32 object-cover" />}
-                            <button onClick={() => handleEdit(banner.id)} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Edit</button>
+                            <div className='flex  gap-2 '>
+                                <div className='w-[50%]'>
+                                {banner.image && <img src={banner.image} alt="Banner" className="w-full h-32 object-cover" />}
+                                </div>
+                                <div>
+                                    <h3>{banner.title}</h3>
+                                    <p>Stars: {banner.stars}</p>
+                                    <p>Order: {banner.order}</p>
+                                    <button onClick={() => handleEdit(banner.id)} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-all duration-300">Edit</button>
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>
