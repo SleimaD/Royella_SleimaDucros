@@ -74,7 +74,7 @@ const ActionBack = () => {
     if (!manager) return <div>Loading...</div>;
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-8 w-[80%]">
             <div className="bg-white shadow-lg rounded-lg overflow-hidden p-5">
                 <div className="text-center">
                     <button onClick={() => setEditMode(!editMode)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">

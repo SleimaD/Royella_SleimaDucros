@@ -65,7 +65,7 @@ const HotelBack = () => {
 
     return (
         <section className="dark:bg-mediumBlack py-20 2xl:py-[120px]">
-            <div className="Container sm:overflow-hidden lg:overflow-auto">
+            <div className="Container  w sm:overflow-hidden lg:overflow-auto">
                 {editMode ? (
                     <form onSubmit={handleSave} className="space-y-4 container w-[80%] bg-[#fdfdfd] shadow p-3">
                         {hotelInfo.image && typeof hotelInfo.image === 'string' && <img src={hotelInfo.image} alt="Hotel" className="w-[35rem] h-[20rem]" />}
@@ -77,9 +77,9 @@ const HotelBack = () => {
                         <button type="button" onClick={handleCancelEdit} className="btn-secondary bg-red-600 p-2 mx-3">Cancel</button>
                     </form>
                 ) : (
-                    <div className="md:flex flex flex-col items-center justify-between container w-[80%] shadow">
+                    <div className="md:flex flex flex-col items-center justify-between container w-[60%] shadow">
                         <div className="flex-1 keen-slider w-screen md:w-[60%] 2xl:w-[580px] md:pr-5 lg:pr-6 xl:pr-8 2xl:pr-9 3xl:pr-10 md:mt-0 pl-8">
-                            <img src={hotelInfo.image} alt="Hotel" className="w-[25rem] h-[20rem]" />
+                            <img src={hotelInfo.image} alt="Hotel" className="w-full h-[34rem]" />
                         </div>
                         <div className="flex-1 font-Garamond mt-5 md:mt-0 md:pl-8 p-5 lg:pl-10 2xl:pl-14">
                             <h5 className="text-base text-khaki leading-[26px] font-medium">{hotelInfo.subtitle}</h5>

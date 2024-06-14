@@ -89,7 +89,7 @@ const FacilitiesBack = () => {
     if (error) return <p>{error}</p>;
 
     return (
-        <div className="overflow-x-auto container w-[80%] mx-auto">
+        <div className="overflow-x-auto container w-[70%] flex flex-col justify-center mx-auto p-8">
             <button onClick={toggleAddForm} className="mb-3">
                 {showAddForm ? 'Cancel Adding' : 'Add New Facility'}
             </button>

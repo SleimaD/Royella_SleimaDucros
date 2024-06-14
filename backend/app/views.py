@@ -195,6 +195,18 @@ class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Service.objects.all().order_by('order')
     serializer_class = ServiceSerializer
 
+    @action(detail=False, methods=['post'])
+    def update_order(self, request):
+        try:
+            order = request.data.get('order', [])
+            for index, service_id in enumerate(order):
+                service = Service.objects.get(id=service_id)
+                service.order = index
+                service.save()
+            return Response({'status': 'success', 'message': 'Order updated successfully!'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'status': 'error', 'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 
