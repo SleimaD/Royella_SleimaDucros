@@ -223,7 +223,7 @@ const Navbar = () => {
             {user ? (
               <div className="relative flex items-center p-3">
               <img
-                src={user.photo || 'http://127.0.0.1:8000/media/users/avatar.jpg'}
+                src={user.photo}
                 alt="User Avatar"
                 className="w-8 h-8 rounded-full cursor-pointer"
                 onClick={toggleDropdown}

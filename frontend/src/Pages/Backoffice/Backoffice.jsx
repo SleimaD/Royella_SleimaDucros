@@ -1,15 +1,45 @@
-import React from 'react'
-import HotelAndFacilities from '../../componentsbackoffice/HotelAndFacilities/HotelAndFacilities';
-import Action from '../../componentsbackoffice/CallDoAction/Action';
+import React, { useState, useEffect } from 'react'
+import Action from './ComponentsBack/Home/ActionBack';
+import Sidebarr from './ComponentsBack/SideBar/SideBar';
+import "./ComponentsBack/SideBar/SideBar.css";
+import "./../../index.css"
+import Home from './ComponentsBack/Home/Home';
+import About from './ComponentsBack/About/About';
+import Rooms from './ComponentsBack/Rooms/Rooms';
+import Pricing from './ComponentsBack/Pricing/Pricing';
+import Blog from './ComponentsBack/Blog/Blog';
+import Contact from './ComponentsBack/Contact/Contact';
+import Footer from './ComponentsBack/Footer/Footer';
 
 
 function Backoffice() {
+  const [currentComponent, setCurrentComponent] = useState("Home");
+
+  const renderComponent = () => {
+    switch(currentComponent) {
+      case "Home": return <Home />;
+      case "About": return <About />;
+      case "Rooms": return <Rooms />;
+      case "Pricing": return <Pricing />;
+      case "Blog": return <Blog />;
+      case "Contact": return <Contact />;
+      case "Footer": return <Footer />;
+      default: return <Home />;
+    }
+  };
+
   return (
-    <div className='w-full'>
-        <HotelAndFacilities />
-        <Action />
+  <div className='flex w-full h-screen'>
+      <div className="w-[20%] h-full ">
+        <Sidebarr setCurrentComponent={setCurrentComponent} currentComponent={currentComponent} />
+      </div>      
+      <div className="transition-opacity duration-1000 ease-in-out flex-grow p-2 w-[80%] flex mt-5">
+        {renderComponent()}
+      </div>
     </div>
   )
 }
 
 export default Backoffice
+
+

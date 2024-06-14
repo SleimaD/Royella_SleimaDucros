@@ -5,9 +5,15 @@ from django.contrib.auth.hashers import make_password
 
 
 class ManagerSerializer(serializers.ModelSerializer):
+    video_url = serializers.URLField(required=False, allow_blank=True, allow_null=True)
     class Meta:
         model = Manager
         fields = '__all__'
+    def __init__(self, *args, **kwargs):
+        super(ManagerSerializer, self).__init__(*args, **kwargs)
+        if 'request' in self.context and self.context['request'].method == 'PATCH':
+            for field_name, field in self.fields.items():
+                field.required = False
 
     
 
@@ -15,6 +21,13 @@ class FacilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Facility
         fields = '__all__'
+    def __init__(self, *args, **kwargs):
+        super(FacilitySerializer, self).__init__(*args, **kwargs)
+        if self.instance is not None:
+            for field_name in self.fields:
+                field = self.fields.get(field_name)
+                if field and isinstance(field, serializers.ImageField):
+                    field.required = False
 
 
 class UserSerializer(serializers.ModelSerializer):

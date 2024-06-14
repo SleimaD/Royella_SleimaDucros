@@ -415,31 +415,94 @@ class RoomViewSet(viewsets.ModelViewSet):
 
 
 
+# class BookingViewSet(viewsets.ModelViewSet):
+#     queryset = Booking.objects.all()
+#     serializer_class = BookingSerializer
+#     permission_classes = [IsAuthenticated]
+
+#     def create(self, request, *args, **kwargs):
+#         if not request.user.is_authenticated:
+#             return Response({'detail': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+#         if not request.user.credit_card_info:
+#             return Response({'detail': 'Credit card information required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+#         room_id = request.data.get('room') 
+#         start_date = request.data.get('start_date')
+#         end_date = request.data.get('end_date')
+#         guest_count = request.data.get('guest_count')
+
+#         try:
+#             room = Room.objects.get(id=room_id)
+#         except Room.DoesNotExist:
+#             return Response({'error': 'Room not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+#         if not room.available:
+#             return Response({'error': 'Room is not available.'}, status=status.HTTP_400_BAD_REQUEST)
+
+#         overlapping_bookings = Booking.objects.filter(
+#             room=room,
+#             start_date__lt=end_date,
+#             end_date__gt=start_date
+#         )
+
+#         if overlapping_bookings.exists():
+#             return Response({'error': 'Room is already booked for the selected dates.'}, status=status.HTTP_400_BAD_REQUEST)
+
+#         booking = Booking.objects.create(
+#             user=request.user,
+#             room=room,
+#             start_date=start_date,
+#             end_date=end_date,
+#             guest_count=guest_count,
+#             status='PENDING',
+#             room_details=request.data.get('room_details', {})
+#         )
+#         return Response(self.get_serializer(booking).data, status=status.HTTP_201_CREATED)    
+
+
+logger = logging.getLogger(__name__)
+
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
+    permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
+        logger.debug("Creating a booking with data: %s", request.data)
+        
+        if not request.user.is_authenticated:
+            logger.warning("Unauthenticated booking attempt.")
+            return Response({'detail': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
+        
         if not request.user.credit_card_info:
-            return Response({'error': 'No credit card information provided.'}, status=status.HTTP_400_BAD_REQUEST)
-            
-
+            logger.warning("Booking attempt without credit card information by user %s", request.user.id)
+            return Response({'detail': 'Credit card information required'}, status=status.HTTP_400_BAD_REQUEST)
+        
         room_id = request.data.get('room')
         start_date = request.data.get('start_date')
         end_date = request.data.get('end_date')
         guest_count = request.data.get('guest_count')
 
-        room = Room.objects.get(id=room_id)
-        if room.available == False:
+        try:
+            room = Room.objects.get(id=room_id)
+            logger.info("Room %s fetched successfully for booking.", room_id)
+        except Room.DoesNotExist:
+            logger.error("Room not found: %s", room_id)
+            return Response({'error': 'Room not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if not room.available:
+            logger.info("Attempted booking for unavailable room %s", room_id)
             return Response({'error': 'Room is not available.'}, status=status.HTTP_400_BAD_REQUEST)
 
         overlapping_bookings = Booking.objects.filter(
             room=room,
             start_date__lt=end_date,
             end_date__gt=start_date
-        )
+        ).exists()
 
-        if overlapping_bookings.exists():
+        if overlapping_bookings:
+            logger.info("Booking conflict detected for room %s between %s and %s", room_id, start_date, end_date)
             return Response({'error': 'Room is already booked for the selected dates.'}, status=status.HTTP_400_BAD_REQUEST)
 
         booking = Booking.objects.create(
@@ -451,9 +514,8 @@ class BookingViewSet(viewsets.ModelViewSet):
             status='PENDING',
             room_details=request.data.get('room_details', {})
         )
+        logger.info("Booking %s created successfully.", booking.id)
         return Response(self.get_serializer(booking).data, status=status.HTTP_201_CREATED)
-    
-
 
 
 class OfferViewSet(viewsets.ModelViewSet):

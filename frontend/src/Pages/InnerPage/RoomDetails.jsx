@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { BsArrowLeft, BsArrowRight, BsCheck2 } from "react-icons/bs";
 import BreadCrumb from "../../BreadCrumb/BreadCrumb";
+import { BsArrowLeft, BsArrowRight, BsCheck2 } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -24,7 +24,6 @@ const RoomDetails = () => {
       setFinalPrice(discountedPrice);
     }
   }, [discount, room.price]);
-
 
   useEffect(() => {
     const fetchRoomDetails = async () => {
@@ -108,7 +107,7 @@ const RoomDetails = () => {
             user: user.id
           }, {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`
             }
           });
           Swal.fire({
@@ -122,6 +121,14 @@ const RoomDetails = () => {
           navigate("/reservations");
         } catch (error) {
           console.error('Error making a booking:', error);
+          Swal.fire({
+            title: "Erreur!",
+            text: "Une erreur s'est produite lors de la réservation.",
+            icon: "error",
+            confirmButtonColor: "#d33",
+            color: "#fff",
+            background: "#c19d68",
+          });
         }
       }
     });
@@ -137,7 +144,7 @@ const RoomDetails = () => {
 
   return (
     <section className="">
-      <BreadCrumb title="Room Details" />
+      <BreadCrumb title="Room Details" pageName="find_rooms" />
       <div className="py-20 2xl:py-[120px] dark:bg-lightBlack">
         <div className="Container grid grid-cols-6 md:grid-cols-7 lg:grid-cols-6 gap-5 ">
           <div className="col-span-6 md:col-span-4">
