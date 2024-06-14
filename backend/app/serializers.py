@@ -261,9 +261,19 @@ class MemberSerializer(serializers.ModelSerializer):
 
 
 class HomeBannerSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(required=False, allow_null=True, use_url=True)
+    stars = serializers.IntegerField(required=False)
+    order = serializers.IntegerField(required=False)
     class Meta:
         model = HomeBanner
         fields = '__all__'
+    def __init__(self, *args, **kwargs):
+        super(HomeBannerSerializer, self).__init__(*args, **kwargs)
+        if 'context' in kwargs:
+            request = kwargs['context'].get('request', None)
+            if request and request.method == 'PATCH':
+                for field_name, field in self.fields.items():
+                    field.required = False
 
 
 

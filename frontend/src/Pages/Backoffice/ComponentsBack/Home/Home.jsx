@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import FacilitiesBack from './FacilitiesBack';
 import ActionBack from './ActionBack';
+import HeroSectionBack from './HeroSectionBack';
 
 function Home() {
 
@@ -14,6 +15,9 @@ function Home() {
       </section>
       <section className='mt-4'>
         <ActionBack />
+      </section>
+      <section className='mt-4'>
+        <HeroSectionBack />
       </section>
     </div>
   )
