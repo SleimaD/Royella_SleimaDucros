@@ -164,8 +164,8 @@ const BlogBack = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Manage Blogs</h1>
-      <button onClick={toggleForm} className="mb-4 px-4 py-2 bg-blue-500 text-white rounded">
+      <h1 className="text-5xl text-center font-bold mb-4 font-Garamond">BLOGS</h1>
+      <button onClick={toggleForm} className="mb-4 px-4 py-2 btn-primary text-white rounded">
         {showForm ? 'Hide Form' : 'Add Blog'}
       </button>
       {showForm && (
@@ -250,21 +250,21 @@ const BlogBack = () => {
               <option value="rejected">Rejected</option>
             </select>
           </div>
-          <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
+          <button type="submit" className="px-4 py-2 btn-primary text-white rounded">
             {isEditing ? 'Update' : 'Add'} Blog
           </button>
         </form>
       )}
       <div>
         <h2 className="text-xl font-bold mb-4">Blog List</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 h-[90rem] overflow-y-auto container flex-wrap">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 h-[70rem] overflow-y-auto container flex-wrap">
           {blogs.length > 0 ? (
             blogs.map(blog => (
               <div key={blog.id} className="group">
                 <div className="relative">
-                  <img src={blog.image} className="w-full h-36 object-cover" alt={blog.title} />
+                  <img src={blog.image} className="w-full h-[12rem] object-cover" alt={blog.title} />
                 </div>
-                <div className="font-Garamond border border-gray-300 dark:border-gray-700 border-t-0">
+                <div className="font-Garamond border border-[#e8e8e8] dark:border-gray-700 border-t-0">
                   <div className="py-6 px-4">
                     <div className="flex items-center space-x-4">
                       <p className="text-sm leading-6 text-gray-600 dark:text-gray-400 font-normal uppercase mr-7 ml-3 relative before:absolute before:w-2 before:h-2 before:left-[-13px] before:bg-gray-300 dark:before:bg-khaki before:top-2">
@@ -280,12 +280,12 @@ const BlogBack = () => {
                       </h2>
                     </Link>
                   </div>
-                  <div className="border-t border-gray-300 dark:border-gray-700 py-2">
-                    <div className="px-4 flex items-center justify-between">
-                      <button onClick={() => handleEdit(blog)} className="mr-2 px-2 py-1 bg-yellow-500 text-white rounded">
+                  <div className="border-t border-[#e8e8e8] dark:border-gray-700 py-2">
+                    <div className="px-4 flex items-center justify-between py-2">
+                      <button onClick={() => handleEdit(blog)} className="mr-2 px-2 p-1  bg-khaki text-white ">
                         Edit
                       </button>
-                      <button onClick={() => handleDelete(blog.id)} className="px-2 py-1 bg-red-500 text-white rounded">
+                      <button onClick={() => handleDelete(blog.id)} className="px-2 py-1 bg-red-500 text-white ">
                         Delete
                       </button>
                     </div>

@@ -6,7 +6,7 @@ import "./../../index.css"
 import Home from './ComponentsBack/Home/Home';
 import About from './ComponentsBack/About/About';
 import Rooms from './ComponentsBack/Rooms/Rooms';
-import Pricing from './ComponentsBack/Pricing/Pricing';
+import PricingBack from './ComponentsBack/Pricing/PricingBack';
 import BlogBack from './ComponentsBack/Blog/BlogBack';
 import Contact from './ComponentsBack/Contact/Contact';
 import Footer from './ComponentsBack/Footer/Footer';
@@ -20,7 +20,7 @@ function Backoffice() {
       case "Home": return <Home />;
       // case "About": return <About />;
       case "Rooms": return <Rooms />;
-      case "Pricing": return <Pricing />;
+      case "Pricing": return <PricingBack />;
       case "Blog": return <BlogBack />;
       case "Contact": return <Contact />;
       case "Footer": return <Footer />;
