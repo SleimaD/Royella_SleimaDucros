@@ -7,7 +7,7 @@ import Home from './ComponentsBack/Home/Home';
 import About from './ComponentsBack/About/About';
 import Rooms from './ComponentsBack/Rooms/Rooms';
 import Pricing from './ComponentsBack/Pricing/Pricing';
-import Blog from './ComponentsBack/Blog/Blog';
+import BlogBack from './ComponentsBack/Blog/BlogBack';
 import Contact from './ComponentsBack/Contact/Contact';
 import Footer from './ComponentsBack/Footer/Footer';
 
@@ -18,10 +18,10 @@ function Backoffice() {
   const renderComponent = () => {
     switch(currentComponent) {
       case "Home": return <Home />;
-      case "About": return <About />;
+      // case "About": return <About />;
       case "Rooms": return <Rooms />;
       case "Pricing": return <Pricing />;
-      case "Blog": return <Blog />;
+      case "Blog": return <BlogBack />;
       case "Contact": return <Contact />;
       case "Footer": return <Footer />;
       default: return <Home />;

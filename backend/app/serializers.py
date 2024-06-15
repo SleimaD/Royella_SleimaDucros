@@ -196,17 +196,54 @@ class BlogDescriptionSerializer(serializers.ModelSerializer):
 
 
 
+User = get_user_model()
+
 class BlogSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(many=True)
-    tags = TagSerializer(many=True)
+    category = serializers.PrimaryKeyRelatedField(many=True, queryset=Category.objects.all())
+    tags = serializers.PrimaryKeyRelatedField(many=True, queryset=Tag.objects.all())
     comments = CommentSerializer(many=True, read_only=True)
-    # sections = BlogDescription(many=True)
-    author = serializers.StringRelatedField()
+    author = serializers.StringRelatedField(read_only=True)
     
     class Meta:
         model = Blog
         fields = "__all__"
+        extra_kwargs = {
+            'title': {'required': False},
+            'content': {'required': False},
+            'image': {'required': False},
+            'category': {'required': False},
+            'tags': {'required': False},
+            'status': {'required': False},
+            'author': {'read_only': True}
+        }
+        
+    def create(self, validated_data):
+        if 'request' in self.context and hasattr(self.context['request'], 'user'):
+            validated_data['author'] = self.context['request'].user
+        else:
+            default_user = User.objects.get(username='Sleima')
+            validated_data['author'] = default_user
+            print("No user found in request context.")
+        return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        category = validated_data.pop('category', None)
+        tags = validated_data.pop('tags', None)
+        
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        
+        if category is not None:
+            instance.category.set(category)
+        if tags is not None:
+            instance.tags.set(tags)
+        
+        instance.save()
+        return instance
+    
 
+    
+    
 
 
 

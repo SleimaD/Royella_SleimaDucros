@@ -33,6 +33,7 @@ from rest_framework.exceptions import ValidationError
 from django.db.models import Q
 import random
 from django.db.models import Avg
+from rest_framework.exceptions import PermissionDenied
 
 
 logger = logging.getLogger(__name__)
@@ -244,26 +245,15 @@ class TestimonialViewSet(viewsets.ModelViewSet):
         hotel_info.room_count = total_rooms
         hotel_info.customer_rating = overall_rating
         hotel_info.save()
-
+               
 
 
 
 class BlogViewSet(viewsets.ModelViewSet):
     queryset = Blog.objects.all()
-    serializer_class = BlogSerializer
+    serializer_class = BlogSerializer    
 
-    def get_permissions(self):
-        if self.action in ['create']:
-            permission_classes = [IsAuthenticated, IsRedacteurUser | IsWebmasterUser | IsAdminUser]
-        elif self.action in ['update', 'partial_update', 'destroy']:
-            permission_classes = [IsAuthenticated, IsWebmasterUser | IsAdminUser]
-        else:
-            permission_classes = [permissions.AllowAny]
-        return [permission() for permission in permission_classes]
-
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
-    
+                    
     @action(detail=False, methods=['get'])
     def latest(self, request):
         latest_blogs = Blog.objects.order_by('-posted_on')[:3]
@@ -280,24 +270,95 @@ class BlogViewSet(viewsets.ModelViewSet):
         subscribers = NewsletterSubscriber.objects.all()
         subject = 'New Blog Post: ' + blog.title
         html_message = render_to_string('newsletter_email.html', {'blog': blog})
+        print(html_message)
         plain_message = strip_tags(html_message)
         from_email = settings.EMAIL_HOST_USER
         recipient_list = [subscriber.email for subscriber in subscribers]
+        print(recipient_list)
 
         send_mail(subject, plain_message, from_email, recipient_list, html_message=html_message)
+    
 
+
+User = get_user_model()
+
+class BlogBackofficeViewSet(viewsets.ModelViewSet):
+    queryset = Blog.objects.all()
+    serializer_class = BlogSerializer
+    pagination_class = None
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        if user.is_authenticated:
+            serializer.save(author=user)
+        else:
+            raise ValidationError('User must be authenticated')
+
+                            
+    def perform_update(self, serializer):
+        request = self.request
+        if request.user.is_authenticated: 
+            serializer.save(author=request.user)
+        else:
+            
+            default_user = User.objects.filter(username='Sleima').first()
+            if default_user:
+                serializer.save(author=default_user)
+            else:
+                serializer.save()
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({
+            'request': self.request,
+        })
+        return context
+ 
+
+
+
+@api_view(['POST'])
+def add_blog(request):
+    serializer = BlogSerializer(data=request.data)
+    if serializer.is_valid():
+        blog = serializer.save()
+        send_newsletter(blog)  
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        send_newsletter(None)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+def send_newsletter(blog):
+    subscribers = NewsletterSubscriber.objects.all()
+    from_email = 'hotelroyella@gmail.com'
+    recipient_list = [subscriber.email for subscriber in subscribers]
+
+    if blog:
+        subject = 'New Blog Post: ' + blog.title
+        html_message = render_to_string('newsletter_email.html', {'blog': blog})
+        plain_message = strip_tags(html_message)
+    else:
+        subject = "New Blog Attempted!"
+        html_message = "A new blog was attempted. Check it out!"
+        plain_message = strip_tags(html_message)
+
+    send_mail(subject, plain_message, from_email, recipient_list, html_message=html_message)
 
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = [AllowAny]
 
 
 
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    permission_classes = [AllowAny]
 
 
 
@@ -313,9 +374,12 @@ class CommentViewSet(viewsets.ModelViewSet):
         return queryset
 
     def get_permissions(self):
+        print(f"Action: {self.action}")
         if self.action in ['create']:
+            logger.info(f"Action: {self.action}")
             permission_classes = [IsAuthenticated, IsRegisteredUser | IsRedacteurUser | IsWebmasterUser | IsAdminUser]
         elif self.action in ['update', 'partial_update', 'destroy']:
+            logger.info("Checking update/delete permissions")
             permission_classes = [IsAuthenticated, IsWebmasterUser | IsAdminUser]
         else:
             permission_classes = [permissions.AllowAny]

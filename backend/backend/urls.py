@@ -6,6 +6,7 @@ from app.views import *
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views import *
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
 
@@ -20,7 +21,7 @@ router.register(r'users', UserViewSet)
 router.register(r'services', ServiceViewSet)
 router.register(r'service_details', ServiceDetailViewSet)
 router.register(r'testimonials', TestimonialViewSet)
-router.register(r'blogs', BlogViewSet)
+router.register(r'blogs', BlogViewSet, basename='blog')
 router.register(r'categories', CategoryViewSet)
 router.register(r'tags', TagViewSet)
 router.register(r'comments', CommentViewSet)
@@ -37,8 +38,9 @@ router.register(r'galleries', GalleryViewSet)
 router.register(r'newsletter-subscribers', NewsletterSubscriberViewSet)
 router.register(r'contact-messages', GetInTouchViewSet)
 router.register(r'contact-subjects', GetInTouchSubjectViewSet)
+router.register(r'blog-backoffice', BlogBackofficeViewSet, basename='blog-backoffice')
 
-
+          
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
@@ -46,6 +48,7 @@ urlpatterns = [
     path('newssubscriber', newssubscriber, name='newssubscriber'),
     path('api/register/', UserCreateView.as_view(), name='register'),
     path('api/login/', LoginView.as_view(), name='login'),
+    path('api/add-blog/', add_blog, name='add_blog'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
  
