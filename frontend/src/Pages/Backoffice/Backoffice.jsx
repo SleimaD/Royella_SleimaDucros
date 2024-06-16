@@ -5,7 +5,7 @@ import "./ComponentsBack/SideBar/SideBar.css";
 import "./../../index.css"
 import Home from './ComponentsBack/Home/Home';
 import About from './ComponentsBack/About/About';
-import Rooms from './ComponentsBack/Rooms/Rooms';
+import RoomsBack from './ComponentsBack/Rooms/RoomsBack';
 import PricingBack from './ComponentsBack/Pricing/PricingBack';
 import BlogBack from './ComponentsBack/Blog/BlogBack';
 import Contact from './ComponentsBack/Contact/Contact';
@@ -19,7 +19,7 @@ function Backoffice() {
     switch(currentComponent) {
       case "Home": return <Home />;
       // case "About": return <About />;
-      case "Rooms": return <Rooms />;
+      case "Rooms": return <RoomsBack />;
       case "Pricing": return <PricingBack />;
       case "Blog": return <BlogBack />;
       case "Contact": return <Contact />;

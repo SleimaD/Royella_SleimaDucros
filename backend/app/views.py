@@ -34,6 +34,7 @@ from django.db.models import Q
 import random
 from django.db.models import Avg
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.parsers import JSONParser
 
 
 logger = logging.getLogger(__name__)
@@ -429,6 +430,7 @@ class RoomViewSet(viewsets.ModelViewSet):
     queryset = Room.objects.all().order_by('id')
     serializer_class = RoomSerializer
     pagination_class = StandardResultsSetPagination
+    parser_classes = (MultiPartParser, FormParser, JSONParser) 
 
     @action(detail=False, methods=['get'])
     def available(self, request):
@@ -464,10 +466,15 @@ class RoomViewSet(viewsets.ModelViewSet):
         logger.info(f'Room created: {room}')
         self.update_hotel_info()
 
+
     def perform_update(self, serializer):
-        room = serializer.save()
-        logger.info(f'Room updated: {room}')
-        self.update_hotel_info()
+        if serializer.is_valid():
+            room = serializer.save()
+            logger.info(f'Room updated: {room}')
+            self.update_hotel_info()
+        else:
+            logger.error(serializer.errors)
+
 
     def perform_destroy(self, instance):
         instance.delete()
@@ -488,6 +495,15 @@ class RoomViewSet(viewsets.ModelViewSet):
         hotel_info.customer_rating = overall_rating
         hotel_info.save()
         logger.info(f'Updated Hotel Info: Rooms: {hotel_info.room_count}, Rating: {hotel_info.customer_rating}')    
+    
+    @action(detail=False, methods=['get'], pagination_class=None)  
+    def all_rooms(self, request):
+        rooms = Room.objects.all().order_by('id')
+        serializer = self.get_serializer(rooms, many=True)
+        return Response(serializer.data)
+
+
+    
 
 
 

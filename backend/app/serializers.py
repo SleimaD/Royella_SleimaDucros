@@ -268,11 +268,24 @@ class RoomImageSerializer(serializers.ModelSerializer):
 class RoomSerializer(serializers.ModelSerializer):
     descriptions = RoomDescriptionSerializer(many=True, read_only=True)
     amenities = AmenitySerializer(many=True, read_only=True)
-    images = RoomImageSerializer(many=True, read_only=True)
+    images = RoomImageSerializer(many=True, read_only=True, required=False)
 
     class Meta:
         model = Room
         fields = '__all__'
+        extra_kwargs = {
+            'id': {'required': False},
+            'name': {'required': False},
+            'description': {'required': False},
+            'price': {'required': False},
+            'image': {'required': False, 'allow_null': True},
+            'available': {'required': False},
+            'max_guests': {'required': False},
+            'amenities': {'required': False},
+            'stars': {'required': False},
+            'beds': {'required': False},
+            'dimensions': {'required': False},
+        }
 
 
 
@@ -282,12 +295,21 @@ class BookingSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
+
 class OfferSerializer(serializers.ModelSerializer):
-    room = RoomSerializer()
+    room_id = serializers.PrimaryKeyRelatedField(queryset=Room.objects.all(), write_only=True, source='room')
+    room = RoomSerializer(read_only=True)
 
     class Meta:
         model = Offer
-        fields = '__all__'
+        fields = "__all__"
+
+    def create(self, validated_data):
+        room = validated_data.pop('room')
+        offer = Offer.objects.create(room=room, **validated_data)
+        return offer
+    
 
 
 class MemberSerializer(serializers.ModelSerializer):
