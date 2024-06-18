@@ -380,3 +380,10 @@ class GetInTouchSerializer(serializers.ModelSerializer):
     
     def get_subject_text(self, obj):
         return obj.subject.subject if obj.subject else None
+
+
+
+class ContactInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactInfo
+        fields = '__all__'
