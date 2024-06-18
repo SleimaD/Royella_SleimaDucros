@@ -39,6 +39,7 @@ router.register(r'newsletter-subscribers', NewsletterSubscriberViewSet)
 router.register(r'contact-messages', GetInTouchViewSet)
 router.register(r'contact-subjects', GetInTouchSubjectViewSet)
 router.register(r'blog-backoffice', BlogBackofficeViewSet, basename='blog-backoffice')
+router.register(r'contact-info', ContactInfoViewSet)
 
           
 urlpatterns = [

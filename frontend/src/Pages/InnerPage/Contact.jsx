@@ -12,6 +12,13 @@ const Contact = () => {
   const [message, setMessage] = useState('');
   const [subjects, setSubjects] = useState([]);
   const [feedback, setFeedback] = useState('');
+  const [contactInfo, setContactInfo] = useState({
+    phone: '',
+    email: '',
+    address: '',
+    latitude: '',
+    longitude: '',
+  });
 
   useEffect(() => {
     const fetchSubjects = async () => {
@@ -48,6 +55,23 @@ const Contact = () => {
     }
   };
 
+
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/contact-info/');
+        setContactInfo(response.data[0]);  
+      } catch (error) {
+        console.error('Failed to fetch contact info:', error);
+      }
+    };
+
+    fetchContactInfo();
+  }, []);
+
+
+
+
   return (
     <div>
       <BreadCrumb title="Contact " pageName="contact" />
@@ -77,7 +101,7 @@ const Contact = () => {
                     Call Us Now
                   </p>
                   <p className="font-Garamond text-lg sm:text-xl md:text-[22px] leading-[26px] text-lightBlack dark:text-white font-medium">
-                    +980 123 (4567) 890
+                    {contactInfo.phone}
                   </p>
                 </div>
               </div>
@@ -92,7 +116,7 @@ const Contact = () => {
                     Send Email
                   </p>
                   <p className="font-Garamond text-lg sm:text-xl md:text-[22px] leading-[26px] text-lightBlack dark:text-white font-medium">
-                    example@gmail.com
+                    {contactInfo.email}
                   </p>
                 </div>
               </div>
@@ -107,8 +131,7 @@ const Contact = () => {
                     Our Locations
                   </p>
                   <p className="font-Garamond text-lg sm:text-xl md:text-[22px] leading-[26px] text-lightBlack dark:text-white font-medium">
-                    New elephant Road, Dhanmondi <br />
-                    Dhaka - 1212
+                    {contactInfo.address}
                   </p>
                 </div>
               </div>
@@ -182,7 +205,7 @@ const Contact = () => {
 
       <div data-aos="fade-down" data-aos-duration="1000">
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387190.279909073!2d-74.25987368715491!3d40.69767006458873!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2sbd!4v1633418400558!5m2!1sen!2sbd"
+          src={`https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d10000!2d${contactInfo.longitude}!3d${contactInfo.latitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2s!4v0&zoom=15`}
           height={450}
           allowFullScreen=""
           loading="lazy"
