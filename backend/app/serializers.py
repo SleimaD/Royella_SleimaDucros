@@ -172,14 +172,15 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    # author = serializers.StringRelatedField() 
     author_photo = serializers.SerializerMethodField()
     author_name = serializers.CharField(source='author.username', read_only=True)
+    author = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
-    
+
     class Meta:
         model = Comment
         fields ="__all__"
+
 
     def get_author_photo(self, obj):
         request = self.context.get('request')
@@ -203,7 +204,7 @@ class BlogSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(many=True, queryset=Category.objects.all())
     tags = serializers.PrimaryKeyRelatedField(many=True, queryset=Tag.objects.all())
     comments = CommentSerializer(many=True, read_only=True)
-    author = serializers.StringRelatedField(read_only=True)
+    author = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     
     class Meta:
         model = Blog
@@ -215,18 +216,19 @@ class BlogSerializer(serializers.ModelSerializer):
             'category': {'required': False},
             'tags': {'required': False},
             'status': {'required': False},
-            'author': {'read_only': True}
         }
         
+     
     def create(self, validated_data):
-        if 'request' in self.context and hasattr(self.context['request'], 'user'):
-            validated_data['author'] = self.context['request'].user
-        else:
-            default_user = User.objects.get(username='Sleima')
-            validated_data['author'] = default_user
-            print("No user found in request context.")
-        return super().create(validated_data)
+        categories_data = validated_data.pop('category', [])
+        tags_data = validated_data.pop('tags', [])        
+        blog = Blog.objects.create(**validated_data)
+        blog.category.set(categories_data)
+        blog.tags.set(tags_data)
+        
+        return blog
     
+
     def update(self, instance, validated_data):
         category = validated_data.pop('category', None)
         tags = validated_data.pop('tags', None)

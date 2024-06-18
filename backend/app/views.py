@@ -341,6 +341,27 @@ def add_blog(request):
 
 
 
+
+@api_view(['POST'])
+def add_blog_for_writer(request):
+    data = request.data.copy()
+    user_id = data.get('author_id')
+    
+    if user_id:
+        data['author'] = user_id
+    else:
+        return Response({"error": "Missing author ID"}, status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = BlogSerializer(data=data)
+    if serializer.is_valid():
+        blog = serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
 def send_newsletter(blog):
     subscribers = NewsletterSubscriber.objects.all()
     from_email = 'hotelroyella@gmail.com'
@@ -373,6 +394,7 @@ class TagViewSet(viewsets.ModelViewSet):
 
 
 
+
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
@@ -383,29 +405,27 @@ class CommentViewSet(viewsets.ModelViewSet):
         if blog_id is not None:
             queryset = queryset.filter(blog=blog_id)
         return queryset
-    
 
     def get_permissions(self):
-        print(f"Action: {self.action}")
-        if self.action in ['create']:
-            logger.info(f"Action: {self.action}")
-            permission_classes = [IsAuthenticated, IsRegisteredUser | IsRedacteurUser | IsWebmasterUser | IsAdminUser]
+        if self.action == 'create':
+            permission_classes = [AllowAny]
         elif self.action in ['update', 'partial_update', 'destroy']:
-            logger.info("Checking update/delete permissions")
-            permission_classes = [IsAuthenticated, IsWebmasterUser | IsAdminUser]
+            permission_classes = [IsAuthenticated]
         else:
-            permission_classes = [permissions.AllowAny]
+            permission_classes = [AllowAny]
         return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        author_id = self.request.data.get('author')
+        blog_id = self.request.data.get('blog')
+        if author_id and blog_id:
+            author = User.objects.get(id=author_id)
+            blog = Blog.objects.get(id=blog_id)
+            serializer.save(author=author, blog=blog)
+        else:
+            raise serializers.ValidationError({"author": "Author and Blog are required."})
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context.update({
-            "request": self.request,
-        })
-        return context
+
 
 
 

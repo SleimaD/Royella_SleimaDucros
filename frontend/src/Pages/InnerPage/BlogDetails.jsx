@@ -1,7 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import BreadCrumb from "../../BreadCrumb/BreadCrumb";
 import BlogSideBar from "./BlogSideBar";
-import { BiChevronsRight } from "react-icons/bi";
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../RolesRoutes/AuthProvider";
@@ -13,13 +12,21 @@ const BlogDetails = () => {
   const [comments, setComments] = useState([]);
   const [popularPosts, setPopularPosts] = useState([]);
   const [newComment, setNewComment] = useState({ content: '' });
-  const [descriptions, setDescriptions] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [tags, setTags] = useState([]);
 
   useEffect(() => {
     fetchBlogDetails();
     fetchPopularPosts();
-    fetchDescriptions();
+    fetchComments();
   }, [id]);
+
+  useEffect(() => {
+    if (blogData) {
+      fetchCategoryDetails(blogData.category);
+      fetchTagsDetails(blogData.tags);
+    }
+  }, [blogData]);
 
   const fetchBlogDetails = async () => {
     try {
@@ -48,20 +55,27 @@ const BlogDetails = () => {
     }
   };
 
-  const fetchDescriptions = async () => {
+  const fetchCategoryDetails = async (categoryIds) => {
+    if (!categoryIds || categoryIds.length === 0) return;
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/descriptions/?blog=${id}`);
-      setDescriptions(response.data);
+      const response = await axios.get(`http://127.0.0.1:8000/api/categories/`);
+      const filteredCategories = response.data.filter(cat => categoryIds.includes(cat.id));
+      setCategories(filteredCategories);
     } catch (error) {
-      console.error('Error fetching descriptions:', error);
+      console.error('Error fetching category details:', error);
     }
   };
 
-  useEffect(() => {
-    if (blogData) {
-      fetchComments();
+  const fetchTagsDetails = async (tagIds) => {
+    if (!tagIds || tagIds.length === 0) return;
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/api/tags/`);
+      const filteredTags = response.data.filter(tag => tagIds.includes(tag.id));
+      setTags(filteredTags);
+    } catch (error) {
+      console.error('Error fetching tag details:', error);
     }
-  }, [blogData]);
+  };
 
   const handleCommentChange = (e) => {
     const { name, value } = e.target;
@@ -80,6 +94,9 @@ const BlogDetails = () => {
       setNewComment({ content: '' });
     } catch (error) {
       console.error('Error posting comment:', error);
+      if (error.response && error.response.data) {
+        console.error('Response error data:', error.response.data);
+      }
     }
   };
 
@@ -105,19 +122,18 @@ const BlogDetails = () => {
                 <p className="text-base font-Garamond text-gray dark:text-lightGray">
                   <span>{new Date(blogData.posted_on).toLocaleDateString()} </span>
                   <span className="mx-2">/</span>
-                  <span>{blogData.category && blogData.category.map(cat => cat.name).join(', ')}</span>
+                  <span>{categories.map(cat => cat.name).join(', ')}</span>
                 </p>
                 <h2 className="py-2 sm:py-3 md:py-4 lg:py-[19px] 2xl:py-[25px] font-Garamond text-[22px] sm:text-2xl md:text-3xl lg:text-4xl 2xl:text-[38px] 3xl:text-[40px] leading-6 lg:leading-[26px] text-lightBlack dark:text-white font-semibold">
                   {blogData.title}
                 </h2>
                 <p className="text-sm lg:text-base leading-6 text-gray dark:text-lightGray font-normal font-Lora">
                   {blogData.content}
-                  ferge
                 </p>
               </div>
 
               <div className="flex flex-wrap justify-center items-center w-full gap-4 pt-10">
-                {descriptions.map((description) => (
+                {blogData.descriptions && blogData.descriptions.map((description) => (
                   <div key={description.id} className="" data-aos="fade-up" data-aos-duration="1000">
                     {description.image && (
                         <img src={description.image} alt={description.title} className="w-[22rem] h-[17rem]" />
@@ -126,9 +142,7 @@ const BlogDetails = () => {
                 ))}
               </div>
 
-
-
-              {descriptions.map((description, index) => (
+              {blogData.descriptions && blogData.descriptions.map((description, index) => (
                 <div key={index} className="pt-10" data-aos="fade-up" data-aos-duration="1000">
                   {description.title && (
                     <h2 className="pb-2 sm:pb-3 md:pb-4 lg:pb-[19px] 2xl:pb-6 font-Garamond text-lg sm:text-xl md:text-2xl xl:text-[28px] leading-6 lg:leading-7 text-lightBlack dark:text-white font-semibold">
@@ -147,7 +161,7 @@ const BlogDetails = () => {
                   <h5 className="text-lg text-[#101010] dark:text-white leading-[28px] font-semibold font-Garamond mr-2">
                     Tags :
                   </h5>
-                  {blogData.tags && blogData.tags.map(tag => (
+                  {tags.map(tag => (
                     <span key={tag.id} className="text-sm border-[1px] border-lightGray dark:border-gray px-3 py-1 dark:text-white">
                       {tag.name}
                     </span>
@@ -183,12 +197,11 @@ const BlogDetails = () => {
                         {comment.author_photo && (
                           <img src={comment.author_photo} alt={comment.author_name} className="w-[70px] h-[70px] rounded-full" />
                         )}
-                        {/* <img src={comment.author.photo} alt="" className="w-[70px] h-[70px]" /> */}
                         <div className="ml-3 2xl:ml-4 flex-grow">
                           <div className="flex justify-between items-center">
                             <div className="flex items-center">
                               <span className="text-base sm:text-lg lg:text-xl font-Garamond font-semibold leading-6 md:leading-7 text-lightBlack dark:text-white">
-                                {comment.author.name}
+                                {comment.author_name}
                               </span>
                               <hr className="w-[10px] sm:w-[27px] h-[1px] text-lightBlack dark:text-white mx-1 sm:mx-2" />
                               <span className="text-[13px] sm:text-[15px] font-Lora font-normal text-gray dark:text-lightGray">
@@ -210,7 +223,7 @@ const BlogDetails = () => {
               </div>
 
               {/* Comment form */}
-              {user && (
+              {user && user.role === 'Utilisateur' && (
                 <div data-aos="fade-up" data-aos-duration="1000">
                   <h3 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl 2xl:text-[32px] text-lightBlack dark:text-white font-semibold font-Garamond mb-5 2xl:mb-[30px]">
                     Leave A Comment
@@ -220,32 +233,25 @@ const BlogDetails = () => {
                       <input
                         type="text"
                         name="name"
-                        value={newComment.name}
+                        value={user.username} 
                         onChange={handleCommentChange}
                         className="w-full h-[50px] border-none outline-none focus:ring-0 placeholder:text-base placeholder:text-lightGray placeholder:leading-[38px] placeholder:font-Lora placeholder:font-normal px-5 dark:bg-normalBlack bg-whiteSmoke dark:text-white"
                         placeholder="Your Name"
                         id="name"
+                        disabled 
                       />
                       <input
                         type="email"
                         name="email"
-                        value={newComment.email}
+                        value={user.email} 
                         onChange={handleCommentChange}
                         className="w-full h-[50px] border-none outline-none focus:ring-0 placeholder:text-base placeholder:text-lightGray placeholder:leading-[38px] placeholder:font-Lora placeholder:font-normal px-5 dark:bg-normalBlack bg-whiteSmoke dark:text-white"
                         placeholder="Email Address"
                         id="email"
+                        disabled 
                       />
                     </div>
                     <div className="grid items-center gap-5 mb-5 md:mb-0">
-                      <input
-                        type="text"
-                        name="website"
-                        value={newComment.website}
-                        onChange={handleCommentChange}
-                        className="w-full h-[50px] border-none outline-none focus:ring-0 placeholder:text-base placeholder:text-lightGray placeholder:leading-[38px] placeholder:font-Lora placeholder:font-normal px-5 dark:bg-normalBlack bg-whiteSmoke dark:text-white"
-                        placeholder="Your Website"
-                        id="website"
-                      />
                       <textarea
                         className="w-full h-[160px] border-none outline-none focus:ring-0 placeholder:text-base placeholder:text-lightGray placeholder:leading-[38px] placeholder:font-Lora placeholder:font-normal px-5 dark:bg-normalBlack bg-whiteSmoke dark:text-white resize-none"
                         placeholder="Type Your Comment"

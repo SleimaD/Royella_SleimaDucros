@@ -50,7 +50,8 @@ urlpatterns = [
     path('api/login/', LoginView.as_view(), name='login'),
     path('api/add-blog/', add_blog, name='add_blog'),
     path('api/create_booking/', create_booking, name='create_booking'),
-    path("profile-update/<int:id>/", update_profile)
+    path("profile-update/<int:id>/", update_profile),
+    path("api/add-blog-for-writer/", add_blog_for_writer)
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
  
