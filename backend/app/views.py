@@ -701,3 +701,9 @@ class GetInTouchViewSet(viewsets.ModelViewSet):
 
     def perform_destroy(self, instance):
         instance.delete()
+
+
+
+class ContactInfoViewSet(viewsets.ModelViewSet):
+    queryset = ContactInfo.objects.all()
+    serializer_class = ContactInfoSerializer
