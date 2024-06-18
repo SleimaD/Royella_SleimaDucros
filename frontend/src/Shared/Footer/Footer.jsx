@@ -12,6 +12,14 @@ const Footer = () => {
   const [randomGallery, setRandomGallery] = useState([]);
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [contactInfo, setContactInfo] = useState({
+    phone: '',
+    email: '',
+    address: '',
+    latitude: '',
+    longitude: '',
+  });
+
 
   useEffect(() => {
     const fetchGallery = async () => {
@@ -49,6 +57,22 @@ const Footer = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/contact-info/');
+        setContactInfo(response.data[0]);  
+      } catch (error) {
+        console.error('Failed to fetch contact info:', error);
+      }
+    };
+
+    fetchContactInfo();
+  }, []);
+
+
+
+
   return (
     <>
       <Brand />
@@ -74,45 +98,39 @@ const Footer = () => {
                         className="text-khaki w-5 h-5 mr-3 2xl:mr-4"
                         size={14}
                       />
-                      +980 (1234) 567 220
+                      {contactInfo.phone}
                     </p>
                     <p className="flex items-center text-lightGray font-Lora font-normal text-sm sm:text-base leading-[26px]">
                       <BiEnvelope
                         className="text-khaki w-5 h-5 mr-3 2xl:mr-4"
                         size={14}
                       />
-                      example@yahoo.com
+                      {contactInfo.email}
                     </p>
                     <p className="flex items-center text-lightGray font-Lora font-normal text-sm sm:text-base leading-[26px]">
                       <IoLocationSharp
                         className="text-khaki w-5 h-5 mr-3 2xl:mr-4"
                         size={14}
                       />
-                      102/B New Elephant Rd <br />
-                      Dhaka - 1212
+                      {contactInfo.address}
                     </p>
                   </div>
                 </div>
                 <div>
                   <ul className="flex space-x-3">
                     <li className="hover-animBg group transition-all duration-300 rounded-full border border-lightGray border-opacity-75 hover:border-khaki cursor-pointer w-[37px] h-[37px] grid items-center justify-center">
-                      <Link to="#" className="">
+                      <Link to="https://www.facebook.com/molengeek/" className="">
                         <FaFacebookF className="text-lightGray text-opacity-75 group-hover:text-white group-hover:text-slateBlue-0 w-4 h-4" />
                       </Link>
                     </li>
                     <li className="hover-animBg group transition-all duration-300 rounded-full border border-lightGray border-opacity-75 hover:border-khaki cursor-pointer w-[37px] h-[37px] grid items-center justify-center">
-                      <Link to="#">
+                      <Link to="https://twitter.com/molengeek">
                         <FaTwitter className="text-lightGray text-opacity-75 group-hover:text-white group-hover:text-slateBlue-0 w-4 h-4" />
                       </Link>
                     </li>
                     <li className="hover-animBg group transition-all duration-300 rounded-full border border-lightGray border-opacity-75 hover:border-khaki cursor-pointer w-[37px] h-[37px] grid items-center justify-center">
-                      <Link to="#">
+                      <Link to="https://www.instagram.com/molengeek/">
                         <BiLogoLinkedin className="text-lightGray text-opacity-75 group-hover:text-white group-hover:text-slateBlue-0 w-4 h-4" />
-                      </Link>
-                    </li>
-                    <li className="hover-animBg group transition-all duration-300 rounded-full border border-lightGray border-opacity-75 hover:border-khaki cursor-pointer w-[37px] h-[37px] grid items-center justify-center">
-                      <Link to="#">
-                        <FaPinterestP className="text-lightGray text-opacity-75 group-hover:text-white group-hover:text-slateBlue-0 w-4 h-4" />
                       </Link>
                     </li>
                   </ul>
@@ -131,19 +149,16 @@ const Footer = () => {
               <div className="pt-[30px] pb-0 lg:py-[30px]">
                 <ul className="text-lightGray font-Lora font-normal text-sm sm:text-base leading-[26px] list-none hover:list-disc">
                   <li className="hover:ml-[17px] md:hover:ml-[18px] transition-all duration-500 hover:text-khaki leading-[44px]">
-                    <Link to="#">About Hotel</Link>
+                    <Link to="/about">About Hotel</Link>
                   </li>
                   <li className="hover:ml-[17px] md:hover:ml-[18px] transition-all duration-500 hover:text-khaki leading-[44px]">
-                    <Link to="#">Rooms & Suites</Link>
+                    <Link to="/find_room">Rooms & Suites</Link>
                   </li>
                   <li className="hover:ml-[17px] md:hover:ml-[18px] transition-all duration-500 hover:text-khaki leading-[44px]">
-                    <Link to="#">Reservations</Link>
+                    <Link to="/blog">News & Blogs</Link>
                   </li>
                   <li className="hover:ml-[17px] md:hover:ml-[18px] transition-all duration-500 hover:text-khaki leading-[44px]">
-                    <Link to="#">News & Blogs</Link>
-                  </li>
-                  <li className="hover:ml-[17px] md:hover:ml-[18px] transition-all duration-500 hover:text-khaki leading-[44px]">
-                    <Link to="#">Contact Us</Link>
+                    <Link to="/contact" >Contact Us</Link>
                   </li>
                 </ul>
               </div>
