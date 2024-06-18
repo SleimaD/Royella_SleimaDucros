@@ -42,6 +42,7 @@ const RegistrationForm = () => {
             const response = await axios.post('http://localhost:8000/api/register/', data);
             console.log('Registration successful', response.data);
             alert('Registration successful. Check your email for confirmation.');
+            window.location.reload();
         } catch (error) {
             console.error('Registration failed', error.response);
             alert('Registration failed: ' + (error.response?.data?.detail || 'Unknown error'));

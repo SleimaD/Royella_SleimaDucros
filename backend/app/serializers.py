@@ -37,6 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
         extra_kwargs = {
+            'username': {'required': False, 'validators': []},
             'password': {'write_only': True, 'required': False},
             'photo': {'required': False},
             'credit_card_info': {'required': False},
@@ -369,6 +370,11 @@ class GetInTouchSubjectSerializer(serializers.ModelSerializer):
 
 
 class GetInTouchSerializer(serializers.ModelSerializer):
+    subject_text = serializers.SerializerMethodField()
+
     class Meta:
         model = GetInTouch
         fields = "__all__"
+    
+    def get_subject_text(self, obj):
+        return obj.subject.subject if obj.subject else None

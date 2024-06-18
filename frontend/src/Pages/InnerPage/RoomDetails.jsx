@@ -14,7 +14,7 @@ const RoomDetails = () => {
   const location = useLocation();
   const bookingsData = location.state;
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const { room, discount } = location.state;
   const [finalPrice, setFinalPrice] = useState(room.price);
 
@@ -66,7 +66,7 @@ const RoomDetails = () => {
       });
       return;
     }
-
+  
     if (!user.credit_card_info) {
       Swal.fire({
         title: "Attention!",
@@ -85,21 +85,43 @@ const RoomDetails = () => {
       });
       return;
     }
-
-    Swal.fire({
-      title: "Êtes-vous sûr?",
-      text: "Vous allez réserver cette chambre.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#008000",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Oui, je suis sûr!",
-      color: "#fff",
-      background: "#c19d68",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await axios.post('http://127.0.0.1:8000/api/bookings/', {
+  
+    try {
+      const availabilityResponse = await axios.post('http://127.0.0.1:8000/api/check_availability/', {
+        room: roomData.id,
+        start_date: bookingsData.selectedInDate,
+        end_date: bookingsData.selectedOutDate,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+  
+      if (!availabilityResponse.data.isAvailable) {
+        Swal.fire({
+          title: "Non Disponible!",
+          text: "La chambre n'est pas disponible aux dates sélectionnées.",
+          icon: "error",
+          confirmButtonColor: "#d33",
+          color: "#fff",
+          background: "#c19d68",
+        });
+        return;
+      }
+  
+      Swal.fire({
+        title: "Êtes-vous sûr?",
+        text: "Vous allez réserver cette chambre.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#008000",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Oui, je suis sûr!",
+        color: "#fff",
+        background: "#c19d68",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const bookingResponse = await axios.post('http://127.0.0.1:8000/api/create_booking/', {
             room: roomData.id,
             start_date: bookingsData.selectedInDate,
             end_date: bookingsData.selectedOutDate,
@@ -107,7 +129,7 @@ const RoomDetails = () => {
             user: user.id
           }, {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+              Authorization: `Bearer ${token}`
             }
           });
           Swal.fire({
@@ -119,20 +141,22 @@ const RoomDetails = () => {
             background: "#c19d68",
           });
           navigate("/reservations");
-        } catch (error) {
-          console.error('Error making a booking:', error);
-          Swal.fire({
-            title: "Erreur!",
-            text: "Une erreur s'est produite lors de la réservation.",
-            icon: "error",
-            confirmButtonColor: "#d33",
-            color: "#fff",
-            background: "#c19d68",
-          });
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error('Error during the booking or availability check:', error);
+      Swal.fire({
+        title: "Erreur!",
+        text: "Cette chambre n'est pas disponible aux dates sélectionnées.",
+        icon: "error",
+        confirmButtonColor: "#d33",
+        color: "#fff",
+        background: "#c19d68",
+      });
+    }
   };
+  
+
 
   if (!roomData) {
     return <div>Loading...</div>;

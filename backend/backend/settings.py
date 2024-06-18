@@ -46,10 +46,19 @@ MIDDLEWARE = [
 
 ]
 
+
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:5173', 'http://localhost:3000']
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+
 
 ROOT_URLCONF = 'backend.urls'
+
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 TEMPLATES = [
     {
@@ -142,3 +151,13 @@ EMAIL_HOST_USER = 'hotelroyella@gmail.com'
 # EMAIL_HOST_PASSWORD = 'hotelroyella1!'  
 EMAIL_HOST_PASSWORD = 'ruak bnas qdve laks'  
 # CONTACT_EMAIL_RECEIVER = 'hotelroyella@gmail.com' 
+
+
+
+
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework_simplejwt.authentication.JWTAuthentication',
+#     ),
+# }
+

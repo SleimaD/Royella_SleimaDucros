@@ -53,13 +53,9 @@ class RoomDescription(models.Model):
 class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
-    room_nbr = models.IntegerField()
     start_date = models.DateField()
     end_date = models.DateField()
-    guest_count = models.IntegerField()
-    status = models.CharField(max_length=10, choices=[('PENDING', 'Pending'), ('CONFIRMED', 'Confirmed'), ('CANCELLED', 'Cancelled')])
-    room_details = models.JSONField(default=dict)
-    booking_group = models.CharField(max_length=100, blank=True, null=True)
+    status = models.CharField(max_length=10, choices=[('PENDING', 'Pending'), ('CONFIRMED', 'Confirmed'), ('CANCELLED', 'Cancelled')], default='PENDING')
 
 
 

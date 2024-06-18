@@ -88,7 +88,7 @@ const HotelAndFacilities = () => {
                 }
                 @media (min-width: 768px) {
                   .facility-card:hover::before {
-                    width: 114%;
+                    width: 100%;
                   }
                 }
                 @media (min-width: 1280px) {
@@ -96,7 +96,7 @@ const HotelAndFacilities = () => {
                     right: -222px;
                   }
                   .facility-card:hover::before {
-                    width: 116%;
+                    width: 100%;
                   }
                 }
                 @media (min-width: 1920px) {

@@ -101,6 +101,7 @@ const Login = () => {
               login(userData);
               localStorage.setItem('user', JSON.stringify(userData)); 
               console.log('Login successful', response.data);
+              window.location.reload();
               navigate('/'); 
           }
       } catch (err) {

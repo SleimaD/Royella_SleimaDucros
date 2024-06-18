@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../../RolesRoutes/AuthProvider";
+import { useAuth } from "../../RolesRoutes/AuthProvider"; 
 
 const Profile = () => {
-    const { user, login } = useAuth();
+    const { user, updateUser } = useAuth();
     const [email, setEmail] = useState(user?.email || "");
     const [creditCardInfo, setCreditCardInfo] = useState(user?.credit_card_info || "");
     const [username, setUsername] = useState(user?.username || "");
-    const [firstName, setFirstName] = useState(user?.first_name || "");
-    const [lastName, setLastName] = useState(user?.last_name || "");
     const [photo, setPhoto] = useState(null);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
 
     useEffect(() => {
+        console.log("User data:", user);
         setEmail(user?.email || "");
         setCreditCardInfo(user?.credit_card_info || "");
         setUsername(user?.username || "");
-        setFirstName(user?.first_name || "");
-        setLastName(user?.last_name || "");
     }, [user]);
 
     const handleSave = async () => {
@@ -26,33 +23,40 @@ const Profile = () => {
             return;
         }
 
+        if (!user?.id) {
+            setMessage("User ID is undefined. Cannot proceed with saving.");
+            return;
+        }
+
         const formData = new FormData();
         formData.append("username", username);
         formData.append("email", email);
-        formData.append("first_name", firstName);
-        formData.append("last_name", lastName);
         formData.append("credit_card_info", creditCardInfo);
         if (photo) {
-            formData.append("photo", photo);  
+            formData.append("photo", photo);
         }
 
+        setLoading(true);
+        setMessage("");
         try {
-            setLoading(true);
-            const response = await fetch(`http://127.0.0.1:8000/api/users/profile-update/`, {
-                method: "POST",
+            const response = await fetch(`http://127.0.0.1:8000/profile-update/${user.id}/`, {
+                method: "PUT",
                 headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                    "X-CSRFToken": getCookie("csrftoken")
                 },
-                body: formData
+                body: formData,
+                credentials: 'include'
+                
             });
 
             if (response.ok) {
                 const updatedUser = await response.json();
-                login(updatedUser);  
+                updateUser(updatedUser.data);
                 setMessage("Profile updated successfully!");
             } else {
                 const errorData = await response.json();
-                setMessage(errorData.message || "Failed to update profile");
+                setMessage(errorData.message || "Failed to update profile.");
             }
         } catch (error) {
             setMessage("An error occurred while updating the profile: " + error.toString());
@@ -60,6 +64,21 @@ const Profile = () => {
             setLoading(false);
         }
     };
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 
     return (
         <div className="w-full h-screen p-4 flex justify-center items-center flex-col">
@@ -72,24 +91,6 @@ const Profile = () => {
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        className="mt-1 block w-full border border-gray-300 rounded-md"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700">First Name</label>
-                    <input
-                        type="text"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                        className="mt-1 block w-full border border-gray-300 rounded-md"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700">Last Name</label>
-                    <input
-                        type="text"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
                         className="mt-1 block w-full border border-gray-300 rounded-md"
                     />
                 </div>

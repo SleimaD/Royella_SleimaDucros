@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from .models import *
 from .serializers import *
 import json
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -35,6 +35,19 @@ import random
 from django.db.models import Avg
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.parsers import JSONParser
+from rest_framework.filters import SearchFilter
+from datetime import datetime
+from django.http import Http404
+from rest_framework.exceptions import AuthenticationFailed, NotFound
+import jwt
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework_simplejwt.exceptions import TokenError
+from django.utils.dateparse import parse_datetime
 
 
 logger = logging.getLogger(__name__)
@@ -112,6 +125,7 @@ class LoginView(APIView):
                     'refresh': str(refresh),
                     'access': str(refresh.access_token),
                     'user': {
+                        'id': user.id,
                         'role': user.role,
                         'username': user.username,
                         'email': user.email,
@@ -146,7 +160,6 @@ User = get_user_model()
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsOwner]
 
     @action(detail=True, methods=['patch'])
     def update_role(self, request, pk=None):
@@ -163,33 +176,30 @@ class UserViewSet(viewsets.ModelViewSet):
         except Exception as e:
             logger.error(f"Exception occurred: {str(e)}")
             return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-    
-    @action(detail=False, methods=['post'], url_path='profile-update')
-    def profile_update(self, request):
-        username = request.data.get('username')
-        
-        if not username:
-            return Response({'message': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return Response({'message': 'Sorry, user not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        user.first_name = request.data.get('first_name', user.first_name)
-        user.last_name = request.data.get('last_name', user.last_name)
-        user.email = request.data.get('email', user.email)
-        user.credit_card_info = request.data.get('credit_card_info', user.credit_card_info)
-        
-        if request.FILES.get('photo') is not None:
-            user.photo = request.FILES.get('photo')
 
-        user.save()
-        
+@api_view(['GET', 'PUT'])
+def update_profile(request, id):
+    try:
+        user = User.objects.get(id=id)
+    except User.DoesNotExist:
+        raise NotFound()
+
+    if request.method == 'GET':
         serializer = UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data)
 
+    if request.method == 'PUT':
+        data = request.data
+        serializer = UserSerializer(user, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'status': 'success', 'message': 'User profile updated', 'data': serializer.data})
+        return Response({'status': 'error', 'message': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    return JsonResponse({"detail": "Method not allowed."}, status=405)
+    
 
 
 
@@ -373,6 +383,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         if blog_id is not None:
             queryset = queryset.filter(blog=blog_id)
         return queryset
+    
 
     def get_permissions(self):
         print(f"Action: {self.action}")
@@ -431,36 +442,39 @@ class RoomViewSet(viewsets.ModelViewSet):
     serializer_class = RoomSerializer
     pagination_class = StandardResultsSetPagination
     parser_classes = (MultiPartParser, FormParser, JSONParser) 
+    filter_backends = [SearchFilter]
+    search_fields = ['name', 'description', 'beds']
+
 
     @action(detail=False, methods=['get'])
     def available(self, request):
         start_date = request.query_params.get('start_date')
         end_date = request.query_params.get('end_date')
-        adults = int(request.query_params.get('adults', 0))
-        children = int(request.query_params.get('children', 0))
+        adults = request.query_params.get('adults')
+        children = request.query_params.get('children')
+        beds = request.query_params.get('beds')
 
-        if not start_date or not end_date:
-            return Response({'error': 'Please provide both start_date and end_date'}, status=status.HTTP_400_BAD_REQUEST)
+        rooms = Room.objects.filter(available=True)
+        
+        if beds:
+            rooms = rooms.filter(beds__icontains=beds)
 
-        guest_count = adults + children
+        bookings = Booking.objects.filter(
+            start_date__lt=end_date,
+            end_date__gt=start_date
+        )
+        
+        booked_rooms = bookings.values_list('room_id', flat=True)
+        available_rooms = rooms.exclude(id__in=booked_rooms)
 
-        rooms = Room.objects.filter(
-            Q(booking__start_date__gt=end_date) | Q(booking__end_date__lt=start_date) | Q(booking__isnull=True),
-            max_guests__gte=guest_count
-        ).distinct()
-
-        logger.info(f"Filtered rooms: {rooms.count()} found for the date range {start_date} to {end_date} for {guest_count} guests.")
-
-        page = self.paginate_queryset(rooms)
+        page = self.paginate_queryset(available_rooms)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            response = self.get_paginated_response(serializer.data)
-            logger.info(f"Paginated response: {response.data}")
-            return response
-
-        serializer = RoomSerializer(rooms, many=True)
+            return self.get_paginated_response(serializer.data)
+        
+        serializer = self.get_serializer(available_rooms, many=True)
         return Response(serializer.data)
-    
+        
     def perform_create(self, serializer):
         room = serializer.save()
         logger.info(f'Room created: {room}')
@@ -505,109 +519,59 @@ class RoomViewSet(viewsets.ModelViewSet):
 
     
 
-
-
-# class BookingViewSet(viewsets.ModelViewSet):
-#     queryset = Booking.objects.all()
-#     serializer_class = BookingSerializer
-#     permission_classes = [IsAuthenticated]
-
-#     def create(self, request, *args, **kwargs):
-#         if not request.user.is_authenticated:
-#             return Response({'detail': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
-        
-#         if not request.user.credit_card_info:
-#             return Response({'detail': 'Credit card information required'}, status=status.HTTP_400_BAD_REQUEST)
-        
-#         room_id = request.data.get('room') 
-#         start_date = request.data.get('start_date')
-#         end_date = request.data.get('end_date')
-#         guest_count = request.data.get('guest_count')
-
-#         try:
-#             room = Room.objects.get(id=room_id)
-#         except Room.DoesNotExist:
-#             return Response({'error': 'Room not found.'}, status=status.HTTP_404_NOT_FOUND)
-
-#         if not room.available:
-#             return Response({'error': 'Room is not available.'}, status=status.HTTP_400_BAD_REQUEST)
-
-#         overlapping_bookings = Booking.objects.filter(
-#             room=room,
-#             start_date__lt=end_date,
-#             end_date__gt=start_date
-#         )
-
-#         if overlapping_bookings.exists():
-#             return Response({'error': 'Room is already booked for the selected dates.'}, status=status.HTTP_400_BAD_REQUEST)
-
-#         booking = Booking.objects.create(
-#             user=request.user,
-#             room=room,
-#             start_date=start_date,
-#             end_date=end_date,
-#             guest_count=guest_count,
-#             status='PENDING',
-#             room_details=request.data.get('room_details', {})
-#         )
-#         return Response(self.get_serializer(booking).data, status=status.HTTP_201_CREATED)    
-
-
 logger = logging.getLogger(__name__)
 
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
-    permission_classes = [IsAuthenticated]
 
-    def create(self, request, *args, **kwargs):
-        logger.debug("Creating a booking with data: %s", request.data)
-        
-        if not request.user.is_authenticated:
-            logger.warning("Unauthenticated booking attempt.")
-            return Response({'detail': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
-        
-        if not request.user.credit_card_info:
-            logger.warning("Booking attempt without credit card information by user %s", request.user.id)
-            return Response({'detail': 'Credit card information required'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        room_id = request.data.get('room')
-        start_date = request.data.get('start_date')
-        end_date = request.data.get('end_date')
-        guest_count = request.data.get('guest_count')
+    
 
-        try:
-            room = Room.objects.get(id=room_id)
-            logger.info("Room %s fetched successfully for booking.", room_id)
-        except Room.DoesNotExist:
-            logger.error("Room not found: %s", room_id)
-            return Response({'error': 'Room not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-        if not room.available:
-            logger.info("Attempted booking for unavailable room %s", room_id)
-            return Response({'error': 'Room is not available.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        overlapping_bookings = Booking.objects.filter(
-            room=room,
-            start_date__lt=end_date,
-            end_date__gt=start_date
-        ).exists()
 
-        if overlapping_bookings:
-            logger.info("Booking conflict detected for room %s between %s and %s", room_id, start_date, end_date)
-            return Response({'error': 'Room is already booked for the selected dates.'}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['POST'])
+def create_booking(request):
+    user_id = request.data.get('user')
+    room_id = request.data.get('room')
+    start_date_str = request.data.get('start_date')
+    end_date_str = request.data.get('end_date')
 
-        booking = Booking.objects.create(
-            user=request.user,
-            room=room,
-            start_date=start_date,
-            end_date=end_date,
-            guest_count=guest_count,
-            status='PENDING',
-            room_details=request.data.get('room_details', {})
-        )
-        logger.info("Booking %s created successfully.", booking.id)
-        return Response(self.get_serializer(booking).data, status=status.HTTP_201_CREATED)
+    start_date = parse_datetime(start_date_str).date() if start_date_str else None
+    end_date = parse_datetime(end_date_str).date() if end_date_str else None
+
+    if not start_date or not end_date:
+        return Response({'error': 'Invalid dates provided.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    if user.role.upper() != 'UTILISATEUR':
+        return Response({'error': 'Only users can make bookings.'}, status=status.HTTP_403_FORBIDDEN)
+
+    if not user.credit_card_info:
+        return Response({'error': 'Credit card not registered.'}, status=status.HTTP_403_FORBIDDEN)
+
+    overlapping_bookings = Booking.objects.filter(
+        room_id=room_id,
+        start_date__lte=end_date,
+        end_date__gte=start_date
+    ).exists()
+
+    if overlapping_bookings:
+        return Response({'error': 'Room is not available for the selected dates.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    booking = Booking.objects.create(
+        user=user,
+        room_id=room_id,
+        start_date=start_date,
+        end_date=end_date,
+        status='PENDING'  
+    )
+
+    return Response({'message': 'Booking successful, pending confirmation.', 'booking_id': booking.id}, status=status.HTTP_201_CREATED)
 
 
 class OfferViewSet(viewsets.ModelViewSet):
@@ -670,7 +634,7 @@ class GetInTouchSubjectViewSet(viewsets.ModelViewSet):
 class GetInTouchViewSet(viewsets.ModelViewSet):
     queryset = GetInTouch.objects.all()
     serializer_class = GetInTouchSerializer
-    http_method_names = ['post']
+    http_method_names = ['post', 'get']
 
     def perform_create(self, serializer):
         message = serializer.save()
@@ -704,3 +668,16 @@ class GetInTouchViewSet(viewsets.ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_destroy(self, instance):
+        instance.delete()
