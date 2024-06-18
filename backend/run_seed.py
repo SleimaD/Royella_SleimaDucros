@@ -30,6 +30,7 @@ if __name__ == "__main__":
    # run_hotel()
    # run_gallery()
    # runSubjects()
+   # run_contact()
    
 
     

@@ -3,6 +3,8 @@ from .models import *
 from datetime import datetime, timedelta
 import random
 from django.db.models import Avg 
+import requests
+
 
 
 
@@ -1252,3 +1254,50 @@ def runSubjects():
         })
     pks = seeder.execute()
     print(pks)
+
+
+
+
+#region contact
+#! contact
+
+
+import requests
+
+def get_coordinates(address):
+    params = {
+        'q': address,
+        'format': 'json',
+        'limit': 1
+    }
+    try:
+        response = requests.get("https://nominatim.openstreetmap.org/search", params=params, headers={'User-Agent': 'YourAppName'})
+        response.raise_for_status()  
+        results = response.json()
+        if results:
+            return float(results[0]['lat']), float(results[0]['lon'])
+        else:
+            print("No results found for this address.")
+            return None, None
+    except requests.RequestException as e:
+        print(f"HTTP Request failed: {e}")
+        return None, None
+
+
+
+def run_contact():
+    address = "Pl. de la Minoterie 10, 1080 Molenbeek-Saint-Jean"
+    latitude, longitude = get_coordinates(address)
+    
+    if latitude is not None and longitude is not None:
+        ContactInfo.objects.create(
+            phone="+980 (1234) 567 220",
+            email="hotelroyella@gmail.com",
+            address=address,
+            latitude=latitude,
+            longitude=longitude
+        )
+        print("seeded successfully!")
+    else:
+        print("Failed")
+
