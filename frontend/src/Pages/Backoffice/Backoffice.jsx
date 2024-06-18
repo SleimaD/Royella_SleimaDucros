@@ -8,7 +8,7 @@ import About from './ComponentsBack/About/About';
 import RoomsBack from './ComponentsBack/Rooms/RoomsBack';
 import PricingBack from './ComponentsBack/Pricing/PricingBack';
 import BlogBack from './ComponentsBack/Blog/BlogBack';
-import Contact from './ComponentsBack/Contact/Contact';
+import ContactBack from './ComponentsBack/Contact/ContactBack';
 import Footer from './ComponentsBack/Footer/Footer';
 
 
@@ -22,7 +22,7 @@ function Backoffice() {
       case "Rooms": return <RoomsBack />;
       case "Pricing": return <PricingBack />;
       case "Blog": return <BlogBack />;
-      case "Contact": return <Contact />;
+      case "Contact": return <ContactBack />;
       case "Footer": return <Footer />;
       default: return <Home />;
     }

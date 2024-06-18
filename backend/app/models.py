@@ -59,7 +59,7 @@ class Booking(models.Model):
 
 
 
-class Offer(models.Model):
+class Offer(models.Model): 
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='offers')
     discount_percentage = models.DecimalField(max_digits=5, decimal_places=2)
     start_date = models.DateTimeField()
@@ -242,22 +242,9 @@ class GetInTouch(models.Model):
 
 
 
-# class ContactInfo(models.Model):
-#     phone = models.CharField(max_length=20)
-#     email = models.EmailField()
-#     address = models.CharField(max_length=255)
-#     latitude = models.FloatField(blank=True, null=True)
-#     longitude = models.FloatField(blank=True, null=True)
-#     facebook = models.URLField(blank=True, null=True)
-#     twitter = models.URLField(blank=True, null=True)
-#     linkedin = models.URLField(blank=True, null=True)
-
-
-
-# class GoogleMaps(models.Model):
-#     address = models.CharField(max_length=255)
-#     latitude = models.FloatField(blank=True, null=True)
-#     longitude = models.FloatField(blank=True, null=True)
-
-
-
+class ContactInfo(models.Model):
+    phone = models.CharField(max_length=20)
+    email = models.EmailField()
+    address = models.CharField(max_length=255)
+    latitude = models.FloatField(blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
