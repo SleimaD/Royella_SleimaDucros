@@ -9,7 +9,7 @@ import RoomsBack from './ComponentsBack/Rooms/RoomsBack';
 import PricingBack from './ComponentsBack/Pricing/PricingBack';
 import BlogBack from './ComponentsBack/Blog/BlogBack';
 import ContactBack from './ComponentsBack/Contact/ContactBack';
-import Footer from './ComponentsBack/Footer/Footer';
+import FooterBack from './ComponentsBack/Footer/FooterBack';
 
 
 function Backoffice() {
@@ -18,12 +18,11 @@ function Backoffice() {
   const renderComponent = () => {
     switch(currentComponent) {
       case "Home": return <Home />;
-      // case "About": return <About />;
       case "Rooms": return <RoomsBack />;
       case "Pricing": return <PricingBack />;
       case "Blog": return <BlogBack />;
       case "Contact": return <ContactBack />;
-      case "Footer": return <Footer />;
+      case "Footer": return <FooterBack />;
       default: return <Home />;
     }
   };
@@ -33,7 +32,7 @@ function Backoffice() {
       <div className="w-[20%] h-full ">
         <Sidebarr setCurrentComponent={setCurrentComponent} currentComponent={currentComponent} />
       </div>      
-      <div className="transition-opacity duration-1000 ease-in-out flex p-5 w-[83%] flex mt-5">
+      <div className="transition-opacity duration-1000 ease-in-out  p-5 w-[83%] flex mt-5">
         {renderComponent()}
       </div>
     </div>

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { MdEmail, MdOutlineShareLocation } from "react-icons/md";
 import { IoIosCall } from "react-icons/io";
-import { useHref } from 'react-router-dom';
 
 
 const ContactBack = () => {
@@ -107,6 +106,8 @@ const ContactBack = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  if (!contactInfo) return <div>Loading...</div>;
 
 
   return (

@@ -20,10 +20,6 @@ const Sidebarr = ({ setCurrentComponent, currentComponent }) => {
           <Sidebar.Item href="#" icon={FaHome} label="1" labelColor="dark" onClick={() => setCurrentComponent("Home")} className={`${currentComponent === "Home" ? "bg-white text-black " : ""} font-Garamond`}>
             Home
           </Sidebar.Item>
-          {/* <Sidebar.Item href="#" icon={FcAbout} label="2" onClick={() => setCurrentComponent("About")}
-            className={`${currentComponent === "About" ? "bg-white text-black" : ""} font-Garamond`}>
-            About
-          </Sidebar.Item> */}
           <Sidebar.Item href="#" label="3" icon={FaBed} onClick={() => setCurrentComponent("Rooms")} className={`${currentComponent === "Rooms" ? "bg-white text-black" : ""} font-Garamond`} >
             Rooms
           </Sidebar.Item>
