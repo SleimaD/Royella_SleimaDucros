@@ -155,9 +155,7 @@ EMAIL_HOST_PASSWORD = 'ruak bnas qdve laks'
 
 
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': (
-#         'rest_framework_simplejwt.authentication.JWTAuthentication',
-#     ),
-# }
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  
 

@@ -42,21 +42,27 @@ class UserSerializer(serializers.ModelSerializer):
             'photo': {'required': False},
             'credit_card_info': {'required': False},
         }
+
+    def validate_photo(self, value):
+        if value.size > 10485760:  
+            raise serializers.ValidationError("La taille de l'image doit être inférieure à 10 MB.")
+        return value
+    
     def update(self, instance, validated_data):
         instance.email = validated_data.get('email', instance.email)
         instance.credit_card_info = validated_data.get('credit_card_info', instance.credit_card_info)
         if 'photo' in validated_data:
             instance.photo = validated_data['photo']
         instance.save()
-        return instance
+        return instance 
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        # fields = '__all__'
         fields = ['username', 'first_name', 'last_name', 'email', 'password', 'photo', 'role']
+
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])
         return super().create(validated_data)

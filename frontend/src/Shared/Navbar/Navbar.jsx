@@ -7,6 +7,15 @@ import { IoSettingsSharp, IoSettingsOutline } from "react-icons/io5";
 import { IoMoonSharp } from "react-icons/io5";
 import { useEffect, useState } from "react";
 import { useAuth } from "./../../RolesRoutes/AuthProvider";
+import { ImProfile } from "react-icons/im";
+import { IoMdSettings } from "react-icons/io";
+import { FaUsersGear } from "react-icons/fa6";
+import { IoMdMail } from "react-icons/io";
+import { MdBookmarks } from "react-icons/md";
+import { TfiWrite } from "react-icons/tfi";
+import { BiLogOut } from "react-icons/bi";
+
+
 
 
 const Navbar = () => {
@@ -242,27 +251,27 @@ const Navbar = () => {
                 onClick={toggleDropdown} 
               />
               {dropdownOpen && (
-                <div className="absolute right-0 top-12 mt-2 py-2 w-48 bg-[#ffffffef] backdrop-blur-sm  rounded-md shadow-xl z-50">
-                  <div className="block px-4 py-2 text-sm text-gray-700">{user.username} <small>({user.role})</small></div>
+                <div className="absolute right-0 top-12 mt-2 py-2 px-3 w-[15rem] bg-[#131212dd] text-white backdrop-blur-sm  rounded-md shadow-xl z-50 flex  flex-col gap-3 ">
+                  <div className="block px-4 py-2 text-lg text-gray-700 font-bold font-Garamond">{user.username} <small>({user.role})</small></div>
                   <NavLink
                     to="/profile"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    className=" px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 hover:bg-[#f8f6f3] hover:transition-all  transition-all duration-300 hover:text-black"
                   >
-                    Profile
+                     <ImProfile className="text-khaki" /> Profile
                   </NavLink>
                   {user.role === 'Admin' && (
-                    <div>
+                    <div className="flex flex-col gap-2">
                       <NavLink
                       to="/backoffice"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className=" px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-1 hover:bg-[#f8f6f3] hover:transition-all  transition-all duration-300 hover:text-black"
                     >
-                      Backoffice
+                      <IoMdSettings size={19} className="text-khaki" /> Backoffice
                     </NavLink>
                     <NavLink
                       to="/useraccounts"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className=" px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-1 hover:bg-[#f8f6f3] hover:transition-all  transition-all duration-300 hover:text-black"
                     >
-                      User Accounts
+                      <FaUsersGear size={19} className="text-khaki" /> User Accounts
                     </NavLink> 
                     </div>
                     
@@ -270,32 +279,32 @@ const Navbar = () => {
                   {(user.role === 'Admin' || user.role === 'Webmaster')  && (
                     <NavLink
                       to="/mailbox"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className=" px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-1 hover:bg-[#f8f6f3] hover:transition-all  transition-all duration-300 hover:text-black"
                     >
-                      Mailbox
+                      <IoMdMail size={19} className="text-khaki" /> Mailbox
                     </NavLink>
                   )}
                   {(user.role === 'Receptionist' || user.role === 'Utilisateur' || user.role === 'Admin' || user.role === 'Webmaster')  && (
                     <NavLink
                       to="/reservations"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className=" px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-1 hover:bg-[#f8f6f3] hover:transition-all  transition-all duration-300 hover:text-black"
                     >
-                      Reservations
+                       <MdBookmarks size={19} className="text-khaki" /> Reservations
                     </NavLink>
                   )}
                   {(user.role === 'Webmaster' || user.role === 'Redacteur' || user.role === 'Admin')  && (
                     <NavLink
                       to="/blogmanagement"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className=" px-[0.6rem] py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 hover:bg-[#f8f6f3] hover:transition-all  transition-all duration-300 hover:text-black"
                     >
-                      Blog Management
+                      <TfiWrite size={19} className="text-khaki" /> Blog Management
                     </NavLink>
                   )}
                   <button
                     onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    className=" w-full text-left px-3 py-2 mt-5 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 hover:bg-[#f8f6f3] hover:transition-all  transition-all duration-300 hover:text-black"
                   >
-                    Logout
+                    <BiLogOut size={20} className="text-khaki" /> Logout
                   </button>
                 </div>
               )}

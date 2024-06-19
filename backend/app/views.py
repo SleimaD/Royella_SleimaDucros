@@ -48,6 +48,8 @@ from django.views.decorators.http import require_http_methods
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.exceptions import TokenError
 from django.utils.dateparse import parse_datetime
+from rest_framework.decorators import parser_classes
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 logger = logging.getLogger(__name__)
@@ -129,6 +131,7 @@ class LoginView(APIView):
                         'role': user.role,
                         'username': user.username,
                         'email': user.email,
+                        'photo': user.photo.url,
                     }
                 }, status=status.HTTP_200_OK)
             else:
@@ -180,6 +183,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['GET', 'PUT'])
+@parser_classes([MultiPartParser, FormParser])
 def update_profile(request, id):
     try:
         user = User.objects.get(id=id)
@@ -199,7 +203,7 @@ def update_profile(request, id):
         return Response({'status': 'error', 'message': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     return JsonResponse({"detail": "Method not allowed."}, status=405)
-    
+
 
 
 

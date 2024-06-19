@@ -197,17 +197,16 @@ const FindRoom = () => {
         </h1>
         <div
           className="Container bg-white dark:bg-lightBlack grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-5 items-center justify-center font-Lora py-3 lg:py-4 xl:py-5 2xl:py-6 border-t-[3px] border-t-khaki px-5 md:px-7 2xl:px-10"
-          data-aos="zoom-in-up"
-          data-aos-duration="1000"
+          
         >
           <div className="p-3 relative">
             <p className="text-sm text-gray dark:text-lightGray">Check In</p>
             <div className="flex items-center pt-[6px] relative">
-              <BiCalendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray dark:text-lightGray" />
+              <BiCalendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray dark:text-lightGray z-10" />
               <DatePicker
                 selected={selectedInDate}
                 onChange={handleCheckInDate}
-                className="border-none pl-8 bg-transparent focus:outline-transparent focus:border-transparent text-lightBlack dark:text-white focus:border-none outline-0 text-sm lg:text-base focus:ring-transparent w-full"
+                className="border-none pl-8 bg-transparent focus:outline-transparent focus:border-transparent text-lightBlack dark:text-white focus:border-none outline-0 text-sm lg:text-base focus:ring-transparent w-full z-10"
                 placeholderText="Select check-in date"
                 dateFormat="yyyy-MM-dd"
               />
@@ -216,7 +215,7 @@ const FindRoom = () => {
           <div className="p-3 relative">
             <p className="text-sm text-gray dark:text-lightGray">Check Out</p>
             <div className="flex items-center pt-[6px] relative">
-              <BiCalendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray dark:text-lightGray" />
+              <BiCalendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray dark:text-lightGray z-10" />
               <DatePicker
                 selected={selectedOutDate}
                 onChange={handleCheckOutDate}
