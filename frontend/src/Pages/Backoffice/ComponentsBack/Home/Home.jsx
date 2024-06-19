@@ -10,9 +10,9 @@ function Home() {
 
 
   return (
-    <div className='w-full h-screen flex flex-col gap-7 px-4 p-1'>
-      <h1 className="text-6xl text-center font-bold mb-4 font-Garamond ">HOME</h1>
-      <section className='mt-4'>
+    <div className='w-full h-screen flex flex-col gap-3 px-4 p-1'>
+      <h1 className="text-6xl text-center font-bold  mt-10 font-Garamond ">HOME</h1>
+      <section className=''>
         <HotelBack />
       </section>
       <section className=" w-full">

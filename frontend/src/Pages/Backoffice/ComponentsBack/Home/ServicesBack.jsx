@@ -127,6 +127,7 @@ const ServicesBack = () => {
 
     return (
         <DndProvider backend={HTML5Backend}>
+            <h3 className='text-2xl font-Garamond uppercase underline p-2 text-center mt-3 mb-5'>services</h3>
             <div className="bg-gray-100 min-h-screen  flex justify-center items-center">
                 <div className="w-full bg-[#f6f4f4] p-5 rounded-lg">
                     <div className="mb-5 flex flex-col gap-3">

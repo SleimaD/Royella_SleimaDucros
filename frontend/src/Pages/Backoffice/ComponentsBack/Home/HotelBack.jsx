@@ -65,6 +65,7 @@ const HotelBack = () => {
 
     return (
         <section className="dark:bg-mediumBlack py-20 2xl:py-[120px]">
+            <h3 className='text-2xl font-Garamond uppercase underline p-2 text-center mt-3 mb-5'>Hotel</h3>
             <div className="Container  w sm:overflow-hidden lg:overflow-auto">
                 {editMode ? (
                     <form onSubmit={handleSave} className="space-y-4 container w-[80%] bg-[#fdfdfd] shadow p-3">
@@ -77,15 +78,15 @@ const HotelBack = () => {
                         <button type="button" onClick={handleCancelEdit} className="btn-secondary bg-red-600 p-2 mx-3">Cancel</button>
                     </form>
                 ) : (
-                    <div className="md:flex flex flex-col items-center justify-between container w-[60%] shadow">
-                        <div className="flex-1 keen-slider w-screen md:w-[60%] 2xl:w-[580px] md:pr-5 lg:pr-6 xl:pr-8 2xl:pr-9 3xl:pr-10 md:mt-0 pl-8">
+                    <div className="md:flex flex  items-center justify-between container mt-[-5rem] w-[85%] shadow p-3 bg-whiteSmoke transition-all duration-300">
+                        <div className="flex  w-[50%]">
                             <img src={hotelInfo.image} alt="Hotel" className="w-full h-[34rem]" />
                         </div>
                         <div className="flex-1 font-Garamond mt-5 md:mt-0 md:pl-8 p-5 lg:pl-10 2xl:pl-14">
                             <h5 className="text-base text-khaki leading-[26px] font-medium">{hotelInfo.subtitle}</h5>
                             <h1 className="text-[22px] sm:text-2xl md:text-[21px] xl:text-3xl 2xl:text-[38px] leading-6 md:leading-7 lg:leading-[30px] 2xl:leading-[44px] text-lightBlack dark:text-white font-semibold my-4">{hotelInfo.title}</h1>
                             <p className="text-sm xl:text-base md:text-sm lg:text-base font-Lora text-gray dark:text-lightGray font-normal leading-[26px]">{hotelInfo.description}</p>
-                            <button onClick={() => setEditMode(true)} className="btn-primary">Edit</button>
+                            <button onClick={() => setEditMode(true)} className="btn-primary transition-all duration-300">Edit</button>
                         </div>
                     </div>
                 )}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 const FacilitiesBack = () => {
     const [facilities, setFacilities] = useState([]);
@@ -89,8 +90,9 @@ const FacilitiesBack = () => {
     if (error) return <p>{error}</p>;
 
     return (
-        <div className="overflow-x-auto container w-[70%] flex flex-col justify-center mx-auto p-8">
-            <button onClick={toggleAddForm} className="mb-3">
+        <div className="overflow-x-auto container w-[90%] flex flex-col justify-center mx-auto p-8">
+            <h3 className='text-2xl font-Garamond uppercase underline p-2 text-center mt-3 mb-5'>Facilities</h3>
+            <button onClick={toggleAddForm} className="mb-3 btn-primary">
                 {showAddForm ? 'Cancel Adding' : 'Add New Facility'}
             </button>
             {showAddForm && (
@@ -103,7 +105,7 @@ const FacilitiesBack = () => {
             )}
             <table className="w-full text-sm text-left text-gray-500">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-                    <tr>
+                    <tr className='bg-khaki text-white'>   
                         <th scope="col" className="py-3 px-6">Name</th>
                         <th scope="col" className="py-3 px-6">Icon</th>
                         <th scope="col" className="py-3 px-6">Image</th>
@@ -112,7 +114,7 @@ const FacilitiesBack = () => {
                 </thead>
                 <tbody>
                     {facilities.map(facility => (
-                        <tr key={facility.id} className="bg-white border-b">
+                        <tr key={facility.id} className="bg-white border-b border-[#d6d6d6a9]">
                             <td className="py-4 px-6">
                                 {facility.editing ? (
                                     <input type="text" name="name" value={facility.name} onChange={(e) => handleInputChange(e, facility.id)} required />
@@ -136,15 +138,15 @@ const FacilitiesBack = () => {
                             </td>
                             <td className="py-4 px-6">
                                 {facility.editing ? (
-                                    <>
-                                        <button onClick={(e) => handleSubmit(e, facility.id)}>Save</button>
-                                        <button onClick={() => setFacilities(prev => prev.map(f => f.id === facility.id ? {...f, editing: false} : f))}>Cancel</button>
-                                    </>
+                                    <div className='flex gap-5 '>
+                                        <button className='bg-green-500 text-white p-2 px-4 hover:opacity-70  ' onClick={(e) => handleSubmit(e, facility.id)}>Save</button>
+                                        <button className='bg-red-500 text-white p-2 px-4 hover:opacity-70' onClick={() => setFacilities(prev => prev.map(f => f.id === facility.id ? {...f, editing: false} : f))}>Cancel</button>
+                                    </div>
                                 ) : (
-                                    <>
-                                        <button onClick={() => setFacilities(prev => prev.map(f => f.id === facility.id ? {...f, editing: true} : f))}>Edit</button>
-                                        <button onClick={() => deleteFacility(facility.id)}>Delete</button>
-                                    </>
+                                    <div className='flex gap-5 '>
+                                        <button className='bg-khaki text-white p-2 px-4 hover:opacity-70  ' onClick={() => setFacilities(prev => prev.map(f => f.id === facility.id ? {...f, editing: true} : f))}>Edit</button>
+                                        <button onClick={() => deleteFacility(facility.id)}><RiDeleteBin6Line className='text-red-600 hover:scale-110 text-3xl' /></button>
+                                    </div>
                                 )}
                             </td>
                         </tr>

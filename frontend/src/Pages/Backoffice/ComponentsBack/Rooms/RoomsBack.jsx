@@ -139,12 +139,13 @@ function RoomsBack() {
                             <p className="text-gray-500 line-clamp-2 mb-4">{room.description}</p>
                             <div className="flex items-center justify-between">
                                 <div className='flex gap-1 items-center'>
-                                    {[...Array(5)].map((_, i) => (
-                                        <FaStar key={i}
-                                            className={`text-${(starPreview && starPreview.id === room.id && i < starPreview.stars) ? 'yellow' : (i < room.stars ? 'yellow' : 'gray')}-400 cursor-pointer`}
-                                            onClick={() => handleStarPreview(room, i + 1)}
-                                        />
-                                    ))}
+                                {[...Array(5)].map((_, i) => (
+                                    <FaStar
+                                        key={i}
+                                        className={`${i < (starPreview && starPreview.id === room.id ? starPreview.stars : room.stars) ? 'text-yellow-400' : 'text-gray-400'} cursor-pointer`}
+                                        onClick={() => handleStarPreview(room, i + 1)}
+                                    />
+                                ))}
                                 </div>
                                 {starPreview && starPreview.id === room.id && (
                                     <button onClick={handleEditStars} className="ml-2 text-sm bg-khaki text-white p-1 rounded">Save</button>
