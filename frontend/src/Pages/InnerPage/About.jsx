@@ -102,8 +102,53 @@ const About = () => {
   }, []);
 
 
-  if (!manager || Object.keys(manager).length === 0) return <div>Loading...</div>;
+  const [hotelInfo, setHotelInfo] = useState({
+    title: '',
+    subtitle: '',
+    description: '',
+    room_count: 0,
+    customer_rating: 0,
+    image: '',
+  });
 
+  const [contactInfo, setContactInfo] = useState({
+    phone: '',
+    email: '',
+    address: '',
+    latitude: '',
+    longitude: '',
+  });
+
+  useEffect(() => {
+    const fetchHotelInfo = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/hotels/1/');
+        setHotelInfo(response.data);
+      } catch (error) {
+        console.error('Error fetching hotel info:', error);
+      }
+    };
+
+    fetchHotelInfo();
+  }, []);
+
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/contact-info/1/');
+        setContactInfo(response.data);
+      } catch (error) {
+        console.error('Error fetching contact info:', error);
+      }
+    };
+
+    fetchContactInfo();
+  }, []);
+
+
+  if (!manager || Object.keys(manager).length === 0) return <div>Loading...</div>;
+  if (!hotelInfo || Object.keys(hotelInfo).length === 0) return <div>Loading...</div>;
+  if (!contactInfo || Object.keys(contactInfo).length === 0) return <div>Loading...</div>;
 
 
   return (
@@ -121,7 +166,7 @@ const About = () => {
               data-aos-duration="1000"
             >
               <img
-                src="/images/inner/about-thumb.jpg"
+                src={hotelInfo.image}
                 alt=""
                 className="w-full h-full"
               />
@@ -134,31 +179,19 @@ const About = () => {
               data-aos-duration="1000"
             >
               <h5 className="text-base text-khaki leading-[26px] font-medium">
-                LUXURY HOTEL AND RESORT
+                {hotelInfo.subtitle}
               </h5>
               <h1 className="text-[22px] sm:text-2xl md:text-[21px]  xl:text-3xl 2xl:text-[38px] leading-6 md:leading-7 lg:leading-[30px] 2xl:leading-[44px] text-lightBlack dark:text-white font-semibold my-4">
-                LUXURY BEST HOTEL IN CITY CALIFORNIA, USA
+                {hotelInfo.title}
               </h1>
               <p className="text-sm xl:text-base md:text-sm lg:text-base font-Lora text-gray dark:text-lightGray font-normal leading-[26px]">
-                Rapidiously myocardinate cross-platform intellectual capital
-                after marketing model. Appropriately create interactive
-                infrastructures after maintainable are Holisticly facilitate
-                stand-alone inframe Compellingly create premier open data
-                through economically.
+                {hotelInfo.description}
               </p>
 
-              <p className="text-sm sm:text-base font-Lora text-gray dark:text-lightGray font-normal leading-[26px] mt-5">
-                Rapidiously myocardinate cross-platform intellectual capital
-                after marketing model. Appropriately create interactive
-                infrastructures after
-              </p>
 
               <div className="bg-whiteSmoke dark:bg-lightBlack px-[30px] py-5">
                 <p className="text-sm sm:text-base leading-10 3xl:leading-[50px] text-lightBlack dark:text-white font-medium font-Lora ">
-                  102/B, Dream Street, New Elephant Road, Resort.
-                </p>
-                <p className="text-sm sm:text-base leading-10  text-lightBlack dark:text-white font-medium font-Lora ">
-                  Dhanmondi Dhaka - 1212
+                  {contactInfo.address}
                 </p>
               </div>
               <button className="btn-primary mt-[30px]">MORE ABOUT</button>
