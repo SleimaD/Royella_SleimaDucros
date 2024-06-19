@@ -7,6 +7,7 @@ function FooterBack() {
   const [image, setImage] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const fileInputRef = useRef(null);
+  const [subscribers, setSubscribers] = useState([]);
 
   useEffect(() => {
     const fetchGallery = async () => {
@@ -50,6 +51,21 @@ function FooterBack() {
     }
   };
 
+
+  useEffect(() => {
+    const fetchSubscribers = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/newsletter-subscribers/");
+        setSubscribers(response.data);
+      } catch (error) {
+        console.error("Error fetching subscribers:", error);
+      }
+    };
+
+    fetchSubscribers();
+  }, []);
+  
+
   return (
     <div className="w-full mt-5 h-[100vh] flex flex-col gap-5">
       <h1 className="text-6xl text-center font-bold mb-4 font-Garamond">FOOTER</h1>
@@ -88,7 +104,8 @@ function FooterBack() {
           </form>
         </div>
       )}
-      <section className="w-[95%] mt-5 bg-whiteSmoke flex justify-center items-center shadow">
+      <section className="w-[95%] mt-5 bg-whiteSmoke flex flex-col p-2 gap-4 justify-center items-center shadow">
+        <h3 className='text-3xl font-Garamond font-semibold'>GALLERY</h3>
         <div className="w-full flex flex-wrap justify-center items-center gap-8 p-5 h-[30rem] overflow-auto">
           {gallery.map((item, index) => (
             <div key={index} className="relative group">
@@ -102,6 +119,18 @@ function FooterBack() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="w-[95%] mt-5 bg-whiteSmoke flex flex-col gap-5 justify-center items-center shadow">
+          <h3 className='text-xl font-Garamond font-semibold'>SUBSCRIBERS(newsletter)</h3>
+          <div>
+            {subscribers.map((item, index) => (              
+              <div key={index} className="flex items-center gap-4 p-2">
+                <p className="text-sm">{item.email}</p>
+                <p className='text-sm'>{item.date_subscribed}</p>
+              </div>
+            ))}
+          </div>
       </section>
     </div>
   );
