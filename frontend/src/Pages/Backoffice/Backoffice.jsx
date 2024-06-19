@@ -33,7 +33,7 @@ function Backoffice() {
       <div className="w-[20%] h-full ">
         <Sidebarr setCurrentComponent={setCurrentComponent} currentComponent={currentComponent} />
       </div>      
-      <div className="transition-opacity duration-1000 ease-in-out flex-grow p-2 w-[80%] flex mt-5">
+      <div className="transition-opacity duration-1000 ease-in-out flex p-5 w-[83%] flex mt-5">
         {renderComponent()}
       </div>
     </div>
