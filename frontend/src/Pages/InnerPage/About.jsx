@@ -21,6 +21,7 @@ const About = () => {
   const [testimonials, setTestimonials] = useState([]);
   const [toggler, setToggler] = useState(false);
   const [members, setMembers] = useState([]);
+  const [manager, setManager] = useState({});
   const [sliderRef] = useKeenSlider({
     breakpoints: {
       "(min-width: 320px)": {
@@ -85,6 +86,25 @@ const About = () => {
       .then(data => setLatestBlogs(data))
       .catch(error => console.error('Error fetching latest blogs:', error));
   }, []);
+
+  useEffect(() => {
+    axios.get('http://127.0.0.1:8000/api/managers/') 
+        .then(response => {
+            if (response.data && response.data.length > 0) {
+                setManager(response.data[0]);  
+                console.log("Video URL:", response.data[0].video_url); 
+                console.log(response.data[0]);
+            }
+        })
+        .catch(error => {             
+            console.error('There was an error!', error);
+        });
+  }, []);
+
+
+  if (!manager || Object.keys(manager).length === 0) return <div>Loading...</div>;
+
+
 
   return (
     <section className="">
@@ -161,11 +181,13 @@ const About = () => {
               data-aos-duration="1000"
             >
               <div className="flex-1 h-[100%] w-full relative ">
-                <img
-                  src="/images/home-1/action-img.png"
-                  className="h-full w-full md:h-[80%] lg:h-full object-cover"
-                  alt=""
-                />
+                <video
+                muted
+                loop
+                playsInline
+                className="absolute top-0 left-0 w-full h-full object-cover"
+                src={manager.video_url}
+              />
 
                 <div
                   className="w-[70px] h-[70px]  text-white absolute top-1/2 md:top-[35%] lg:top-1/2 left-[45%] bg-khaki rounded-full flex items-center justify-center cursor-pointer z-[1] "
@@ -186,34 +208,31 @@ const About = () => {
               data-aos-duration="1000"
             >
               <h5 className="text-base text-khaki leading-[26px] font-semibold">
-                MANAGER
+                {manager.subtitle}
               </h5>
               <h1 className="text-[22px] sm:text-2xl md:text-[28px] xl:text-[32px] 2xl:text-[38px] leading-[38px] lg:leading-[44px] text-lightBlack dark:text-white font-semibold">
-                LUXURY BEST HOTEL IN CITY CALIFORNIA, USA
+                {manager.title}
               </h1>
               <p className="text-sm sm:text-base font-Lora text-gray dark:text-lightGray font-normal leading-[26px]">
-                Rapidiously myocardinate cross-platform intellectual capital
-                after model. Appropriately create interactive infrastructures
-                after main Holisticly facilitate stand-alone inframe
+                {manager.bio}
               </p>
               <p className="text-sm sm:text-base font-Lora italic leading-[26px] underline  text-gray dark:text-lightGray font-normal ">
-                “ Model. Appropriately create interactive infrastructures after
-                main Holisticly facilitate stand-alone inframe of the world ”
+                "{manager.quote}"
               </p>
               <div className="flex items-center space-x-6 pt-5">
                 <img
-                  src="/images/home-1/call-do-action-img.png"
+                  src={manager.image}
                   className="w-[65px] h-[65px] object-cover"
                   alt=""
                 />
 
                 <div className="">
                   <h4 className="text-lg sm:text-[22px] leading-[26px] text-lightBlack dark:text-white font-semibold font-Garamond">
-                    John D. Alexon
+                    {manager.name}
                   </h4>
                   <p className="pt-1 text-base leading-[26px] font-normal text-gray dark:text-lightGray flex items-center font-Lora">
                     <span className="w-5 h-[1px] inline-block text-khaki bg-khaki mr-2"></span>
-                    Manger
+                    {manager.subtitle}
                   </p>
                 </div>
               </div>
