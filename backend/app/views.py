@@ -50,6 +50,7 @@ from rest_framework_simplejwt.exceptions import TokenError
 from django.utils.dateparse import parse_datetime
 from rest_framework.decorators import parser_classes
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.utils.dateparse import parse_date
 
 
 logger = logging.getLogger(__name__)
@@ -476,34 +477,6 @@ class RoomViewSet(viewsets.ModelViewSet):
     search_fields = ['name', 'description', 'beds']
 
 
-    @action(detail=False, methods=['get'])
-    def available(self, request):
-        start_date = request.query_params.get('start_date')
-        end_date = request.query_params.get('end_date')
-        adults = request.query_params.get('adults')
-        children = request.query_params.get('children')
-        beds = request.query_params.get('beds')
-
-        rooms = Room.objects.filter(available=True)
-        
-        if beds:
-            rooms = rooms.filter(beds__icontains=beds)
-
-        bookings = Booking.objects.filter(
-            start_date__lt=end_date,
-            end_date__gt=start_date
-        )
-        
-        booked_rooms = bookings.values_list('room_id', flat=True)
-        available_rooms = rooms.exclude(id__in=booked_rooms)
-
-        page = self.paginate_queryset(available_rooms)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        
-        serializer = self.get_serializer(available_rooms, many=True)
-        return Response(serializer.data)
         
     def perform_create(self, serializer):
         room = serializer.save()
@@ -545,6 +518,8 @@ class RoomViewSet(viewsets.ModelViewSet):
         rooms = Room.objects.all().order_by('id')
         serializer = self.get_serializer(rooms, many=True)
         return Response(serializer.data)
+    
+    
 
 
     
@@ -555,7 +530,60 @@ class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
 
-    
+
+
+
+@csrf_exempt
+def check_room_availability(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+        start_date_str = data.get('start_date')
+        end_date_str = data.get('end_date')
+
+        if not start_date_str or not end_date_str:
+            return JsonResponse({'error': 'Invalid dates provided.'}, status=400)
+
+        try:
+            start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+        except ValueError:
+            return JsonResponse({'error': 'Invalid date format.'}, status=400)
+
+        adults = int(data.get('adults', 1))
+        children = int(data.get('children', 0))
+        beds = data.get('beds', '')
+
+        available_rooms = Room.objects.filter(
+            Q(beds__icontains=beds) &
+            Q(max_guests__gte=(adults + children))
+        ).exclude(
+            Q(booking__start_date__lt=end_date) & Q(booking__end_date__gt=start_date)
+        ).distinct()
+
+        rooms_data = [
+            {
+                'id': room.id,
+                'name': room.name,
+                'description': room.description,
+                'price': room.price,
+                'stars': room.stars,
+                'beds': room.beds,
+                'dimensions': room.dimensions,
+                'image': request.build_absolute_uri(room.image.url)
+            }
+            for room in available_rooms
+        ]
+
+        is_available = len(rooms_data) > 0
+
+        return JsonResponse({'results': rooms_data, 'count': len(rooms_data), 'isAvailable': is_available})
+
+    return JsonResponse({'error': 'Invalid method'}, status=405)
+
 
 
 
@@ -602,6 +630,8 @@ def create_booking(request):
     )
 
     return Response({'message': 'Booking successful, pending confirmation.', 'booking_id': booking.id}, status=status.HTTP_201_CREATED)
+
+
 
 
 class OfferViewSet(viewsets.ModelViewSet):

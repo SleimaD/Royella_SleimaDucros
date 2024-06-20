@@ -47,6 +47,15 @@ const RoomDetails = () => {
     setImageIndex((prevIndex) => (prevIndex + 1) % (roomData.images ? roomData.images.length : 0));
   };
 
+  const formatDate = (date) => {
+    if (!date) return '';
+    const d = new Date(date);
+    const month = `${d.getMonth() + 1}`.padStart(2, '0');
+    const day = `${d.getDate()}`.padStart(2, '0');
+    const year = d.getFullYear();
+    return `${year}-${month}-${day}`;
+  };
+
   const handleBooking = async () => {
     if (!user) {
       Swal.fire({
@@ -87,17 +96,17 @@ const RoomDetails = () => {
     }
   
     try {
-      const availabilityResponse = await axios.post('http://127.0.0.1:8000/api/check_availability/', {
+      const availabilityResponse = await axios.post('http://127.0.0.1:8000/rooms/check_availability/', {
         room: roomData.id,
-        start_date: bookingsData.selectedInDate,
-        end_date: bookingsData.selectedOutDate,
+        start_date: formatDate(bookingsData.selectedInDate),
+        end_date: formatDate(bookingsData.selectedOutDate),
       }, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
   
-      if (!availabilityResponse.data.isAvailable) {
+      if (availabilityResponse.data.results.length === 0) {
         Swal.fire({
           title: "Non Disponible!",
           text: "La chambre n'est pas disponible aux dates sélectionnées.",
@@ -123,8 +132,8 @@ const RoomDetails = () => {
         if (result.isConfirmed) {
           const bookingResponse = await axios.post('http://127.0.0.1:8000/api/create_booking/', {
             room: roomData.id,
-            start_date: bookingsData.selectedInDate,
-            end_date: bookingsData.selectedOutDate,
+            start_date: formatDate(bookingsData.selectedInDate),
+            end_date: formatDate(bookingsData.selectedOutDate),
             guest_count: bookingsData.adult + bookingsData.children,
             user: user.id
           }, {
@@ -156,7 +165,6 @@ const RoomDetails = () => {
     }
   };
   
-
 
   if (!roomData) {
     return <div>Loading...</div>;
@@ -217,7 +225,6 @@ const RoomDetails = () => {
                   </span>
                 </div>
               )}
-
             </div> 
 
             <div className="pt-5 lg:pt-[35px] pr-3">

@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { BiChevronDown, BiCalendar } from "react-icons/bi";
 import BreadCrumb from "../../BreadCrumb/BreadCrumb";
-import { useNavigate, useLocation } from "react-router-dom";
-import { FaStar } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BsArrowRight } from "react-icons/bs";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
+import { FaStar } from 'react-icons/fa';
 import { IoIosCall } from 'react-icons/io';
 import { MdEmail, MdOutlineShareLocation } from "react-icons/md";
+
+
 
 const FindRoom = () => {
   const [rooms, setRooms] = useState([]);
@@ -31,10 +32,14 @@ const FindRoom = () => {
   const [message, setMessage] = useState('');
   const [subjects, setSubjects] = useState([]);
   const [feedback, setFeedback] = useState('');
-  const navigate = useNavigate();
-  const location = useLocation();
 
-  useEffect(() => {
+  const navigate = useNavigate();
+
+
+
+
+
+    useEffect(() => {
     const fetchSubjects = async () => {
       try {
         const response = await axios.get('http://127.0.0.1:8000/api/contact-subjects/');
@@ -69,19 +74,12 @@ const FindRoom = () => {
     }
   };
 
+
+
+
   useEffect(() => {
-    const state = location.state;
-    if (state) {
-      setSelectedInDate(state.checkInDate);
-      setSelectedOutDate(state.checkOutDate);
-      setBeds(state.beds);
-      setAdult(state.adult);
-      setChildren(state.children);
-      fetchAvailableRooms(1, state.checkInDate, state.checkOutDate, state.adult, state.children, state.beds);
-    } else {
-      fetchAllRooms(1);
-    }
-  }, [location.state]);
+    fetchAllRooms(1);
+  }, []);
 
   const fetchAllRooms = async (page) => {
     setLoading(true);
@@ -100,38 +98,42 @@ const FindRoom = () => {
     setLoading(false);
   };
 
-  const fetchAvailableRooms = async (page, checkInDate = selectedInDate, checkOutDate = selectedOutDate, adultCount = adult, childrenCount = children, bedsCount = beds) => {
+  const fetchAvailableRooms = async (page) => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:8000/api/rooms/available/', {
-        params: {
-          start_date: formatDate(checkInDate),
-          end_date: formatDate(checkOutDate),
-          adults: adultCount,
-          children: childrenCount,
-          beds: bedsCount,
-          page: page,
+        const checkInDate = formatDate(selectedInDate);
+        const checkOutDate = formatDate(selectedOutDate);
+
+        if (!checkInDate || !checkOutDate) {
+            console.error('Invalid dates provided.');
+            setLoading(false);
+            return;
         }
-      });
-      console.log("Available rooms data:", response.data);
-      setFilteredRooms(response.data.results);
-      setTotalPages(Math.ceil(response.data.count / 6));
+
+        const response = await axios.post('http://localhost:8000/rooms/check_availability/', {
+            start_date: checkInDate,
+            end_date: checkOutDate,
+            adults: adult,
+            children: children,
+            beds: beds,
+            page: page,
+        });
+        setFilteredRooms(response.data.results);
+        setTotalPages(Math.ceil(response.data.count / 6));
     } catch (error) {
-      console.error('Error fetching available rooms:', error);
+        console.error('Error fetching available rooms:', error);
+        setFilteredRooms([]);
     }
     setLoading(false);
-  };
+};
 
   const formatDate = (date) => {
-    const d = new Date(date);
-    let month = '' + (d.getMonth() + 1);
-    let day = '' + d.getDate();
-    const year = d.getFullYear();
-
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
-
-    return [year, month, day].join('-');
+      if (!date) return '';
+      const d = new Date(date);
+      const month = `${d.getMonth() + 1}`.padStart(2, '0');
+      const day = `${d.getDate()}`.padStart(2, '0');
+      const year = d.getFullYear();
+      return `${year}-${month}-${day}`;
   };
 
   const handleCheckInDate = (date) => {
@@ -196,7 +198,7 @@ const FindRoom = () => {
           CHECK Availability
         </h1>
         <div
-          className="Container bg-white dark:bg-lightBlack grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-5 items-center justify-center font-Lora py-3 lg:py-4 xl:py-5 2xl:py-6 border-t-[3px] border-t-khaki px-5 md:px-7 2xl:px-10"
+          className="Container bg-white dark:bg-lightBlack grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-5 items-center justify-center font-Lora py-3 lg:py-4 xl:grid-cols-5 2xl:py-6 border-t-[3px] border-t-khaki px-5 md:px-7 2xl:px-10"
           
         >
           <div className="p-3 relative">
@@ -427,8 +429,8 @@ const FindRoom = () => {
           </>
         )}
       </div>
-      {/* Contact form */}
-      <div className="py-20 2xl:py-[120px] dark:bg-lightBlack">
+            {/* Contact form */}
+            <div className="py-20 2xl:py-[120px] dark:bg-lightBlack">
         <div className="Container border border-lightGray dark:border-gray px-2 sm:px-7 md:px-10 lg:px-14 2xl:px-20 py-10 md:py-14 lg:py-18 xl:py-20 2xl:py-[100px]">
           <div className="flex items-center flex-col md:flex-row">
             <div
@@ -574,6 +576,7 @@ const FindRoom = () => {
           </div>
         </div>
       </div>
+
     </section>
   );
 };
