@@ -32,6 +32,13 @@ const FindRoom = () => {
   const [message, setMessage] = useState('');
   const [subjects, setSubjects] = useState([]);
   const [feedback, setFeedback] = useState('');
+  const [contactInfo, setContactInfo] = useState({
+    phone: '',
+    email: '',
+    address: '',
+    latitude: '',
+    longitude: '',
+  });
 
   const navigate = useNavigate();
 
@@ -189,6 +196,24 @@ const FindRoom = () => {
     setBeds(1);
     fetchAllRooms(1);
   };
+
+
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/contact-info/');
+        setContactInfo(response.data[0]);  
+      } catch (error) {
+        console.error('Failed to fetch contact info:', error);
+      }
+    };
+
+    fetchContactInfo();
+  }, []);
+
+
+
+
 
   return (
     <section>
@@ -453,7 +478,7 @@ const FindRoom = () => {
 
               {/* call */}
               <div className="flex items-center my-4 md:my-5 lg:my-[26px] group">
-                <div className="w-[30px] h-[30px] md:w-[40px] md:h-[40px] lg:w-[50px] lg:h-[50px] 2xl:w-[60px] 2xl:h-[60px] bg-white dark:bg-normalBlack group-hover:bg-khaki dark:group-hover:bg-khaki grid items-center justify-center rounded-full">
+                <div className="w-[30px] h-[30px] md:w-[40px] md:h-[40px] lg:w-[50px] lg:h-[50px] 2xl:w-[60px] 2xl:h-[60px] bg-whiteSmoke dark:bg-normalBlack group-hover:bg-khaki dark:group-hover:bg-khaki grid items-center justify-center rounded-full">
                   <IoIosCall
                     size={20}
                     className="text-khaki group-hover:text-whiteSmoke"
@@ -464,7 +489,7 @@ const FindRoom = () => {
                     Call Us Now
                   </p>
                   <p className="font-Garamond text-lg sm:text-xl md:text-[22px] leading-[26px] text-lightBlack dark:text-white font-medium">
-                    +980 123 (4567) 890
+                    {contactInfo.phone}
                   </p>
                 </div>
               </div>
@@ -482,14 +507,14 @@ const FindRoom = () => {
                     Send Email
                   </p>
                   <p className="font-Garamond text-lg sm:text-xl md:text-[22px] leading-[26px] text-lightBlack dark:text-white font-medium ">
-                    example@gmail.com
+                    {contactInfo.email}
                   </p>
                 </div>
               </div>
               <hr className="dark:text-gray dark:bg-gray text-lightGray bg-lightGray h-[1px]" />
               {/* location */}
               <div className="flex items-center my-4 md:my-5 lg:my-[26px] group">
-                <div className="w-[30px] h-[30px] md:w-[40px] md:h-[40px] lg:w-[50px] lg:h-[50px] 2xl:w-[60px] 2xl:h-[60px] bg-whiteSmoke dark:bg-normalBlack group-hover:bg-khaki dark:group-hover:bg-khaki grid items-center justify-center rounded-full">
+                <div className="w-[30px] h-[30px] md:w-[40px] md:h-[40px] lg:w-[50px] lg:h-[50px] 2xl:w-[60px] 2xl:h-[60px] bg-whiteSmoke dark:bg-normalBlack group-hover:bg-khaki dark:group-hover:bg-khaki grid items-center justify-center rounded-full p-4 px-6 ">
                   <MdOutlineShareLocation
                     size={20}
                     className="text-khaki group-hover:text-whiteSmoke"
@@ -500,8 +525,7 @@ const FindRoom = () => {
                     Our Locations
                   </p>
                   <p className="font-Garamond text-lg sm:text-xl md:text-[22px] leading-[26px] text-lightBlack dark:text-white font-medium ">
-                    New elephant Road, Dhanmondi <br />
-                    Dhaka - 1212
+                    {contactInfo.address}
                   </p>
                 </div>
               </div>
