@@ -49,7 +49,7 @@ const HotelAndFacilities = () => {
           </div>
           {/* HOTEL’S FACILITIES content */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6 gap-4 pt-[60px] pb-[110px] w-full">
-        {facilities.map((facility, index) => (
+        {facilities.slice(0,6).map((facility, index) => (
           <div 
             key={index} 
             className="h-[200px] w-[197px] pt-[37px] pb-[27px] border border-[#343434] text-center transition-all duration-500 relative z-[1] group facility-card"
