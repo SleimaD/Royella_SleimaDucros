@@ -11,9 +11,9 @@ import { FcAbout } from "react-icons/fc";
 
 const Sidebarr = ({ setCurrentComponent, currentComponent }) => {
   return (
-  <Sidebar  className='bg-[#1e1d1d] text-white mt-10 fixed  '>
+  <Sidebar  className='bg-[#1e1d1d] text-white  fixed dark:bg-mediumBlack dark:text-red-500  '>
       <Sidebar.Items>
-        <Sidebar.ItemGroup>
+        <Sidebar.ItemGroup className="dark:bg-mediumBlack dark:text-green-900 ">
           <Sidebar.Item href="#" icon={HiChartPie} className="text-3xl font-bold mb-10 font-Garamond">
             Backoffice
           </Sidebar.Item>

@@ -95,7 +95,7 @@ const Facilities = () => {
                         {service.subtitle}
                       </h4>
                       <h1 className="text-2xl md:text-3xl 2xl:text-[32px] leading-[26px] font-semibold text-lightBlack dark:text-white">
-                        <Link to={`/service-details/${service.id}`}>
+                        <Link to={`/service_details/${service.id}`}>
                           {service.title}
                         </Link>
                       </h1>

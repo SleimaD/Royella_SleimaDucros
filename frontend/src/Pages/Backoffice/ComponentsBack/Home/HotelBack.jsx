@@ -65,7 +65,7 @@ const HotelBack = () => {
 
     return (
         <section className="dark:bg-mediumBlack py-20 2xl:py-[120px]">
-            <h3 className='text-2xl font-Garamond uppercase underline p-2 text-center mt-3 mb-5'>Hotel</h3>
+            <h3 className='text-2xl font-Garamond uppercase underline p-2 text-center mt-[-3rem]  mb-5'>Hotel</h3>
             <div className="Container  w sm:overflow-hidden lg:overflow-auto">
                 {editMode ? (
                     <form onSubmit={handleSave} className="space-y-4 container w-[80%] bg-whiteSmoke shadow p-3 flex flex-wrap justify-center  gap-5">

@@ -31,6 +31,12 @@ const ServiceDetails = () => {
     (detail) => detail.title.toLowerCase() === "hours"
   );
 
+  const otherDetails = service.details.filter(
+    (detail) => detail.title.toLowerCase() !== "hours"
+  );
+
+
+
   return (
     <section className="">
       <BreadCrumb title="Service Details" />
@@ -86,7 +92,7 @@ const ServiceDetails = () => {
             </p>
 
             {/* Additional Details */}
-            {service.details.map((detail, index) => (
+            {otherDetails.map((detail, index) => (
               <div
                 key={index}
                 className="py-10 lg:py-[60px]"

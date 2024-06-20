@@ -28,11 +28,11 @@ function Backoffice() {
   };
 
   return (
-  <div className='flex w-full h-screen overflow-x-hidden'>
+  <div className='flex w-full h-screen overflow-x-hidden dark:bg-mediumBlack dark:text-white '>
       <div className="w-[20%] h-full ">
         <Sidebarr setCurrentComponent={setCurrentComponent} currentComponent={currentComponent} />
       </div>      
-      <div className="transition-opacity duration-1000 ease-in-out  p-5 w-[83%] flex mt-5">
+      <div className="transition-opacity duration-1000 ease-in-out  p-5 w-[83%] flex dark:bg-mediumBlack dark:text-white ">
         {renderComponent()}
       </div>
     </div>
