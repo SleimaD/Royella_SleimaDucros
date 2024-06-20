@@ -28,6 +28,10 @@ function Mailbox() {
         setSelectedMessage(message);
     };
 
+    const getSubject = (subjectId) => {
+        return subjects[subjectId] || "Other";
+    };
+
     return (
         <div className="flex h-screen bg-khaki">
             <div className="w-1/4 bg-gray-800  overflow-y-auto flex flex-col gap-2 p-2">
@@ -36,25 +40,26 @@ function Mailbox() {
                     <div key={message.id} 
                          className={`p-4  hover:bg-gray-700  cursor-pointer ${selectedMessage && selectedMessage.id === message.id ? 'bg-white ' : ' bg-white'}`}
                          onClick={() => handleSelectMessage(message)}>
-                    <h3 className="text-xl leading-6 font-bold text-gray-900">
-                        Subject: <span className='font-normal text-sm'> {subjects[message.subject]} </span> 
-                    </h3>
-                    <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                        <span className='text-xl font-bold'>From:</span> {message.email}
-                    </p>
+                        <h3 className="text-xl leading-6 font-bold text-gray-900">
+                            Subject: <span className='font-normal text-sm'> {getSubject(message.subject)} </span> 
+                        </h3>
+                        <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                            <span className='text-xl font-bold'>From:</span> {message.email}
+                        </p>
                     </div>
                 ))}
             </div>
-            <div className="w-3/4 bg-[#f7f6f6] overflow-y-auto">
+            <div className="w-3/4 bg-whiteSmoke overflow-y-auto">
                 <div className="p-1 py-5 text-5xl font-bold uppercase font-Garamond text-center ">Mailbox</div>
                 {selectedMessage ? (
-                    <div>
-                        <h3 className="text-2xl font-bold">{subjects[selectedMessage.subject]}</h3>
-                        <p className="text-gray-700">From: {selectedMessage.email}</p>
+                    <div className='p-5'>
+                        <p className="text-gray-700">From: <span className='text-blue-500'> {selectedMessage.email}</span></p>
+                        <h3 className="">Subject : <span className='text-blue-700'> {getSubject(selectedMessage.subject)}</span></h3>
                         <div className="border-t border-gray-200 mt-4">
-                            <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex flex-col bg-white mt-2">
                                 <dt className="text-sm font-medium text-gray-500">Message:</dt>
-                                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <br></br>
+                                <dd className="mt-1 text-md text-gray-900 sm:mt-0 sm:col-span-2">
                                     {selectedMessage.message}
                                 </dd>
                             </div>
