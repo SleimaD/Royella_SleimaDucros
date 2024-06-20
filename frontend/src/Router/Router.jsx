@@ -29,6 +29,7 @@ import Mailbox from "../Pages/Backoffice/Mailbox";
 import BlogManagement from "../Pages/Backoffice/BlogManagement";
 import UserAccounts from "../Pages/Backoffice/UserAccounts";
 import Reservations from "../Pages/Backoffice/Reservations";
+import TestimonialManagement from "../Pages/Backoffice/TestimonialManagement";
 
 
 
@@ -125,6 +126,10 @@ const router = createBrowserRouter([
       { path: "/reservations",
       element: <PrivateRoute allowedRoles={['ADMIN', "RECEPTIONIST", "UTILISATEUR", "WEBMASTER"]}><Reservations /></PrivateRoute>
       },
+      {
+        path: "/testimonialmanager",
+        element: <PrivateRoute allowedRoles={["WEBMASTER"]}><TestimonialManagement /></PrivateRoute>
+      }
     ],
   },
 ]);

@@ -14,6 +14,7 @@ import { IoMdMail } from "react-icons/io";
 import { MdBookmarks } from "react-icons/md";
 import { TfiWrite } from "react-icons/tfi";
 import { BiLogOut } from "react-icons/bi";
+import { VscFeedback } from "react-icons/vsc";
 
 
 
@@ -298,6 +299,14 @@ const Navbar = () => {
                       className=" px-[0.6rem] py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 hover:bg-[#f8f6f3] hover:transition-all  transition-all duration-300 hover:text-black"
                     >
                       <TfiWrite size={19} className="text-khaki" /> Blog Management
+                    </NavLink>
+                  )}
+                  {(user.role === 'Webmaster')  && (
+                    <NavLink
+                      to="/testimonialmanager"
+                      className=" px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 hover:bg-[#f8f6f3] hover:transition-all  transition-all duration-300 hover:text-black"
+                    >
+                      <VscFeedback size={19} className="text-khaki" /> Testimonial Management
                     </NavLink>
                   )}
                   <button
