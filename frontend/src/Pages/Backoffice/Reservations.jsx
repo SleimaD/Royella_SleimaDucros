@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -48,7 +49,7 @@ const Reservations = () => {
             console.log(reservationsWithRoomDetails); 
             setReservations(reservationsWithRoomDetails);
 
-            if (user.role.toLowerCase() === 'receptionist') {
+            if (user.role.toLowerCase() === 'receptionist' || user.role.toLowerCase() === 'admin') {
                 const pending = reservationsWithRoomDetails.filter(reservation => reservation.status === 'PENDING');
                 setPendingReservations(pending);
             }
@@ -87,88 +88,71 @@ const Reservations = () => {
         }
     };
 
-    const handleStatusChange = async (id, newStatus) => {
-        try {
-            const response = await axios.patch(`http://127.0.0.1:8000/api/bookings/${id}/`, {
-                status: newStatus
-            }, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
-            });
-            if (response.status === 200) {
-                alert(`Reservation ${newStatus.toLowerCase()}.`);
-                fetchReservations();  
-            }
-        } catch (error) {
-            console.error(`Error updating reservation status: ${error}`);
-            alert('Failed to update the reservation status.');
-        }
-    };
+    const renderTable = (title, data, showActions) => (
+        <div className='w-full flex justify-center items-center mb-16'>
+            <div className="w-[80%]">
+                <h1 className='text-5xl font-Garamond uppercase text-center p-2 mt-5 mb-8'>{title}</h1>
+                <table className="w-full text-sm text-left text-gray-500 p-3">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr className='bg-khaki text-white'>   
+                            <th scope="col" className="py-3 px-6 font-Garamond text-xl">Room</th>
+                            <th scope="col" className="py-3 px-6 font-Garamond text-xl">Date</th>
+                            <th scope="col" className="py-3 px-6 font-Garamond text-xl">Status</th>
+                            {showActions && <th scope="col" className="py-3 px-6 font-Garamond text-xl">Actions</th>}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data.map(reservation => (
+                            <tr key={reservation.id} className={`bg-white border-b border-[#d6d6d6a9] ${reservation.status === 'PENDING' || reservation.status === 'CANCELLED' ? ' bg-[#f5f4f4d7]' : ''}`}>
+                                <td className="py-4 px-6 flex items-center gap-4 font-Garamond text-lg ">
+                                    <MdOutlineBedroomParent size={30} className="text-khaki" />
+                                    {reservation.roomDetails ? reservation.roomDetails.name : 'Loading...'}
+                                </td>
+                                <td className="py-4 px-6 font-Garamond text-lg ">
+                                    from {reservation.start_date} to {reservation.end_date}
+                                </td>
+                                <td className={`py-4 px-6 font-Garamond text-lg ${reservation.status === 'PENDING' || reservation.status === 'CANCELLED' ? 'text-red-500' : 'text-green-500 font-semibold'}`}>
+                                    {reservation.status}
+                                </td>
+                                {showActions && (
+                                    <td className="py-4 px-6">
+                                        <button
+                                            onClick={() => handleApprove(reservation.id)}
+                                            className="bg-green-500 text-white py-2 px-4 rounded mr-2"
+                                        >
+                                            Approve
+                                        </button>
+                                        <button
+                                            onClick={() => handleCancel(reservation.id)}
+                                            className="bg-red-500 text-white py-2 px-4 rounded"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </td>
+                                )}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
 
     if (user.role.toLowerCase() === 'receptionist' || user.role.toLowerCase() === 'admin') {
         return (
             <div>
-                <h1>Pending Reservations</h1>
-                {pendingReservations.length ? (
-                    <ul>
-                        {pendingReservations.map(reservation => (
-                            <li key={reservation.id}>
-                                {reservation.roomDetails ? reservation.roomDetails.name : 'Loading...'} from {reservation.start_date} to {reservation.end_date} - Status: {reservation.status}
-                                <button onClick={() => handleApprove(reservation.id)}>Approve</button>
-                                <button onClick={() => handleCancel(reservation.id)}>Cancel</button>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>No pending reservations at the moment.</p>
-                )}
-
-                <h1>All Reservations</h1>
-                {reservations.length ? (
-                    <ul>
-                        {reservations.map(reservation => (
-                            <li key={reservation.id}>{reservation.roomDetails ? reservation.roomDetails.name : 'Loading...'} from {reservation.start_date} to {reservation.end_date} - Status: {reservation.status}</li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>No reservations at the moment.</p>
-                )}
+                {renderTable('Pending Reservations', pendingReservations, true)}
+                {renderTable('All Reservations', reservations, false)}
             </div>
         );
     }
 
     return (
         <div>
-            <h1 className='text-5xl font-Garamond uppercase text-center p-2 mt-5 mb-8'>Your Reservations</h1>
             {reservations.length ? (
-                <div className='w-full flex justify-center items-center '>
-                    <table className="w-[70%] text-sm text-left text-gray-500 p-3">
-                        <thead  className="text-xs text-gray-700 uppercase bg-gray-50">
-                            <tr className='bg-khaki text-white'>   
-                                <th scope="col" className="py-3 px-6 font-Garamond text-xl">Room</th>
-                                <th scope="col" className="py-3 px-6 font-Garamond text-xl">Date</th>
-                                <th scope="col" className="py-3 px-6 font-Garamond text-xl">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {reservations.map(reservation => (
-                                <tr key={reservation.id} className="bg-white border-b border-[#d6d6d6a9]">
-                                    <td className="py-4 px-6 flex items-center gap-4 font-Garamond text-lg ">
-                                      <MdOutlineBedroomParent size={30} className="text-khaki" />
-                                      {reservation.roomDetails ? reservation.roomDetails.name : 'Loading...'}
-                                    </td>
-                                    <td className="py-4 px-6 font-Garamond text-lg ">
-                                       from {reservation.start_date} to {reservation.end_date}
-                                    </td>
-                                    <td className={`py-4 px-6 font-Garamond text-lg  ${reservation.status === 'PENDING' || reservation.status === 'CANCELLED' ? 'text-red-500' : 'text-green-500'}`}>
-                                        {reservation.status}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                renderTable('Reservations', reservations, false)
             ) : (
-                <p>You have no reservations at the moment.</p>
+                <p className="text-center text-gray-500 font-Garamond text-xl">You have no reservations at the moment.</p>
             )}  
         </div>
     );

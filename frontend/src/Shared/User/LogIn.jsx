@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "./../../RolesRoutes/AuthProvider"; 
+import { MdOutlineDoneOutline } from "react-icons/md";
 
 const Login = () => {
     const { user, login } = useAuth();
@@ -38,7 +39,7 @@ const Login = () => {
                 window.location.reload();
                 setTimeout(() => {
                     navigate('/');
-                }, 2000);
+                }, 1000);
             }
         } catch (err) {
             setError('Login incorrect ou problème de connexion.');
@@ -49,8 +50,10 @@ const Login = () => {
     if (user) {
         return (
             <div className="w-full bg-gray-300 flex flex-col justify-center items-center h-screen gap-3">
-                <div className='flex justify-center items-center'>
-                    <p className='text-4xl text-khaki'>Connecté(e) en tant que {user.username}</p>
+                <div className='flex flex-col gap-3 justify-center items-center bg-whiteSmoke p-10 px-16 '>
+                    <MdOutlineDoneOutline size={80} className="text-green-400 p-2 rounded-full border-2 border-green-400 mb-10" />
+                    <p className='text-2xl text-khaki font-Garamond uppercase'>Connecté(e) en tant que </p>
+                    <p className='text-4xl text-khaki font-Garamond uppercase  italic'>{user.username}</p>
                 </div>
             </div>
         );
