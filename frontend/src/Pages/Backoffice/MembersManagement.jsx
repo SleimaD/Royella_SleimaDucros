@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import { useForm } from 'react-hook-form';
 import { ImBin } from "react-icons/im";
 
-const AboutBack = () => {
+const MemberManagement = () => {
   const [members, setMembers] = useState([]);
   const [editMode, setEditMode] = useState(null);
   const [createMode, setCreateMode] = useState(false); 
@@ -101,8 +101,7 @@ const AboutBack = () => {
 
   return (
     <div className="p-8 ">
-      <h1 className="text-6xl font-bold text-center font-Garamond mb-14 mt-5">ABOUT</h1>
-      <h1 className="text-2xl uppercase text-center underline font-Garamond mb-4 mt-[7rem]">Manage Members</h1>
+      <h1 className="text-5xl font-bold text-center font-Garamond mb-14 mt-5">MEMBERS MANAGEMENT</h1>
       <button 
         onClick={handleCreateToggle} 
         className="btn-primary text-white  rounded mb-4"
@@ -166,9 +165,9 @@ const AboutBack = () => {
           </div>
         ))}
       </div>
-      <div className='w-50 h-[15rem] bg-white'></div>
+      <div className='w-50 h-[7rem] bg-white'></div>
     </div>
   );
 };
 
-export default AboutBack;
+export default MemberManagement;

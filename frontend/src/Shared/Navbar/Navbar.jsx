@@ -15,7 +15,7 @@ import { MdBookmarks } from "react-icons/md";
 import { TfiWrite } from "react-icons/tfi";
 import { BiLogOut } from "react-icons/bi";
 import { VscFeedback } from "react-icons/vsc";
-
+import { FaPeopleGroup } from "react-icons/fa6";
 
 
 
@@ -307,6 +307,14 @@ const Navbar = () => {
                       className=" px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 hover:bg-[#f8f6f3] hover:transition-all  transition-all duration-300 hover:text-black"
                     >
                       <VscFeedback size={19} className="text-khaki" /> Testimonial Management
+                    </NavLink>
+                  )}
+                  {(user.role === 'Webmaster')  && (
+                    <NavLink
+                      to="/membermanager"
+                      className=" px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 hover:bg-[#f8f6f3] hover:transition-all  transition-all duration-300 hover:text-black"
+                    >
+                      <FaPeopleGroup size={19} className="text-khaki" /> Members Management
                     </NavLink>
                   )}
                   <button
