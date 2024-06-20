@@ -169,7 +169,7 @@ const BlogBack = () => {
         {showForm ? 'Hide Form' : 'Add Blog'}
       </button>
       {showForm && (
-        <form onSubmit={handleSubmit} className="mb-4">
+        <form onSubmit={handleSubmit} className="mb-4 bg-whiteSmoke p-5">
           <div className="mb-2">
             <label className="block text-sm font-bold mb-1" htmlFor="author">Author</label>
             <input

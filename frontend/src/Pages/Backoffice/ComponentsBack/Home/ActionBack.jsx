@@ -82,37 +82,38 @@ const ActionBack = () => {
                     </button>
                 </div>
                 {editMode ? (
-                    <form onSubmit={handleSubmit} className="space-y-4 py-4">
+                    <form onSubmit={handleSubmit} className="p-4 bg-whiteSmoke w-full flex flex-wrap justify-center items-center gap-5">
                         <div>
                             <label>Name:</label>
-                            <input type="text" name="name" value={formData.name} onChange={handleChange} className="ml-2 border" />
+                            <input type="text" name="name" value={formData.name} onChange={handleChange} className="ml-2 border-2 w-[11rem] border-[#a3a2a2d0] rounded-sm shadow-md" />
                         </div>
                         <div>
                             <label>Title:</label>
-                            <input type="text" name="title" value={formData.title} onChange={handleChange} className="ml-2 border" />
+                            <input type="text" name="title" value={formData.title} onChange={handleChange} className="ml-2 border-2 w-[22rem] border-[#a3a2a2d0] rounded-sm shadow-md" />
                         </div>
                         <div>
                             <label>Subtitle:</label>
-                            <input type="text" name="subtitle" value={formData.subtitle} onChange={handleChange} className="ml-2 border" />
+                            <input type="text" name="subtitle" value={formData.subtitle} onChange={handleChange} className="ml-2 border-2 w-[11rem] border-[#a3a2a2d0] rounded-sm shadow-md" />
                         </div>
                         <div>
                             <label>Bio:</label>
-                            <textarea name="bio" value={formData.bio} onChange={handleChange} className="ml-2 border" />
+                            <textarea name="bio" value={formData.bio} onChange={handleChange} className="ml-2 border-2 w-[52rem] py-7 border-[#a3a2a2d0] rounded-sm shadow-md" />
                         </div>
                         <div>
                             <label>Quote:</label>
-                            <textarea name="quote" value={formData.quote} onChange={handleChange} className="ml-2 border" />
+                            <textarea name="quote" value={formData.quote} onChange={handleChange} className="ml-2 border-2 w-[52rem] py-5 border-[#a3a2a2d0] rounded-sm shadow-md" />
                         </div>
+                        
                         <div>
                             <label>Image:</label>
-                            <input type="file" name="image" onChange={handleChange} className="ml-2" />
+                            <input type="file" name="image" onChange={handleChange} className="ml-2 " />
                         </div>
                         <div>
                             <label>Video URL:</label>
-                            <input type="url" name="video_url" value={formData.video_url} onChange={handleChange} className="ml-2 border" />
+                            <input type="url" name="video_url" value={formData.video_url} onChange={handleChange} className="ml-2 border-2 w-[27rem] border-[#a3a2a2d0] rounded-sm shadow-md" />
                         </div>
                         <div className="text-center">
-                            <button type="submit" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <button type="submit" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 mb-2 px-4 mt-5 rounded">
                                 Save Changes
                             </button>
                         </div>

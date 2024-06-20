@@ -114,13 +114,13 @@ function RoomsBack() {
             </button>
 
             {isAdding && (
-                <form onSubmit={handleSaveNewRoom} className="mb-5">
-                    <input type="text" placeholder="Name" name="name" onChange={handleInputChange} className="p-1 border rounded w-full" />
-                    <textarea placeholder="Description" name="description" onChange={handleInputChange} className="p-1 border rounded w-full" />
-                    <input type="text" placeholder="Price" name="price" onChange={handleInputChange} className="p-1 border rounded w-full" />
-                    <input type="number" placeholder="Stars" name="stars" onChange={handleInputChange} className="p-1 border rounded w-full" />
-                    <input type="file" name="image" onChange={handleInputChange} className="p-1 border rounded w-full" />
-                    <button type="submit" className="bg-green-500 text-white p-1 rounded mt-1">Add Room</button>
+                <form onSubmit={handleSaveNewRoom} className="mb-5 w-[80%] bg-whiteSmoke p-5 flex flex-wrap justify-center items-center gap-5 ">
+                    <input type="text" placeholder="Name" name="name" onChange={handleInputChange} className="p-1 border-b-4 border-t-transparent border-l-transparent border-r-transparent border-black py-2 px-3 " />
+                    <textarea placeholder="Description" name="description" onChange={handleInputChange} className="p-1 border-b-4 rounded-md border-black py-2 px-3 w-full h-[10rem]" />
+                    <input type="text" placeholder="Price" name="price" onChange={handleInputChange} className="p-1 border-b-4 border-t-transparent border-l-transparent border-r-transparent border-black py-2 px-3 " />
+                    <input type="number" placeholder="Stars" name="stars" onChange={handleInputChange} className="p-1 border-b-4 border-t-transparent border-l-transparent border-r-transparent border-black py-2 px-3 " />
+                    <input type="file" name="image" onChange={handleInputChange} className="p-1  w-full" />
+                    <button type="submit" className="bg-green-500 text-white p-2  mt-1">Add Room</button>
                 </form>
             )}
 
@@ -152,7 +152,7 @@ function RoomsBack() {
                                 )}
                                 <button onClick={() => handleDeleteRoom(room.id)} className="text-red-500 text-lg p-1 rounded"><ImBin /></button>
                             </div>
-                            <button onClick={() => handleToggleOffers(room.id)} className="mt-3 bg-green-500 text-white p-1 rounded">
+                            <button onClick={() => handleToggleOffers(room.id)} className="mt-3 bg-green-500 text-white p-1 ">
                                 {offers[room.id] ? 'Hide Offers' : 'Show Offers'}
                             </button>
                             {offers[room.id] && (
@@ -163,7 +163,7 @@ function RoomsBack() {
                                             <button onClick={() => handleDeleteOffer(offer.id, room.id)} className="bg-red-500 text-white p-1 rounded ml-1">Delete</button>
                                         </div>
                                     ))}
-                                    <form onSubmit={(e) => {
+                                    <form  className="w-[80%] flex flex-col gap-5 mt-5 " onSubmit={(e) => {
                                         e.preventDefault();
                                         const discount = e.target.discount.value;
                                         const startDate = e.target.start_date.value;
@@ -171,10 +171,10 @@ function RoomsBack() {
                                         handleAddOffer(room.id, discount, startDate, endDate);
                                         e.target.reset();
                                     }}>
-                                        <input type="number" name="discount" placeholder="New Offer %" className="p-1 border rounded" />
-                                        <input type="date" name="start_date" placeholder="Start Date" className="p-1 border rounded ml-2" />
-                                        <input type="date" name="end_date" placeholder="End Date" className="p-1 border rounded ml-2" />
-                                        <button type="submit" className="bg-blue-500 text-white p-1 rounded ml-2">Add Offer</button>
+                                        <input type="number" name="discount" placeholder="New Offer %" className="p-1 border-2 rounded" />
+                                        <input type="date" name="start_date" placeholder="Start Date" className="p-1 border-2 rounded ml-2" />
+                                        <input type="date" name="end_date" placeholder="End Date" className="p-1 border-2 rounded ml-2" />
+                                        <button type="submit" className="bg-blue-500 text-white p-1  ml-2">Add Offer</button>
                                     </form>
                                 </div>
                             )}

@@ -121,13 +121,29 @@ function FooterBack() {
         </div>
       </section>
 
-      <section className="w-[95%] mt-5 bg-whiteSmoke flex flex-col gap-5 justify-center items-center shadow">
+      <section className="w-[95%] mt-5 mb-[10rem] bg-whiteSmoke flex flex-col gap-5 justify-center items-center shadow">
           <h3 className='text-xl font-Garamond font-semibold'>SUBSCRIBERS(newsletter)</h3>
-          <div>
-            {subscribers.map((item, index) => (              
-              <div key={index} className="flex items-center gap-4 p-2">
-                <p className="text-sm">{item.email}</p>
-                <p className='text-sm'>{item.date_subscribed}</p>
+          <div className='mb-10'>
+            {subscribers.map((item, index) => (
+              <div key={index} className="flex items-center gap-4 p-5">
+                <table className="w-full text-sm text-left text-gray-500 p-3">
+                  <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                    <tr className='bg-khaki text-white'>   
+                      <th scope="col" className="py-3 px-6">Email</th>
+                      <th scope="col" className="py-3 px-6">Date Subscribed</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="bg-white border-b border-[#d6d6d6a9]">
+                      <td className="py-4 px-6">
+                        <p className="text-sm text-gray-500 hover:text-khaki">{item.email}</p>
+                      </td>
+                      <td className="py-4 px-6">
+                        <p className="text-sm text-gray-500 hover:text-khaki">{item.date_subscribed}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             ))}
           </div>

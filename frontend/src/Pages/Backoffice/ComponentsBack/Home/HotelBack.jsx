@@ -68,12 +68,13 @@ const HotelBack = () => {
             <h3 className='text-2xl font-Garamond uppercase underline p-2 text-center mt-3 mb-5'>Hotel</h3>
             <div className="Container  w sm:overflow-hidden lg:overflow-auto">
                 {editMode ? (
-                    <form onSubmit={handleSave} className="space-y-4 container w-[80%] bg-[#fdfdfd] shadow p-3">
-                        {hotelInfo.image && typeof hotelInfo.image === 'string' && <img src={hotelInfo.image} alt="Hotel" className="w-[35rem] h-[20rem]" />}
-                        <input type="text" name="title" value={hotelInfo.title || ''} onChange={handleInputChange} placeholder="Title" className="block w-full" />
-                        <input type="text" name="subtitle" value={hotelInfo.subtitle || ''} onChange={handleInputChange} placeholder="Subtitle" className="block w-full" />
-                        <textarea name="description" value={hotelInfo.description || ''} onChange={handleInputChange} placeholder="Description" className="block w-full" />
-                        <input type="file" onChange={handleFileChange} className="block w-full" />
+                    <form onSubmit={handleSave} className="space-y-4 container w-[80%] bg-whiteSmoke shadow p-3 flex flex-wrap justify-center  gap-5">
+                    
+                        {hotelInfo.image && typeof hotelInfo.image === 'string' && <img src={hotelInfo.image} alt="Hotel" className="w-full h-[25rem]" />}
+                        <input type="text" name="title" value={hotelInfo.title || ''} onChange={handleInputChange} placeholder="Title" className="block w-[25rem] border-t-transparent border-l-transparent border-r-transparent border-b-4 rounded-lg border-black bg-[#ffffffd2] " />
+                        <input type="text" name="subtitle" value={hotelInfo.subtitle || ''} onChange={handleInputChange} placeholder="Subtitle" className="block w-[25rem] border-t-transparent border-l-transparent border-r-transparent border-b-4 rounded-lg border-black bg-[#ffffffcf]" />
+                        <textarea name="description" value={hotelInfo.description || ''} onChange={handleInputChange} placeholder="Description" className="block w-[45rem] h-[10rem] border-2 border-[#c1c0c0] rounded-lg  bg-[#ffffff5c]" />
+                        <input type="file" onChange={handleFileChange} className="block  " />
                         <button type="submit" className="btn-primary">Save</button>
                         <button type="button" onClick={handleCancelEdit} className="btn-secondary bg-red-600 p-2 mx-3">Cancel</button>
                     </form>
