@@ -50,7 +50,7 @@ const Login = () => {
         return (
             <div className="w-full bg-gray-300 flex flex-col justify-center items-center h-screen gap-3">
                 <div className='flex justify-center items-center'>
-                    <p className='text-4xl'>Connecté(e) en tant que {user.username}</p>
+                    <p className='text-4xl text-khaki'>Connecté(e) en tant que {user.username}</p>
                 </div>
             </div>
         );

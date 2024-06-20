@@ -172,17 +172,20 @@ class UserViewSet(viewsets.ModelViewSet):
         try:
             user = self.get_object()
             logger.debug(f"Updating role for user {user.id}")
-            serializer = UserSerializer(user, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
+            data = request.data.copy()
+            role = data.get('role')
+
+            if role:
+                user.role = role
+                user.save()
+                serializer = UserSerializer(user)
                 return Response(serializer.data)
             else:
-                logger.error(f"Serializer errors: {serializer.errors}")
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"detail": "Role is required"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             logger.error(f"Exception occurred: {str(e)}")
             return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+        
 
 
 @api_view(['GET', 'PUT'])

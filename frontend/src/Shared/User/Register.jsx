@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import Modal from "./Modal"
+
+
 
 const RegistrationForm = () => {
     const [formData, setFormData] = useState({
@@ -11,6 +14,8 @@ const RegistrationForm = () => {
         photo: null,
         credit_card_info: '',
     });
+    const [showModal, setShowModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -36,17 +41,23 @@ const RegistrationForm = () => {
             }
         });
 
-        console.log([...data.entries()]); 
+        console.log([...data.entries()]);
 
         try {
             const response = await axios.post('http://localhost:8000/api/register/', data);
             console.log('Registration successful', response.data);
-            alert('Registration successful. Check your email for confirmation.');
-            window.location.reload();
+            setModalMessage('Registration successful. Check your email for confirmation.');
+            setShowModal(true);
         } catch (error) {
             console.error('Registration failed', error.response);
-            alert('Registration failed: ' + (error.response?.data?.detail || 'Unknown error'));
+            setModalMessage('Registration failed: ' + (error.response?.data?.detail || 'Unknown error'));
+            setShowModal(true);
         }
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+        window.location.reload(); 
     };
 
     return (
@@ -64,6 +75,7 @@ const RegistrationForm = () => {
                 </div>
                 <button type="submit" className='bg-khaki p-1 px-3 text-white rounded-lg text-lg'>Register</button>
             </form>
+            <Modal show={showModal} message={modalMessage} onClose={closeModal} />
         </div>
     );
 };
