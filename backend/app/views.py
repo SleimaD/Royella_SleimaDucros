@@ -110,6 +110,7 @@ class UserCreateView(APIView):
 
 
 
+
 class LoginView(APIView):
     permission_classes = []
 
@@ -121,7 +122,9 @@ class LoginView(APIView):
         try:
             user = UserModel.objects.get(email=email)
             if check_password(password, user.password):
-               
+                if request.user.is_authenticated:
+                    return Response({'error': 'Vous êtes déjà connecté.'}, status=status.HTTP_400_BAD_REQUEST)
+                
                 refresh = RefreshToken.for_user(user)
                 return Response({
                     'refresh': str(refresh),
@@ -135,11 +138,11 @@ class LoginView(APIView):
                     }
                 }, status=status.HTTP_200_OK)
             else:
-               
                 return Response({'error': 'Identifiants invalides'}, status=status.HTTP_400_BAD_REQUEST)
         except UserModel.DoesNotExist:
-           
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
 
 
 
