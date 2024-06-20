@@ -5,6 +5,7 @@ import ActionBack from './ActionBack';
 import HeroSectionBack from './HeroSectionBack';
 import HotelBack from './HotelBack';
 import ServicesBack from './ServicesBack';
+import TestimonialBack from './TestimonialBack';
 
 function Home() {
 
@@ -26,6 +27,9 @@ function Home() {
       </section>
       <section className='mt-4'>
         <HeroSectionBack />
+      </section>
+      <section className='mt-4'>
+        <TestimonialBack />
       </section>
     </div>
   )
