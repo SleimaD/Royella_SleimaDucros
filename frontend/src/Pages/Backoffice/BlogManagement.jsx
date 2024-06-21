@@ -255,7 +255,7 @@ const BlogManagement = () => {
          Submit for Review
        </button>
        <div className='mt-10'>
-         <h2>Actual Posts</h2>
+         <h2 className='text-center font-Garamond underline uppercase'>Actual Posts</h2>
          <div className='container mx-auto px-4 py-8 w-full flex flex-wrap justify-center items-center gap-3 '>
            {publishedBlogs.map(blog => (
              <div key={blog.id} className="group w-[20rem] ">
@@ -288,7 +288,7 @@ const BlogManagement = () => {
            ))}
          </div>
          {/* Section for Draft Posts */}
-         <h2>Draft Posts</h2>
+         <h2 className='text-center font-Garamond uppercase underline'>Draft Posts</h2>
          <div className='container mx-auto px-4 py-8 w-full flex flex-wrap justify-center items-center gap-3'>
            {draftBlogs.length > 0 ?
              draftBlogs.map(blog => (
@@ -322,7 +322,7 @@ const BlogManagement = () => {
            }
 
          </div>
-         <h2>Pending Posts</h2>
+         <h2 className='text-center font-Garamond underline uppercase'>Pending Posts</h2>
          <div className='container mx-auto px-4 py-8 w-full flex flex-wrap justify-center items-center gap-3'>
            {pendingBlogs.length > 0 ?
              pendingBlogs.map(blog => (
@@ -349,7 +349,8 @@ const BlogManagement = () => {
                </div>
              </div> 
            ))
-           : <div className="text-center text-khaki mt-10 font-Garamond uppercase text-2xl font-bold border-2 border-dotted p-2 px-4">No pending posts</div>
+           : <div className="text-center text-khaki mt-10 font-Garamond uppercase text-2xl font-bold border-2 border-dotted p-2 px-4
+           ">No pending posts</div>
            }
          </div>
        </div>
@@ -359,9 +360,9 @@ const BlogManagement = () => {
 
       {(user.role === 'Admin' || user.role === 'Webmaster') && (
         <>
-          <h2>Actual Posts</h2>
+          <h2 className='text-center text-xl uppercase underline p-4 font-Garamond'>Actual Posts</h2>
           {renderBlogs(publishedBlogs, false)}
-          <h2>Pending Posts</h2>
+          <h2 className='text-center text-xl uppercase underline p-4 font-Garamond'>Pending Posts</h2>
           {renderBlogs(pendingBlogs, true)}
         </>
       )}

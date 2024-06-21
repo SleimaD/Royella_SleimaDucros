@@ -85,14 +85,14 @@ const LatestBlog = () => {
                             {blog.category.map(cat => cat.name).join(', ')}
                           </p>
                         </div>
-                        <Link to="/blog_details" state={{ blog }}>
+                        <Link to={`/blog_details/${blog.id}`} state={{ blog }}>
                           <button className="text-xl sm:text-[22px] xl:text-2xl text-left 2xl:text-[26px] leading-[34px] font-semibold text-lightBlack dark:text-white py-2 sm:py-3 md:py-4 hover:underline underline-offset-2">
                             {blog.title}
                           </button>
                         </Link>
                       </div>
                       <div className="border-t-[1px] border-[#e8e8e8] dark:border-[#424242] py-2 lg:py-3">
-                        <Link to="/blog_details" state={{ blog }} className="px-[30px] flex items-center justify-between">
+                        <Link to={`/blog_details/${blog.id}`} state={{ blog }} className="px-[30px] flex items-center justify-between">
                           <button className="text-sm sm:text-base flex items-center">
                             <span className="ml-[10px] leading-[38px] uppercase text-lightBlack dark:text-white font-medium group-hover:text-khaki hover:underline underline-offset-1">
                               Read More
