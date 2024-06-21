@@ -16,6 +16,7 @@ import { TfiWrite } from "react-icons/tfi";
 import { BiLogOut } from "react-icons/bi";
 import { VscFeedback } from "react-icons/vsc";
 import { FaPeopleGroup } from "react-icons/fa6";
+import { FaSignInAlt } from "react-icons/fa";
 
 
 
@@ -328,8 +329,8 @@ const Navbar = () => {
             </div>
           ) : (
             <div className="flex items-center">
-              <NavLink to="/login" className="p-3 text-white">Sign In</NavLink>
-              <NavLink to="/register" className="p-3 text-white">Sign Up</NavLink>
+              <NavLink to="/login" className="p-3 text-white"><FaSignInAlt size={35}  /></NavLink>
+              {/* <NavLink to="/register" className="p-3 text-white">Sign Up</NavLink> */}
             </div>
           )}
           </div>

@@ -15,11 +15,11 @@ const BlogBack = () => {
     image: null,
     category: [],
     tags: [],
-    status: 'draft'
+    status: 'draft',
+    author: user?.id || ''
   });
   const [isEditing, setIsEditing] = useState(false);
   const [showForm, setShowForm] = useState(false);
-
 
   useEffect(() => {
     if (token) {
@@ -40,7 +40,7 @@ const BlogBack = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       setBlogs(response.data);
-      console.log(`Bearer ${token}`); 
+      console.log(`Bearer ${token}`);
     } catch (error) {
       if (error.response && error.response.status === 401) {
         console.error('Authentication error:', error.response.data);
@@ -71,7 +71,7 @@ const BlogBack = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
-  }; 
+  };
 
   const handleCategoryChange = (e) => {
     const options = e.target.options;
@@ -106,21 +106,25 @@ const BlogBack = () => {
     formData.append('title', form.title);
     formData.append('content', form.content);
     if (form.image) formData.append('image', form.image);
-    form.category.forEach((cat, index) => formData.append(`category[${index}]`, cat));
-    form.tags.forEach((tag, index) => formData.append(`tags[${index}]`, tag));
+
+    // Append each category and tag separately
+    form.category.forEach((cat) => formData.append('category', cat));
+    form.tags.forEach((tag) => formData.append('tags', tag));
+
     formData.append('status', form.status);
-  
+    formData.append('author', form.author);
+
     const headers = {
       'Content-Type': 'multipart/form-data',
-      Authorization: `Bearer ${token}`, 
+      Authorization: `Bearer ${token}`,
     };
-    
+
     try {
       const url = isEditing ? `http://127.0.0.1:8000/api/blog-backoffice/${form.id}/` : 'http://127.0.0.1:8000/api/add-blog/';
       const method = isEditing ? axios.patch : axios.post;
       const response = await method(url, formData, { headers });
       console.log('Response:', response);
-      setForm({ id: null, title: '', content: '', image: null, category: [], tags: [], status: 'draft' });
+      setForm({ id: null, title: '', content: '', image: null, category: [], tags: [], status: 'draft', author: user?.id || '' });
       setIsEditing(false);
       fetchBlogs();
       setShowForm(false);
@@ -128,7 +132,7 @@ const BlogBack = () => {
       console.error('Error submitting form:', error);
     }
   };
-  
+
   const handleEdit = (blog) => {
     setForm({
       id: blog.id,
@@ -137,7 +141,8 @@ const BlogBack = () => {
       image: null,
       category: blog.category.map(cat => cat.id),
       tags: blog.tags.map(tag => tag.id),
-      status: blog.status
+      status: blog.status,
+      author: blog.author || user?.id || ''
     });
     setIsEditing(true);
     setShowForm(true);
@@ -158,7 +163,7 @@ const BlogBack = () => {
     setShowForm(!showForm);
     if (isEditing) {
       setIsEditing(false);
-      setForm({ id: null, title: '', content: '', image: null, category: [], tags: [], status: 'draft' });
+      setForm({ id: null, title: '', content: '', image: null, category: [], tags: [], status: 'draft', author: user?.id || '' });
     }
   };
 

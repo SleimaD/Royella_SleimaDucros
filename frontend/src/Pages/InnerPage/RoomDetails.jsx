@@ -12,10 +12,21 @@ const RoomDetails = () => {
   const [imageIndex, setImageIndex] = useState(0);
   const [roomData, setRoomData] = useState(null);
   const location = useLocation();
-  const bookingsData = location.state;
   const navigate = useNavigate();
   const { user, token } = useAuth();
-  const { room, discount } = location.state;
+
+  const bookingsData = location.state;
+
+  if (!bookingsData || !bookingsData.room) {
+    return (
+      <div>
+        <h2>Error: Room details not available.</h2>
+        <button onClick={() => navigate('/')}>Go back to Home</button>
+      </div>
+    );
+  }
+
+  const { room, discount } = bookingsData;
   const [finalPrice, setFinalPrice] = useState(room.price);
 
   useEffect(() => {
@@ -75,7 +86,7 @@ const RoomDetails = () => {
       });
       return;
     }
-  
+
     if (!user.credit_card_info) {
       Swal.fire({
         title: "Attention!",
@@ -94,7 +105,7 @@ const RoomDetails = () => {
       });
       return;
     }
-  
+
     try {
       const availabilityResponse = await axios.post('http://127.0.0.1:8000/rooms/check_availability/', {
         room: roomData.id,
@@ -105,7 +116,7 @@ const RoomDetails = () => {
           Authorization: `Bearer ${token}`
         }
       });
-  
+
       if (availabilityResponse.data.results.length === 0) {
         Swal.fire({
           title: "Non Disponible!",
@@ -117,7 +128,7 @@ const RoomDetails = () => {
         });
         return;
       }
-  
+
       Swal.fire({
         title: "Êtes-vous sûr?",
         text: "Vous allez réserver cette chambre.",
@@ -164,7 +175,6 @@ const RoomDetails = () => {
       });
     }
   };
-  
 
   if (!roomData) {
     return <div>Loading...</div>;

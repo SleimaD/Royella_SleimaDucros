@@ -234,21 +234,22 @@ const BlogManagement = () => {
 
   return (
     <div className='w-full h-screen p-4'>
-      <h1>Blog Management</h1>
+      <h1 className='text-4xl mt-5 mb-16 text-center font-Garamond uppercase'>BLOG MANAGEMENT</h1>
       {user.role === 'Redacteur' && (
         <>
-        <div className='w-full h-screen p-4'>
-       <form onSubmit={handleSubmit} className='w-[90%] flex flex-wrap justify-center items-center'>
-         <input type="text" name="title" value={form.title} onChange={handleInputChange} placeholder="Title" />
-         <textarea name="content" value={form.content} onChange={handleInputChange} placeholder="Content" />
-         <input type="file" name="image" onChange={handleInputChange} />
-         <select multiple name="category" value={form.category} onChange={handleCategoryChange}>
+        <div className='w-full h-screen p-4 flex flex-col gap-5  items-center'>
+       <form onSubmit={handleSubmit} className='w-[90%] flex flex-wrap justify-center items-center gap-5 bg-whiteSmoke p-7 shadow-md'>
+         <input className='w-[23rem] border-b-4 border-gray-300' type="text" name="title" value={form.title} onChange={handleInputChange} placeholder="Title" />
+         <input className='' type="file" name="image" onChange={handleInputChange} />
+         <textarea className='w-[44rem] h-[6rem] border-b-4 border-gray-300' name="content" value={form.content} onChange={handleInputChange} placeholder="Content" />
+         <select className='w-[35rem] border-b-4 border-gray-300' multiple name="category" value={form.category} onChange={handleCategoryChange}>
            {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
          </select>
-         <select multiple name="tags" value={form.tags} onChange={handleTagChange}>
+         <select className='w-[35rem] border-b-4 border-gray-300' multiple name="tags" value={form.tags} onChange={handleTagChange}>
            {tags.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
          </select>
-         <button type="submit">{isEditing ? 'Update' : 'Save Draft'}</button>
+
+         <button type="submit" className='btn-primary'>{isEditing ? 'Update' : 'Save Draft'}</button>
        </form>
        <button onClick={() => setForm({ ...form, status: 'pending' })} disabled={form.status === 'pending'}>
          Submit for Review

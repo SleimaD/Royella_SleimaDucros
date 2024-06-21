@@ -100,8 +100,8 @@ const MemberManagement = () => {
   };
 
   return (
-    <div className="p-8 ">
-      <h1 className="text-5xl font-bold text-center font-Garamond mb-14 mt-5">MEMBERS MANAGEMENT</h1>
+    <div className="p-8 dark:bg-mediumBlack ">
+      <h1 className="text-5xl font-bold text-center font-Garamond mb-14 mt-5 dark:text-white">MEMBERS MANAGEMENT</h1>
       <button 
         onClick={handleCreateToggle} 
         className="btn-primary text-white  rounded mb-4"
@@ -165,7 +165,7 @@ const MemberManagement = () => {
           </div>
         ))}
       </div>
-      <div className='w-50 h-[7rem] bg-white'></div>
+      <div className='w-50 h-[7rem] bg-white dark:bg-mediumBlack'></div>
     </div>
   );
 };

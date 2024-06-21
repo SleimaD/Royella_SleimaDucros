@@ -329,7 +329,7 @@ class MemberSerializer(serializers.ModelSerializer):
 
 
 class HomeBannerSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField(required=False, allow_null=True, use_url=True)
+    image = serializers.ImageField(required=False, allow_null=True)
     stars = serializers.IntegerField(required=False)
     order = serializers.IntegerField(required=False)
     class Meta:

@@ -57,7 +57,7 @@ const FindRoom = () => {
     };
 
     fetchSubjects();
-  }, []);
+    }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

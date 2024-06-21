@@ -6,6 +6,7 @@ import { useKeenSlider } from 'keen-slider/react';
 import 'keen-slider/keen-slider.min.css';
 import axios from 'axios';
 import { BiChevronDown } from 'react-icons/bi';
+import Swal from 'sweetalert2';
 
 const Rooms = () => {
   const [rooms, setRooms] = useState([]);
@@ -38,9 +39,6 @@ const Rooms = () => {
     slideChanged(slider) {
       setCurrentSlide(slider.track.details.rel);
     },
-    created() {
-      // setLoaded(true);
-    },
   });
 
   useEffect(() => {
@@ -65,11 +63,19 @@ const Rooms = () => {
 
   const handleSearch = () => {
     if (!selectedInDate || !selectedOutDate) {
-      alert('Please select check-in and check-out dates.');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing Dates',
+        text: 'Please select check-in and check-out dates.',
+      });
       return;
     }
     if (adult + children > room * 2) {
-      alert('Too many guests for the selected number of rooms.');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Too Many Guests',
+        text: 'Too many guests for the selected number of rooms.',
+      });
       return;
     }
     navigate('/find_room', {
@@ -118,15 +124,15 @@ const Rooms = () => {
           <div className="p-3">
             <div className={`text-white px-3 py-2 w-full block transition-all duration-300 group relative `} to="#">
               <span className="flex items-center justify-between text-sm text-lightGray cursor-pointer" onClick={() => setOpen(!open)} title="click hear to open and close rooms extender">
-                Rooms
+                Beds
                 <BiChevronDown className="" />
               </span>
-              <div className="pt-[10px] text-sm sm:text-base">{room} Room</div>
+              <div className="pt-[10px] text-sm sm:text-base">{room} Bed</div>
               <div className="absolute pt-5 z-20">
                 <div className={`shadow-2xl ${open ? "" : "hidden"} rounded-sm bg-white text-black w-60 text-left dark:bg-normalBlack dark:text-white transition-all duration-500 text-sm py-4 `}>
                   <div className="py-2 px-5 group cursor-pointer">
                     <li className="flex items-center justify-between">
-                      <div className="">{room} Room</div>
+                      <div className="">{room} Bed</div>
                       <div className="flex items-center space-x-2">
                         <button className="w-5 h-5 md:w-6 md:h-6 bg-khaki text-white" onClick={() => setRoom(room + 1)}>+</button>
                         <button className="w-5 h-5 md:w-6 md:h-6 bg-khaki text-white" onClick={() => setRoom(room - 1)} disabled={room <= 1}>-</button>

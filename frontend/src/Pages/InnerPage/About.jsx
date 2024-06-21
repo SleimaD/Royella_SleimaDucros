@@ -50,13 +50,14 @@ const About = () => {
         const response = await axios.get("http://127.0.0.1:8000/api/testimonials/");
         const allTestimonials = response.data;
         const shuffled = allTestimonials.sort(() => 0.5 - Math.random());
-        const selectedTestimonials = shuffled.slice(0, 3); 
-        setTestimonials(selectedTestimonials);
+        const uniqueTestimonials = Array.from(new Set(shuffled.map(a => a.id)))
+          .map(id => shuffled.find(a => a.id === id))
+          .slice(0, 3);
+        setTestimonials(uniqueTestimonials);
       } catch (error) {
         console.error("Error fetching testimonials:", error);
       }
     };
-
     fetchTestimonials();
   }, []);
 
@@ -220,6 +221,7 @@ const About = () => {
                 playsInline
                 className="absolute top-0 left-0 w-full h-full object-cover"
                 src={manager.video_url}
+                type="video/mp4"
               />
 
                 <div
