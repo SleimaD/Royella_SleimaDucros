@@ -99,7 +99,7 @@ const BlogSideBar = ({ onFilter, popularPosts, selectedCategory, selectedTags, s
       </div>
 
       {/* Categories */}
-      <div className="bg-whiteSmoke dark:bg-normalBlack w-full p-4 sm:p-8 2xl:p-10 mt-5 2xl:mt-[30px] rounded-md">
+      {/* <div className="bg-whiteSmoke dark:bg-normalBlack w-full p-4 sm:p-8 2xl:p-10 mt-5 2xl:mt-[30px] rounded-md">
         <h2 className="text-lg sm:text-xl md:text-[22px] lg:text-2xl leading-6 md:leading-7 lg:leading-[30px] text-lightBlack dark:text-white relative before:w-[50px] before:h-[1px] before:bg-lightBlack dark:before:bg-white before:absolute before:left-0 before:top-9 font-Garamond font-semibold">
           Categories
         </h2>
@@ -122,10 +122,10 @@ const BlogSideBar = ({ onFilter, popularPosts, selectedCategory, selectedTags, s
             ))}
           </ul>
         </div>
-      </div>
+      </div> */}
 
       {/* Tags */}
-      <div className="bg-whiteSmoke dark:bg-normalBlack w-full p-4 sm:p-8 2xl:p-10 mt-5 2xl:mt-[30px] rounded-md">
+      {/* <div className="bg-whiteSmoke dark:bg-normalBlack w-full p-4 sm:p-8 2xl:p-10 mt-5 2xl:mt-[30px] rounded-md">
         <h2 className="text-lg sm:text-xl md:text-[22px] lg:text-2xl leading-6 md:leading-7 lg:leading-[30px] text-lightBlack dark:text-white relative before:w-[50px] before:h-[1px] before:bg-lightBlack dark:before:bg-white before:absolute before:left-0 before:top-9 font-Garamond font-semibold">
           Tag
         </h2>
@@ -144,7 +144,7 @@ const BlogSideBar = ({ onFilter, popularPosts, selectedCategory, selectedTags, s
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };
