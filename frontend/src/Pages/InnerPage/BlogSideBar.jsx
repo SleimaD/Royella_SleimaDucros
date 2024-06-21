@@ -32,7 +32,7 @@ const BlogSideBar = ({ onFilter, popularPosts, selectedCategory, selectedTags, s
   };
 
   const handleCategoryClick = (category) => {
-    const newCategory = selectedCategory === category ? '' : category;
+    const newCategory = selectedCategory === category ? null : category;
     onFilter(newCategory, 'category');
   };
 

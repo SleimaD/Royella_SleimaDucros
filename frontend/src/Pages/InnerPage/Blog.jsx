@@ -24,7 +24,7 @@ const Blog = () => {
   }, [searchTerm, selectedCategory, selectedTags]);
 
   const fetchBlogs = () => {
-    fetch('http://127.0.0.1:8000/api/blogs/') 
+    fetch('http://127.0.0.1:8000/api/blogs/')
       .then(response => response.json())
       .then(data => {
         setBlogs(data);
@@ -36,9 +36,9 @@ const Blog = () => {
 
   const fetchPopularPosts = (blogsData) => {
     const popular = blogsData
-      .filter(blog => blog.comments.length > 0) 
-      .sort((a, b) => b.comments.length - a.comments.length) 
-      .slice(0, 3); 
+      .filter(blog => blog.comments.length > 0)
+      .sort((a, b) => b.comments.length - a.comments.length)
+      .slice(0, 3);
     setPopularPosts(popular);
   };
 
@@ -49,12 +49,12 @@ const Blog = () => {
       filtered = filtered.filter(blog => blog.category.some(cat => cat.name && cat.name.toLowerCase() === selectedCategory.toLowerCase()));
     }
 
-    if (selectedTags.length) {
+    if (selectedTags.length > 0) {
       filtered = filtered.filter(blog => selectedTags.every(tag => blog.tags.some(t => t.name && t.name.toLowerCase() === tag.toLowerCase())));
     }
 
     if (searchTerm) {
-      filtered = filtered.filter(blog => 
+      filtered = filtered.filter(blog =>
         blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         blog.category.some(cat => cat.name && cat.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
         blog.tags.some(tag => tag.name && tag.name.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -69,9 +69,14 @@ const Blog = () => {
     if (type === 'category') {
       setSelectedCategory(filter);
       setSearchTerm('');
+      setSelectedTags([]);
     } else if (type === 'tag') {
-      setSelectedTags(filter);
+      const newTags = selectedTags.includes(filter)
+        ? selectedTags.filter(t => t !== filter)
+        : [...selectedTags, filter];
+      setSelectedTags(newTags);
       setSearchTerm('');
+      setSelectedCategory(null);
     } else if (type === 'search') {
       setSearchTerm(filter);
       setSelectedCategory(null);
@@ -98,7 +103,7 @@ const Blog = () => {
   };
 
   if (!popularPosts || popularPosts.length === 0) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
   return (
