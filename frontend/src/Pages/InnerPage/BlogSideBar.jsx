@@ -3,12 +3,9 @@ import { FaSearch } from "react-icons/fa";
 import { BiChevronsRight } from "react-icons/bi";
 import { Link } from "react-router-dom";
 
-const BlogSideBar = ({ onFilter, popularPosts }) => {
+const BlogSideBar = ({ onFilter, popularPosts, selectedCategory, selectedTags, searchTerm }) => {
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedTags, setSelectedTags] = useState([]);
 
   useEffect(() => {
     fetchCategories();
@@ -30,13 +27,12 @@ const BlogSideBar = ({ onFilter, popularPosts }) => {
   };
 
   const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    onFilter(e.target.value, 'search');
+    const searchTerm = e.target.value;
+    onFilter(searchTerm, 'search');
   };
 
   const handleCategoryClick = (category) => {
     const newCategory = selectedCategory === category ? '' : category;
-    setSelectedCategory(newCategory);
     onFilter(newCategory, 'category');
   };
 
@@ -44,7 +40,6 @@ const BlogSideBar = ({ onFilter, popularPosts }) => {
     const newTags = selectedTags.includes(tag)
       ? selectedTags.filter(t => t !== tag)
       : [...selectedTags, tag];
-    setSelectedTags(newTags);
     onFilter(newTags, 'tag');
   };
 

@@ -11,9 +11,17 @@ const Blog = () => {
   const [blogsPerPage] = useState(6);
   const [popularPosts, setPopularPosts] = useState([]);
 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedTags, setSelectedTags] = useState([]);
+
   useEffect(() => {
     fetchBlogs();
   }, []);
+
+  useEffect(() => {
+    filterBlogs();
+  }, [searchTerm, selectedCategory, selectedTags]);
 
   const fetchBlogs = () => {
     fetch('http://127.0.0.1:8000/api/blogs/') 
@@ -34,27 +42,41 @@ const Blog = () => {
     setPopularPosts(popular);
   };
 
-  const handleFilter = (filter, type) => {
+  const filterBlogs = () => {
     let filtered = blogs;
 
-    if (type === 'category') {
-      filtered = filter 
-        ? blogs.filter(blog => blog.category.some(cat => cat.name.toLowerCase() === filter.toLowerCase())) 
-        : blogs;
-    } else if (type === 'tag') {
-      filtered = filter.length 
-        ? blogs.filter(blog => filter.every(tag => blog.tags.some(t => t.name.toLowerCase() === tag.toLowerCase())))
-        : blogs;
-    } else if (type === 'search') {
-      filtered = blogs.filter(blog => 
-        blog.title.toLowerCase().includes(filter.toLowerCase()) ||
-        blog.category.some(cat => cat.name.toLowerCase().includes(filter.toLowerCase())) ||
-        blog.tags.some(tag => tag.name.toLowerCase().includes(filter.toLowerCase()))
+    if (selectedCategory) {
+      filtered = filtered.filter(blog => blog.category.some(cat => cat.name && cat.name.toLowerCase() === selectedCategory.toLowerCase()));
+    }
+
+    if (selectedTags.length) {
+      filtered = filtered.filter(blog => selectedTags.every(tag => blog.tags.some(t => t.name && t.name.toLowerCase() === tag.toLowerCase())));
+    }
+
+    if (searchTerm) {
+      filtered = filtered.filter(blog => 
+        blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        blog.category.some(cat => cat.name && cat.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        blog.tags.some(tag => tag.name && tag.name.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
     setFilteredBlogs(filtered);
-    setCurrentPage(1); 
+    setCurrentPage(1);
+  };
+
+  const handleFilter = (filter, type) => {
+    if (type === 'category') {
+      setSelectedCategory(filter);
+      setSearchTerm('');
+    } else if (type === 'tag') {
+      setSelectedTags(filter);
+      setSearchTerm('');
+    } else if (type === 'search') {
+      setSearchTerm(filter);
+      setSelectedCategory(null);
+      setSelectedTags([]);
+    }
   };
 
   const indexOfLastBlog = currentPage * blogsPerPage;
@@ -161,7 +183,13 @@ const Blog = () => {
             </div>
           </div>
           <div className="col-span-6 md:col-span-3 lg:col-span-2">
-            <BlogSideBar onFilter={handleFilter} popularPosts={popularPosts} />
+            <BlogSideBar 
+              onFilter={handleFilter} 
+              popularPosts={popularPosts} 
+              selectedCategory={selectedCategory}
+              selectedTags={selectedTags}
+              searchTerm={searchTerm}
+            />
           </div>
         </div>
       </div>

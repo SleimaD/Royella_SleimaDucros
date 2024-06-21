@@ -113,10 +113,10 @@ const ServicesBack = () => {
             const result = await response.json();
             setInitialServices(services);
             setHasChanged(false);
-            alert('Order saved successfully!');
+            console.log('Order saved successfully!');
         } catch (error) {
             console.error('Error saving service order:', error);
-            alert('Failed to save order.');
+            console.log('Failed to save order.');
         }
     };
 
