@@ -82,16 +82,16 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Royella',
-        'USER': 'root',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'Royella',
+#         'USER': 'root',
+#         'PASSWORD': 'password',
+#         'HOST': 'localhost',
+#         'PORT': '3306',
+#     }
+# }
 
 
 # Password validation
@@ -178,5 +178,9 @@ SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True  
 CSRF_COOKIE_SECURE = True  
 
-import dj_database_url
-DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+# import dj_database_url
+# DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+
+DATABASES = {
+    'default': dj_database_url.config(default=' mysql://sn60nzlgnaiovkjm:yf7407wpukearrfb@xq7t6tasopo9xxbs.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/mwja6pjyuxiomu5r')
+}
