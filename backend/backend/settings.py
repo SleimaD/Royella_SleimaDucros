@@ -159,3 +159,24 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  
 
+
+
+
+
+# heroku
+
+import dj_database_url
+from pathlib import Path
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+DATABASES = {
+    'default': dj_database_url.config(default='mysql://username:password@hostname:port/dbname')
+}
+
+import django_heroku
+django_heroku.settings(locals(), databases=False) 
+
+SECURE_SSL_REDIRECT = True 
+SESSION_COOKIE_SECURE = True  
+CSRF_COOKIE_SECURE = True  
