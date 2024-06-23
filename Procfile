@@ -1,1 +1,1 @@
-web: gunicorn royella.wsgi:application
+web: gunicorn backend.wsgi:application
