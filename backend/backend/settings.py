@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-k4*7-@!@u4!9+-)$92ytanhwq4r)*n6z*$m!$9)^+249#t66er'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [".herokuapp.com"]
 
@@ -170,9 +170,6 @@ from pathlib import Path
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-DATABASES = {
-    'default': dj_database_url.config(default='mysql://username:password@hostname:port/dbname')
-}
 
 import django_heroku
 django_heroku.settings(locals(), databases=False) 
@@ -180,3 +177,6 @@ django_heroku.settings(locals(), databases=False)
 SECURE_SSL_REDIRECT = True 
 SESSION_COOKIE_SECURE = True  
 CSRF_COOKIE_SECURE = True  
+
+import dj_database_url
+DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
