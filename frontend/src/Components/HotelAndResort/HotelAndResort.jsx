@@ -49,7 +49,7 @@ const HotelAndResort = () => {
           <div className="flex-1 keen-slider w-screen md:w-[60%] 2xl:w-[580px] md:pr-5 lg:pr-6 xl:pr-8 2xl:pr-9 3xl:pr-10 md:mt-0" ref={sliderRef}>
             <div className="keen-slider__slide number-slide1">
               <div className="">
-                <img src={hotelInfo.image} className="h-[85%] lg:h-[90%]" alt="Hotel-slider-image" />
+                <img src={hotelInfo.image} className="h-[35rem] lg:h-[35rem]" alt="Hotel-slider-image" />
               </div>
             </div>
           </div>
