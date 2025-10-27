@@ -4,6 +4,93 @@ from datetime import datetime, timedelta
 import random
 from django.db.models import Avg 
 import requests
+from django.utils import timezone
+from django.db.models import Count, Min
+
+def dedupe_by_field(model, field):
+    dups = (
+        model.objects.values(field)
+        .annotate(c=Count('id'), keep_id=Min('id'))
+        .filter(c__gt=1)
+    )
+    for d in dups:
+        model.objects.filter(**{field: d[field]}).exclude(id=d['keep_id']).delete()
+
+def dedupe_service_detail():
+    from .models import ServiceDetail
+    dups = (
+        ServiceDetail.objects.values('service_id', 'title')
+        .annotate(c=Count('id'), keep_id=Min('id'))
+        .filter(c__gt=1)
+    )
+    for d in dups:
+        ServiceDetail.objects.filter(service_id=d['service_id'], title=d['title']).exclude(id=d['keep_id']).delete()
+
+
+def dedupe_room_image():
+    from .models import RoomImage
+    dups = (
+        RoomImage.objects.values('room_id', 'image')
+        .annotate(c=Count('id'), keep_id=Min('id'))
+        .filter(c__gt=1)
+    )
+    for d in dups:
+        RoomImage.objects.filter(room_id=d['room_id'], image=d['image']).exclude(id=d['keep_id']).delete()
+
+# Dedupe for Comment by (blog_id, author_id, content)
+def dedupe_comment():
+    from .models import Comment
+    dups = (
+        Comment.objects.values('blog_id', 'author_id', 'content')
+        .annotate(c=Count('id'), keep_id=Min('id'))
+        .filter(c__gt=1)
+    )
+    for d in dups:
+        Comment.objects.filter(
+            blog_id=d['blog_id'], author_id=d['author_id'], content=d['content']
+        ).exclude(id=d['keep_id']).delete()
+
+
+# Dedupe for BlogDescription by (blog_id, title, image)
+def dedupe_blog_description():
+    from .models import BlogDescription
+    dups = (
+        BlogDescription.objects.values('blog_id', 'title', 'image')
+        .annotate(c=Count('id'), keep_id=Min('id'))
+        .filter(c__gt=1)
+    )
+    for d in dups:
+        BlogDescription.objects.filter(
+            blog_id=d['blog_id'], title=d['title'], image=d['image']
+        ).exclude(id=d['keep_id']).delete()
+
+def dedupe_all():
+    from .models import (
+        Manager, Facility, FAQ, Service, Testimonial, Member, Amenity,
+        HomeBanner, PageBanner, Room, Gallery, GetInTouchSubject, PaymentPlan, Feature,
+        Blog, Category, Tag, BlogDescription
+    )
+    dedupe_by_field(Manager, 'name')
+    dedupe_by_field(Facility, 'name')
+    dedupe_by_field(FAQ, 'question')
+    dedupe_by_field(Service, 'title')
+    dedupe_by_field(Testimonial, 'name')
+    dedupe_by_field(Member, 'email')
+    dedupe_by_field(Amenity, 'name')
+    dedupe_by_field(HomeBanner, 'title')
+    dedupe_by_field(PageBanner, 'page_name')
+    dedupe_by_field(Room, 'name')
+    dedupe_by_field(Gallery, 'image')
+    dedupe_by_field(GetInTouchSubject, 'subject')
+    dedupe_by_field(Feature, 'description')
+    dedupe_by_field(PaymentPlan, 'name')
+    dedupe_by_field(Category, 'name')
+    dedupe_by_field(Tag, 'name')
+    dedupe_by_field(Blog, 'title')
+    dedupe_blog_description()
+    dedupe_service_detail()
+    dedupe_room_image()
+    dedupe_comment()
 
 
 
@@ -23,21 +110,36 @@ manager_entries = [
 ] 
 
  
-def runManager():
-    seeder = Seed.seeder()
-    for i in manager_entries:
-        seeder.add_entity(Manager, 1, {
-            'name': i['name'], 
-            'title': i['title'],
-            'subtitle': i['subtitle'],
-            'bio': i['bio'],
-            'image': i['image'],
-            'quote': i['quote'],
-            'video_url': i['video_url'],
-        })
-    pks = seeder.execute()
-    print(pks) 
+# def runManager():
+#     seeder = Seed.seeder()
+#     for i in manager_entries:
+#         seeder.add_entity(Manager, 1, {
+#             'name': i['name'], 
+#             'title': i['title'],
+#             'subtitle': i['subtitle'],
+#             'bio': i['bio'],
+#             'image': i['image'],
+#             'quote': i['quote'],
+#             'video_url': i['video_url'],
+#         })
+#     pks = seeder.execute()
+#     print(pks) 
 
+
+def runManager():
+    for i in manager_entries:
+        obj, created = Manager.objects.update_or_create(
+            name=i['name'],
+            defaults={
+                'title': i['title'],
+                'subtitle': i['subtitle'],
+                'bio': i['bio'],
+                'image': i['image'],
+                'quote': i.get('quote'),
+                'video_url': i.get('video_url'),
+            }
+        )
+        print((" created " if created else "↺ updated ") + f"manager: {obj.name}")
 
 
 
@@ -78,76 +180,136 @@ facility_entries = [
 ]
 
 
+# def runFacility():
+#     seeder = Seed.seeder()
+#     for i in facility_entries:
+#         seeder.add_entity(Facility, 1, {
+#             'name': i['name'], 
+#             'icon': i['icon'],
+#             'image': i['image'],
+#         })
+#     pks = seeder.execute()
+#     print(pks)
+
 def runFacility():
-    seeder = Seed.seeder()
     for i in facility_entries:
-        seeder.add_entity(Facility, 1, {
-            'name': i['name'], 
-            'icon': i['icon'],
-            'image': i['image'],
-        })
-    pks = seeder.execute()
-    print(pks)
+        obj, created = Facility.objects.update_or_create(
+            name=i['name'],
+            defaults={'icon': i['icon'], 'image': i['image']}
+        )
+        print((" created " if created else "↺ updated ") + f"facility: {obj.name}")
 
 
 
 #region payment plan
 #!paymentplan
+# def run_payment_plans():
+#     seeder = Seed.seeder()
+
+#     features_data = [
+#         'Bed and floor Cleaning',
+#         'Daily Towel Replacement',
+#         'Priority Service from Reception',
+#         'Complimentary Breakfast',
+#         'Private Jacuzzi Setup',
+#         'Exclusive Gym Access',
+#         'Unlimited Room Service',
+#         "24/7 Housekeeping Support",
+#         "In-Room Newspaper Delivery",
+#         "Upgraded Amenities",
+#         "Ice Delivery",
+#         "Unlimited Housekeeping",
+#         "Luxury Bath Amenities",
+#         "Personalized Service",
+#         "Daily Fresh Flowers",
+#         "In-room dining experiences"
+#     ]
+#     features = []
+#     for feature in features_data:
+#         feat, created = Feature.objects.get_or_create(description=feature)
+#         features.append(feat)
+
+#     payment_plan_entries = [
+#         {
+#             'name': 'Basic Plan',
+#             'price': 12.00,
+#             'image': 'plans/basic.png',
+#             'features': ['Bed and floor Cleaning', 'Daily Towel Replacement', 'Priority Service from Reception', "24/7 Housekeeping Support"]
+#         },
+#         {
+#             'name': 'Premium Plan',
+#             'price': 23.00,
+#             'image': 'plans/premium.png',
+#             'features': ['Upgraded Amenities', "Ice Delivery", "Unlimited Room Service", "In-Room Newspaper Delivery" ]
+#         },
+#         {
+#             'name': 'Luxury Plan',
+#             'price': 120.00,
+#             'image': 'plans/luxury.png',
+#             'features': ['Luxury Bath Amenities', 'Private Jacuzzi Setup',"In-room dining experiences", "Unlimited Housekeeping"]
+#         }
+#     ]
+
+#     for plan_data in payment_plan_entries:
+#         plan = PaymentPlan.objects.create(
+#             name=plan_data['name'],
+#             price=plan_data['price'],
+#             image=plan_data['image']
+#         )
+#         plan_features = Feature.objects.filter(description__in=plan_data['features'])
+#         plan.features.set(plan_features)
+
+
+
 def run_payment_plans():
-    seeder = Seed.seeder()
+    # Deduplicate first to avoid MultipleObjectsReturned when names already exist
+    from .models import PaymentPlan, Feature
+    dedupe_by_field(Feature, 'description')
+    dedupe_by_field(PaymentPlan, 'name')
 
     features_data = [
-        'Bed and floor Cleaning',
-        'Daily Towel Replacement',
-        'Priority Service from Reception',
-        'Complimentary Breakfast',
-        'Private Jacuzzi Setup',
-        'Exclusive Gym Access',
-        'Unlimited Room Service',
-        "24/7 Housekeeping Support",
-        "In-Room Newspaper Delivery",
-        "Upgraded Amenities",
-        "Ice Delivery",
-        "Unlimited Housekeeping",
-        "Luxury Bath Amenities",
-        "Personalized Service",
-        "Daily Fresh Flowers",
-        "In-room dining experiences"
+        'Bed and floor Cleaning','Daily Towel Replacement','Priority Service from Reception',
+        'Complimentary Breakfast','Private Jacuzzi Setup','Exclusive Gym Access',
+        'Unlimited Room Service',"24/7 Housekeeping Support","In-Room Newspaper Delivery",
+        "Upgraded Amenities","Ice Delivery","Unlimited Housekeeping",
+        "Luxury Bath Amenities","Personalized Service","Daily Fresh Flowers","In-room dining experiences"
     ]
-    features = []
-    for feature in features_data:
-        feat, created = Feature.objects.get_or_create(description=feature)
-        features.append(feat)
+    for f in features_data:
+        Feature.objects.get_or_create(description=f)
 
     payment_plan_entries = [
-        {
-            'name': 'Basic Plan',
-            'price': 12.00,
-            'image': 'plans/basic.png',
-            'features': ['Bed and floor Cleaning', 'Daily Towel Replacement', 'Priority Service from Reception', "24/7 Housekeeping Support"]
-        },
-        {
-            'name': 'Premium Plan',
-            'price': 23.00,
-            'image': 'plans/premium.png',
-            'features': ['Upgraded Amenities', "Ice Delivery", "Unlimited Room Service", "In-Room Newspaper Delivery" ]
-        },
-        {
-            'name': 'Luxury Plan',
-            'price': 120.00,
-            'image': 'plans/luxury.png',
-            'features': ['Luxury Bath Amenities', 'Private Jacuzzi Setup',"In-room dining experiences", "Unlimited Housekeeping"]
-        }
+        {'name':'Basic Plan','price':12.00,'image':'plans/basic.png',
+         'features':['Bed and floor Cleaning','Daily Towel Replacement','Priority Service from Reception',"24/7 Housekeeping Support"]},
+        {'name':'Premium Plan','price':23.00,'image':'plans/premium.png',
+         'features':['Upgraded Amenities',"Ice Delivery","Unlimited Room Service","In-Room Newspaper Delivery"]},
+        {'name':'Luxury Plan','price':120.00,'image':'plans/luxury.png',
+         'features':['Luxury Bath Amenities','Private Jacuzzi Setup',"In-room dining experiences","Unlimited Housekeeping"]},
     ]
 
     for plan_data in payment_plan_entries:
-        plan = PaymentPlan.objects.create(
-            name=plan_data['name'],
-            price=plan_data['price'],
-            image=plan_data['image']
-        )
-        plan_features = Feature.objects.filter(description__in=plan_data['features'])
-        plan.features.set(plan_features)
+        # Be robust if duplicates still exist
+        qs = PaymentPlan.objects.filter(name=plan_data['name']).order_by('id')
+        if qs.exists():
+            plan = qs.first()
+            if qs.count() > 1:
+                PaymentPlan.objects.filter(name=plan_data['name']).exclude(id=plan.id).delete()
+            created = False
+            plan.price = plan_data['price']
+            plan.image = plan_data['image']
+            plan.save(update_fields=['price', 'image'])
+        else:
+            plan = PaymentPlan.objects.create(
+                name=plan_data['name'],
+                price=plan_data['price'],
+                image=plan_data['image']
+            )
+            created = True
+
+        feats = Feature.objects.filter(description__in=plan_data['features'])
+        plan.features.set(feats)
+        print((" created " if created else "↺ updated ") + f"plan: {plan.name}")
+
+
 
 
 
@@ -188,15 +350,24 @@ faq_entries = [
     }
 ]
 
+# def run_faq():
+#     seeder = Seed.seeder()
+#     for entry in faq_entries:
+#         seeder.add_entity(FAQ, 1, {
+#             'question': entry['question'],
+#             'answer': entry['answer']
+#         })
+#     pks = seeder.execute()
+#     print(pks)
+
 def run_faq():
-    seeder = Seed.seeder()
     for entry in faq_entries:
-        seeder.add_entity(FAQ, 1, {
-            'question': entry['question'],
-            'answer': entry['answer']
-        })
-    pks = seeder.execute()
-    print(pks)
+        obj, created = FAQ.objects.update_or_create(
+            question=entry['question'],
+            defaults={'answer': entry['answer']}
+        )
+        print((" created " if created else "↺ updated ") + "faq")
+
 
 
 
@@ -236,117 +407,164 @@ service_entries = [
 
 ]
 
+# def run_service():
+#     seeder = Seed.seeder()
+#     for entry in service_entries:
+#         seeder.add_entity(Service, 1, {
+#             'title': entry['title'],
+#             'subtitle': entry['subtitle'],
+#             'description': entry['description'],
+#             'image': entry['image'],
+#             'order': entry['order']
+#         })
+#     pks = seeder.execute()
+#     print(pks)
+
+
 def run_service():
-    seeder = Seed.seeder()
     for entry in service_entries:
-        seeder.add_entity(Service, 1, {
-            'title': entry['title'],
-            'subtitle': entry['subtitle'],
-            'description': entry['description'],
-            'image': entry['image'],
-            'order': entry['order']
-        })
-    pks = seeder.execute()
-    print(pks)
+        obj, created = Service.objects.update_or_create(
+            title=entry['title'],
+            defaults={
+                'subtitle': entry['subtitle'],
+                'description': entry['description'],
+                'image': entry['image'],
+                'order': entry['order'],
+            }
+        )
+        print((" created " if created else "↺ updated ") + f"service: {obj.title}")
+
 
 
 
 #region service detail
 #!service detail
 
-gym_service = Service.objects.get(title="Gym Training Grounds")
-pool_service = Service.objects.get(title="Swimming Pool")
-restaurant_service = Service.objects.get(title="The Restaurant Center")
-breakfast_service = Service.objects.get(title="Breakfast")
+# gym_service = Service.objects.get(title="Gym Training Grounds")
+# pool_service = Service.objects.get(title="Swimming Pool")
+# restaurant_service = Service.objects.get(title="The Restaurant Center")
+# breakfast_service = Service.objects.get(title="Breakfast")
 
 service_detail_entries = [
     {
-        'service': gym_service,
+        'service_title': "Gym Training Grounds",
         'title': "Equipment",
         'description': "Our gym is equipped with state-of-the-art facilities including cardio machines, free weights, and a variety of fitness classes. Personal trainers are available for customized workout plans."
     },
     {
-        'service': pool_service,
+        'service_title': "Swimming Pool",
         'title': "Options",
         'description': "Enjoy a refreshing swim in our temperature-controlled indoor pool. We offer swimming lessons, aqua aerobics, and dedicated lanes for lap swimming."
     },
     {
-        'service': restaurant_service,
+        'service_title': "The Restaurant Center",
         'title': "Restaurant Rules",
-        'description': "At The Restaurant Center, we aim to provide an exceptional dining experience for all our guests. We kindly ask that you respect our smart casual dress code and maintain punctuality for reservations. To ensure a pleasant atmosphere, please keep mobile devices on silent and step outside for phone calls. Inform our staff of any dietary restrictions or allergies so we can accommodate your needs. Families with children are welcome, and we request that children remain supervised. We appreciate your cooperation in adhering to these guidelines to enhance everyone's enjoyment at The Restaurant Center."
+        'description': "At The Restaurant Center, we aim to provide an exceptional dining experience for all our guests. We kindly ask that you respect our smart casual dress code and maintain punctuality for reservations..."
     },
     {
-        'service': restaurant_service,
+        'service_title': "The Restaurant Center",
         'title': "Dress Code",
-        'description': "We maintain a smart casual dress code to preserve the elegant ambiance of our establishment. Gentlemen are encouraged to wear collared shirts, and we kindly request no flip-flops or beachwear."
+        'description': "We maintain a smart casual dress code to preserve the elegant ambiance of our establishment..."
     },
     {
-        'service': restaurant_service,
+        'service_title': "The Restaurant Center",
         'title': "Terrace",
         'description': "Our Terrace offers a relaxed and elegant setting for you to enjoy your meals and drinks while soaking in the beautiful surroundings. "
     },
     {
-        'service': breakfast_service,
+        'service_title': "Breakfast",
         'title': "Hours",
         'description': "Breakfast - 7.00 AM to 12.30 AM"
     },
     {
-        'service': breakfast_service,
+        'service_title': "Breakfast",
         'title': "Hours",
         'description': "Lunch - not available "
     },
     {
-        'service': breakfast_service,
+        'service_title': "Breakfast",
         'title': "Hours",
         'description': "Supper - not available "
     },
     {
-        'service': breakfast_service,
+        'service_title': "Breakfast",
         'title': "Hours",
         'description': "Dinner -  not available "
     },
     {
-        'service': restaurant_service,
+        'service_title': "The Restaurant Center",
         'title': "Hours",
         'description': "Breakfast - 7.00 AM to 12.30 AM"
     },
     {
-        'service': restaurant_service,
+        'service_title': "The Restaurant Center",
         'title': "Hours",
         'description': "Lunch - 1.00 PM to 2.30 PM"
     },
     {
-        'service': restaurant_service,
+        'service_title': "The Restaurant Center",
         'title': "Hours",
         'description': "Supper - 6.00 PM to 7.00 PM"
     },
     {
-        'service': restaurant_service,
+        'service_title': "The Restaurant Center",
         'title': "Hours",
         'description': "Dinner - 8.30 PM to 10.00 PM"
     },
     {
-        'service': gym_service,
+        'service_title': "Gym Training Grounds",
         'title': "Hours",
         'description': "5.00 AM to 11.30 pm"
     },
     {
-        'service': pool_service,
+        'service_title': "Swimming Pool",
         'title': "Hours",
         'description': "7.00 AM to 10.30 pm"
     },
 ]
 
+# def run_service_details():
+#     seeder = Seed.seeder()
+
+#     titles = {e['service_title'] for e in service_detail_entries}
+#     services = {s.title: s for s in Service.objects.filter(title__in=titles)}
+
+#     missing = titles - set(services.keys())
+#     if missing:
+#         print(f"[seed] Missing services (run run_service first?): {missing}")
+#         return
+
+#     for entry in service_detail_entries:
+#         service = services[entry['service_title']]
+#         seeder.add_entity(ServiceDetail, 1, {
+#             'service': lambda x, s=service: s,
+#             'title': entry['title'],
+#             'description': entry['description'],
+#         })
+
+#     pks = seeder.execute()
+#     print(pks)   
+
+
 def run_service_details():
-    seeder = Seed.seeder()
+    titles = {e['service_title'] for e in service_detail_entries}
+    services = {s.title: s for s in Service.objects.filter(title__in=titles)}
+    missing = titles - set(services.keys())
+    if missing:
+        print(f"[seed] Missing services (run_service first): {missing}")
+        return
+
     for entry in service_detail_entries:
-        seeder.add_entity(ServiceDetail, 1, {
-            'service': entry['service'],
-            'title': entry['title'],
-            'description': entry['description'],
-        })
-    pks = seeder.execute()
-    print(pks)
+        service = services[entry['service_title']]
+        obj, created = ServiceDetail.objects.update_or_create(
+            service=service,
+            title=entry['title'],
+            defaults={'description': entry['description']}
+        )
+        print((" created " if created else " updated ") +
+              f" service detail: {service.title} / {obj.title}")
+
+
 
 
 #region testimonials
@@ -414,21 +632,36 @@ testimonial_entries = [
 
 
 
+# def run_testimonial():
+#     seeder = Seed.seeder()
+#     for entry in testimonial_entries:
+#         seeder.add_entity(Testimonial, 1, {
+#             'name': entry['name'],
+#             'role': entry['role'],
+#             'feedback': entry['feedback'],
+#             'rating': entry['rating'],
+#             'image': entry['image'],
+#             'location': entry['location'],
+#         })
+#     pks = seeder.execute()
+#     print(pks)
+
 def run_testimonial():
-    seeder = Seed.seeder()
     for entry in testimonial_entries:
-        seeder.add_entity(Testimonial, 1, {
-            'name': entry['name'],
-            'role': entry['role'],
-            'feedback': entry['feedback'],
-            'rating': entry['rating'],
-            'image': entry['image'],
-            'location': entry['location'],
-        })
-    pks = seeder.execute()
-    print(pks)
+        rating = int(entry.get('rating', 0))
+        rating = max(1, min(5, rating))
 
-
+        obj, created = Testimonial.objects.update_or_create(
+            name=entry['name'],  
+            defaults={
+                'role': entry['role'],
+                'feedback': entry['feedback'],
+                'rating': rating,
+                'image': entry['image'],
+                'location': entry['location'],
+            }
+        )
+        print((" created " if created else "↺ updated ") + f"testimonial: {obj.name}")
 
 
 #region blog
@@ -457,6 +690,7 @@ def create_tags():
 
 def create_blogs(admin_user, categories, tags):
     blogs_data = [
+
         {
             'title': "Exploring the Mountains",
             'content': "Embark on an unforgettable journey through the majestic peaks and serene valleys of the mountains. Discover the beauty of nature's untouched landscapes, from snow-capped summits to lush meadows teeming with wildflowers. Uncover hidden trails, encounter diverse wildlife, and immerse yourself in the tranquility of the wilderness. This guide will provide you with everything you need to know to plan your next mountain adventure, from choosing the right gear to packing the perfect backpack. Whether you're a seasoned mountaineer or a curious beginner, this blog post will inspire you to explore the wonders of the mountains and create memories that will last a lifetime.",
@@ -477,148 +711,33 @@ def create_blogs(admin_user, categories, tags):
                 }
             ]
         },
-        {
-            'title': "Pre Booking Benifits for the Traveller on our Hotel",  
-            'content': "Planning your getaway? Book your stay in advance and unlock a world of benefits! Secure the perfect room type, enjoy exclusive discounts, and gain peace of mind knowing your accommodation is guaranteed. Plus, explore early booking perks like free breakfast or spa credits.  Book your stay today and get ready to experience all that Royella has to offer.",
-            'image': "blogs/prebooking.jpg",
-            'status': 'approved',
-            'categories': ["Travel"],
-            'tags': ["budget", "Summer", "Vacation"],
-            'descriptions': [
-                {
-                    "image": "blogs/book_desc1.jpg"
-                },
-                {
-                    "image": "blogs/book_desc2.jpg"
-                },
-                {
-                    "title": "Why Pre-Book? Unwind and Enjoy More", 
-                    "content": "ake the stress out of travel and pre-book your stay at [Hotel Name]. Secure the best rates, enjoy flexible cancellation options (if offered), and get priority access to your desired room type. Pre-booking lets you focus on what matters most - creating lasting vacation memories.", 
-                }
-            ]
-        },
-        {
-            'title': "Healthy Eating Tips",
-            'content': "Embark on a journey to a healthier and happier you with these simple and effective healthy eating tips. Discover how to make informed food choices, create a balanced diet, and nourish your body with the essential nutrients it needs to thrive. Learn how to navigate food labels, understand portion sizes, and incorporate delicious and nutritious meals into your lifestyle. With these tips, you'll be well on your way to achieving your wellness goals and feeling your best.",
-            'image': "blogs/healthy.jpg",
-            'status': 'approved',
-            'categories': ["Health"],
-            'tags': ["Healthy", "Budget"],  
-            'descriptions': [
-                {
-                    "title": "Fuel Your Body and Mind: Essential Tips for Healthy Eating", 
-                    "content": "Nourish your body and mind with these essential healthy eating tips. Learn how to make informed food choices that support your overall well-being. Discover simple strategies for creating a balanced diet rich in essential nutrients. Explore delicious and nutritious recipes that will tantalize your taste buds and fuel your body for optimal health.", 
-                },
-                {
-                    "image": "blogs/healthy_desc1.jpg"
-                },
-                {
-                    "image": "blogs/healthy_desc2.jpg"
-                }
-            ]
-        },
-        {
-            'title': "Luxury Hotels in Paris",
-            'content': "Paris is a city known for its elegance, romance, and rich history. It is also home to some of the most luxurious hotels in the world. These hotels offer guests an unparalleled level of comfort, service, and amenities. If you are looking for a truly unforgettable experience in Paris, then you should consider staying in one of these luxury hotels.",
-            'image': "blogs/hotelsparis.jpg",
-            'status': 'approved',
-            'categories': ["Luxury Hotels"],
-            'tags': ["Luxury", "Paris"],
-            'descriptions': [
-                {
-                    "title": "Paris in Opulence: Unveiling Luxury Stays", 
-                    "content": "Paris, the City of Lights, shimmers even brighter when experienced from a luxury hotel. Imagine waking up to iconic landmarks like the Eiffel Tower or Seine River just outside your window. Picture indulging in Michelin-starred cuisine and pampering yourself in opulent spas.  Luxury hotels offer more than just a place to stay – they're gateways to unforgettable experiences.", 
-                },
-                {
-                    "image": "blogs/paris_desc1.jpg"
-                },
-                {
-                    "image": "blogs/paris_desc2.jpg"
-                }
-            ]
-        },
-        {
-            'title': "Family Vacation Spots",
-            'content': "Craft unforgettable memories with your loved ones as you explore exciting family vacation spots. From sun-kissed beaches to enchanting mountain getaways, discover destinations that cater to every age and interest. Immerse yourselves in nature's wonders, explore vibrant cultures, and create bonds that will last a lifetime.",
-            'image': "blogs/familyvacation.jpg",
-            'status': 'approved',
-            'categories': ["Travel"],
-            'tags': ["Family", "Vacation"],
-            'descriptions': [
-                {
-                    "title": "Family Adventures: A Tapestry of Memories", 
-                    "content": "Embark on a journey of togetherness, where laughter echoes through sun-kissed beaches and shared experiences weave a tapestry of cherished memories. Explore bustling cities teeming with life, or venture into the wilderness where nature's wonders await. Let the excitement of family vacations ignite your spirit, strengthening bonds that will last a lifetime.", 
-                },
-                {
-                    "image": "blogs/family_desc1.jpg"
-                },
-                {
-                    "image": "blogs/family_desc2.jpg"
-                }
-            ]
-        },
-        {
-            'title': "Budget Travel Tips",
-            'content': "Traveling the world doesn't have to be an expensive endeavor. With a bit of planning and creativity, you can embark on unforgettable adventures without breaking the bank. Embrace the joy of budget travel by following these savvy tips and discover the world without emptying your wallet.",
-            'image': "blogs/budgettravel.jpg",
-            'status': 'approved',
-            'categories': ["Travel"],
-            'tags': ["Budget", "Savings"],
-            'descriptions': [
-                {
-                    "title": "Saving Money", 
-                    "content": "Create a budget that allocates your income towards essential expenses, savings goals, and a bit of fun. Budgeting apps can simplify this process.  Be realistic and track your progress to ensure you're staying on track. Even small adjustments to your spending can make a big difference over time.", 
-                },
-                {
-                    "image": "blogs/budget_desc1.jpg"
-                },
-                {
-                    "image": "blogs/budget_desc2.jpg"
-                }
-            ]
-        },
-        {
-            'title': "Relaxing Spa Retreats",
-            'content': "Step into a world of wellness, where soothing aromas and gentle sounds create an atmosphere of pure bliss. Indulge in a variety of pampering treatments, from rejuvenating massages to revitalizing facials. Let the expert hands of skilled therapists melt away your stress and tension, leaving you feeling refreshed and renewed.",
-            'image': "blogs/sparetreats.jpg",
-            'status': 'approved',
-            'categories':[ "SPA Center"],
-            'tags': ["Relaxation", "Wellness"],
-            'descriptions': [
-                {
-                    "title": "Rediscover Balance and Inner Harmony",
-                    "content": "As you immerse yourself in the tranquility of a spa retreat, you'll find yourself rediscovering balance and inner harmony. The gentle rhythm of nature, the soothing ambiance, and the focus on self-care will guide you towards a state of deep relaxation. Allow yourself to let go of worries and concerns, and embrace the serenity that surrounds you.",
-                },
-                {
-                    "image": "blogs/spa_desc1.jpg"
-                },
-                {
-                    "image": "blogs/spa_desc2.jpg"
-                }
-            ]
-        }
+       
     ]
-    
+
     for blog_data in blogs_data:
-        blog = Blog.objects.create(
+        # ensure unique-by-title; update if exists
+        blog, created = Blog.objects.update_or_create(
             title=blog_data['title'],
-            content=blog_data['content'],
-            image=blog_data['image'],
-            author=admin_user,
-            status=blog_data['status']
+            defaults={
+                'content': blog_data['content'],
+                'image': blog_data['image'],
+                'author': admin_user,
+                'status': blog_data['status']
+            }
         )
         blog_categories = Category.objects.filter(name__in=blog_data['categories'])
         blog.category.set(blog_categories)
 
         blog_tags = Tag.objects.filter(name__in=blog_data['tags'])
         blog.tags.set(blog_tags)
-        
+
+        # descriptions
         for desc_data in blog_data['descriptions']:
-            BlogDescription.objects.create(
+            BlogDescription.objects.update_or_create(
                 blog=blog,
                 title=desc_data.get('title', ''),
-                content=desc_data.get('content', ''),
-                image=desc_data.get('image', None)
+                image=desc_data.get('image', None),
+                defaults={'content': desc_data.get('content', '')}
             )
 
 def create_comments(admin_user):
@@ -641,13 +760,28 @@ def create_comments(admin_user):
         {"content": "Thanks for sharing.", "author": admin_user, "blog": blogs[6]},
         {"content": "Amazing destination!", "author": admin_user, "blog": blogs[3]},
     ]
-    
+
     for comment_data in comments_data:
-        Comment.objects.create(
+        qs = Comment.objects.filter(
             content=comment_data["content"],
             author=comment_data["author"],
             blog=comment_data["blog"]
-        )
+        ).order_by('id')
+        if qs.exists():
+            keep = qs.first()
+            # remove any duplicates beyond the first one
+            if qs.count() > 1:
+                Comment.objects.filter(
+                    content=comment_data["content"],
+                    author=comment_data["author"],
+                    blog=comment_data["blog"]
+                ).exclude(id=keep.id).delete()
+        else:
+            Comment.objects.create(
+                content=comment_data["content"],
+                author=comment_data["author"],
+                blog=comment_data["blog"]
+            )
 
 
 
@@ -759,14 +893,24 @@ amenity_entries = [
 
 ]
 
+# def run_amenity():
+#     seeder = Seed.seeder()
+#     for entry in amenity_entries:
+#         seeder.add_entity(Amenity, 1, {
+#             'name': entry['name'],
+#             'icon_name': entry['icon_name']
+#         })
+#     pks = seeder.execute()
+
+
 def run_amenity():
-    seeder = Seed.seeder()
     for entry in amenity_entries:
-        seeder.add_entity(Amenity, 1, {
-            'name': entry['name'],
-            'icon_name': entry['icon_name']
-        })
-    pks = seeder.execute()
+        obj, created = Amenity.objects.update_or_create(
+            name=entry['name'],
+            defaults={'icon_name': entry.get('icon_name')}
+        )
+        print((" created " if created else "↺ updated ") + f"amenity: {obj.name}")
+
 
 
 
@@ -914,52 +1058,113 @@ room_entries = [
 ]
 
 
-def run_room():
-    seeder = Seed.seeder()
+# def run_room():
+#     seeder = Seed.seeder()
 
+#     for entry in room_entries:
+#         amenities = entry.pop('amenities', [])
+#         descriptions = entry.pop('descriptions', [])
+#         room = Room.objects.create(**entry)
+#         for amenity_name in amenities:
+#             amenity, created = Amenity.objects.get_or_create(name=amenity_name)
+#             room.amenities.add(amenity)
+#         for desc in descriptions:
+#             RoomDescription.objects.create(room=room, **desc)
+#         room.save()
+
+
+def run_room():
     for entry in room_entries:
-        amenities = entry.pop('amenities', [])
-        descriptions = entry.pop('descriptions', [])
-        room = Room.objects.create(**entry)
-        for amenity_name in amenities:
-            amenity, created = Amenity.objects.get_or_create(name=amenity_name)
-            room.amenities.add(amenity)
-        for desc in descriptions:
-            RoomDescription.objects.create(room=room, **desc)
-        room.save()
+        amenities = list(entry.get('amenities', []))
+        descriptions = list(entry.get('descriptions', []))
+
+        room_defaults = {
+            'description': entry['description'],
+            'price': entry['price'],
+            'image': entry['image'],
+            'available': entry['available'],
+            'max_guests': entry['max_guests'],
+            'stars': entry['stars'],
+            'beds': entry['beds'],
+            'dimensions': entry['dimensions'],
+        }
+        room, created = Room.objects.update_or_create(
+            name=entry['name'],
+            defaults=room_defaults
+        )
+        print((" created " if created else "↺ updated ") + f"room: {room.name}")
+
+        if amenities:
+            amenity_objs = []
+            for amenity_name in amenities:
+                a, _ = Amenity.objects.get_or_create(name=amenity_name)
+                amenity_objs.append(a)
+            room.amenities.set(amenity_objs)
+
+        for d in descriptions:
+            RoomDescription.objects.update_or_create(
+                room=room,
+                title=d['title'],
+                defaults={'content': d['content']}
+            )
 
 
 
 #region imageRoom
 #!imageRoom
 
-room_images_entries = {
-    1: ['rooms/standard.jpg', 'rooms/standard.jpg'],
-    2: ['rooms/deluxeroom.jpg', 'rooms/deluxeroom.jpg'],
-    3: ['rooms/luxury.jpg', 'rooms/luxury.jpg'],
-    4: ['rooms/superior.jpg', 'rooms/superior.jpg'],
-    5: ['rooms/fam.jpg', 'rooms/fam.jpg'],
-    6: ['rooms/deluxefam.jpg', 'rooms/deluxefam.jpg'],
-    7: ['rooms/suite.jpg', 'rooms/suite.jpg'],
-    8: ['rooms/doublesuite.jpg', 'rooms/doublesuite.jpg']
+# room_images_entries = {
+#     1: ['rooms/standard.jpg', 'rooms/standard.jpg'],
+#     2: ['rooms/deluxeroom.jpg', 'rooms/deluxeroom.jpg'],
+#     3: ['rooms/luxury.jpg', 'rooms/luxury.jpg'],
+#     4: ['rooms/superior.jpg', 'rooms/superior.jpg'],
+#     5: ['rooms/fam.jpg', 'rooms/fam.jpg'],
+#     6: ['rooms/deluxefam.jpg', 'rooms/deluxefam.jpg'],
+#     7: ['rooms/suite.jpg', 'rooms/suite.jpg'],
+#     8: ['rooms/doublesuite.jpg', 'rooms/doublesuite.jpg']
+# }
+
+room_images_by_room = {
+    'Standard Room': ['rooms/standard.jpg', 'rooms/standard.jpg'],
+    'Deluxe Room': ['rooms/deluxeroom.jpg', 'rooms/deluxeroom.jpg'],
+    'Luxury Room': ['rooms/luxury.jpg', 'rooms/luxury.jpg'],
+    'Superior Bed Room': ['rooms/superior.jpg', 'rooms/superior.jpg'],
+    'Family Room': ['rooms/fam.jpg', 'rooms/fam.jpg'],
+    'Deluxe Family Room': ['rooms/deluxefam.jpg', 'rooms/deluxefam.jpg'],
+    'Suite Room': ['rooms/suite.jpg', 'rooms/suite.jpg'],
+    'Double Suite Room': ['rooms/doublesuite.jpg', 'rooms/doublesuite.jpg'],
 }
 
+# def run_room_image():
+#     seeder = Seed.seeder()
+
+#     for room_id, images in room_images_entries.items():
+#         try:
+#             room = Room.objects.get(id=room_id)
+#             for img in images:
+#                 seeder.add_entity(RoomImage, 1, {
+#                     'room': lambda x: room,
+#                     'image': lambda x: img,
+#                 })
+#         except Room.DoesNotExist:
+#             print(f"Room with ID {room_id} does not exist.")
+
+#     pks = seeder.execute()
+#     print(pks)
+
 def run_room_image():
-    seeder = Seed.seeder()
-
-    for room_id, images in room_images_entries.items():
+    for room_name, images in room_images_by_room.items():
         try:
-            room = Room.objects.get(id=room_id)
-            for img in images:
-                seeder.add_entity(RoomImage, 1, {
-                    'room': lambda x: room,
-                    'image': lambda x: img,
-                })
+            room = Room.objects.get(name=room_name)
         except Room.DoesNotExist:
-            print(f"Room with ID {room_id} does not exist.")
+            print(f"Room '{room_name}' not found for images.")
+            continue
+        for img in images:
+            RoomImage.objects.get_or_create(room=room, image=img)
+    print("room images upserted")
 
-    pks = seeder.execute()
-    print(pks)
+
+
 
 
 #region offers
@@ -992,23 +1197,50 @@ offer_entries = [
     },
 ]
 
-def run_offers():
-    rooms = list(Room.objects.all())
-    if not rooms:
-        print("No rooms found. Please verif before seeding offers.")
-        return
+# def run_offers():
+#     rooms = list(Room.objects.all())
+#     if not rooms:
+#         print("No rooms found. Please verif before seeding offers.")
+#         return
 
-    for entry in offer_entries:
-        random_room = random.choice(rooms)
-        offer = Offer(
-            room=random_room,
-            discount_percentage=entry['discount_percentage'],
-            start_date=entry['start_date'],
-            end_date=entry['end_date'],
-            is_active=entry['is_active']
+#     for entry in offer_entries:
+#         random_room = random.choice(rooms)
+#         offer = Offer(
+#             room=random_room,
+#             discount_percentage=entry['discount_percentage'],
+#             start_date=entry['start_date'],
+#             end_date=entry['end_date'],
+#             is_active=entry['is_active']
+#         )
+#         offer.save()
+#         print(f'Successfully seeded offer for room: {random_room.name}')
+
+
+def run_offers():
+    mapping = [
+        ('Standard Room', 10, 5),
+        ('Deluxe Room', 25, 15),
+        ('Luxury Room', 30, 20),
+        ('Suite Room', 35, 25),
+    ]
+    now = timezone.now()
+    for room_name, pct, days in mapping:
+        try:
+            room = Room.objects.get(name=room_name)
+        except Room.DoesNotExist:
+            print(f"Offer skipped, room '{room_name}' missing.")
+            continue
+
+        start = now
+        end = now + timedelta(days=days)
+        obj, created = Offer.objects.update_or_create(
+            room=room,
+            discount_percentage=pct,
+            defaults={'start_date': start, 'end_date': end, 'is_active': True}
         )
-        offer.save()
-        print(f'Successfully seeded offer for room: {random_room.name}')
+        print((" created " if created else "↺ updated ") + f"offer for {room.name}")
+
+
 
 
 
@@ -1081,12 +1313,30 @@ members_entries = [
 
 
 
+# def runMembers():
+#     seeder = Seed.seeder()
+#     for entry in members_entries:
+#         seeder.add_entity(Member, 1, entry)
+#     pks = seeder.execute()
+#     print(pks)
+
+
 def runMembers():
-    seeder = Seed.seeder()
     for entry in members_entries:
-        seeder.add_entity(Member, 1, entry)
-    pks = seeder.execute()
-    print(pks)
+        obj, created = Member.objects.update_or_create(
+            email=entry['email'],
+            defaults={
+                'name': entry['name'],
+                'position': entry['position'],
+                'image': entry.get('image'),
+                'is_designated': entry.get('is_designated', False),
+                'facebook': entry.get('facebook'),
+                'twitter': entry.get('twitter'),
+                'linkedin': entry.get('linkedin'),
+            }
+        )
+        print((" created " if created else "↺ updated ") + f"member: {obj.email}")
+
 
 
 
@@ -1143,17 +1393,34 @@ page_banners = [
     },
 ]
 
-def run_banners():
-    seeder = Seed.seeder()
+# def run_banners():
+#     seeder = Seed.seeder()
 
+#     for banner in home_banners:
+#         seeder.add_entity(HomeBanner, 1, banner)
+
+#     for banner in page_banners:
+#         seeder.add_entity(PageBanner, 1, banner)
+
+#     pks = seeder.execute()
+#     print(pks)
+
+
+def run_banners():
     for banner in home_banners:
-        seeder.add_entity(HomeBanner, 1, banner)
+        obj, created = HomeBanner.objects.update_or_create(
+            title=banner['title'],
+            defaults={'image': banner['image'], 'stars': banner['stars'], 'order': banner['order']}
+        )
+        print(("✅ created " if created else "↺ updated ") + f"home banner: {obj.title}")
 
     for banner in page_banners:
-        seeder.add_entity(PageBanner, 1, banner)
+        obj, created = PageBanner.objects.update_or_create(
+            page_name=banner['page_name'],
+            defaults={'title': banner['title'], 'image': banner['image']}
+        )
+        print((" created " if created else "↺ updated ") + f"page banner: {obj.page_name}")
 
-    pks = seeder.execute()
-    print(pks)
 
 
 
@@ -1161,28 +1428,28 @@ def run_banners():
 #region Hotel
 #!hotel
 
-def run_hotel():
-    seeder = Seed.seeder()
 
-    total_rooms = Room.objects.count()
+def run_hotel():
+    total_rooms = Room.objects.count() or 0
     room_avg_rating = Room.objects.aggregate(Avg('stars'))['stars__avg'] or 0
     testimonial_avg_rating = Testimonial.objects.aggregate(Avg('rating'))['rating__avg'] or 0
 
-    if total_rooms > 0:
-        overall_rating = (room_avg_rating + testimonial_avg_rating) / 2
-    else:
-        overall_rating = 0
+    try:
+        overall_rating = float((room_avg_rating + testimonial_avg_rating) / 2)
+    except TypeError:
+        overall_rating = 0.0
 
-    seeder.add_entity(Hotel, 1, {
-        'title': 'LUXURY BEST HOTEL IN CITY CALIFORNIA, USA',
-        'subtitle': 'LUXURY HOTEL AND RESORT',
-        'description': 'Rapidiously myocardinate cross-platform intellectual capital after marketing model. Appropriately create interactive infrastructures after maintainable are Holisticly facilitate stand-alone inframe Compellingly create premier open data through economically.',
-        'image': 'hotel/hotel.jpg',
-        'room_count': total_rooms,
-        'customer_rating': overall_rating,
-    })
-
-    seeder.execute()
+    Hotel.objects.update_or_create(
+        title='LUXURY BEST HOTEL IN CITY CALIFORNIA, USA',
+        defaults={
+            'subtitle': 'LUXURY HOTEL AND RESORT',
+            'description': 'Rapidiously myocardinate cross-platform intellectual capital after marketing model. Appropriately create interactive infrastructures after maintainable are Holisticly facilitate stand-alone inframe Compellingly create premier open data through economically.',
+            'image': 'hotel/hotel.jpg',
+            'room_count': total_rooms,
+            'customer_rating': overall_rating,
+        }
+    )
+    print(f" Hotel upserted: {total_rooms} rooms, rating={overall_rating}")
 
 
 
@@ -1223,23 +1490,49 @@ Gallery_entries = [
     },
 ]
 
+# def run_gallery():
+#     seeder = Seed.seeder()
+
+#     for entry in Gallery_entries:
+#         seeder.add_entity(Gallery, 1, entry)
+
+#     pks = seeder.execute()
+#     print(pks)
+
+
 def run_gallery():
-    seeder = Seed.seeder()
-
     for entry in Gallery_entries:
-        seeder.add_entity(Gallery, 1, entry)
+        obj, created = Gallery.objects.update_or_create(
+            image=entry['image'],
+            defaults={}
+        )
+        print((" created " if created else " updated ") + f"gallery: {obj.image}")
 
-    pks = seeder.execute()
-    print(pks)
 
 
 
 #region getintouch subjects
 #!getintouchsubjects
 
-def runSubjects():
-    seeder = Seed.seeder()
+# def runSubjects():
+#     seeder = Seed.seeder()
     
+#     subjects = [
+#         "General Inquiry",
+#         "Booking Issues",
+#         "Feedback",
+#         "Support",
+#         "Other"
+#     ]
+    
+#     for subject in subjects:
+#         seeder.add_entity(GetInTouchSubject, 1, {
+#             'subject': subject
+#         })
+#     pks = seeder.execute()
+#     print(pks)
+
+def runSubjects():
     subjects = [
         "General Inquiry",
         "Booking Issues",
@@ -1247,13 +1540,13 @@ def runSubjects():
         "Support",
         "Other"
     ]
-    
     for subject in subjects:
-        seeder.add_entity(GetInTouchSubject, 1, {
-            'subject': subject
-        })
-    pks = seeder.execute()
-    print(pks)
+        obj, created = GetInTouchSubject.objects.update_or_create(
+            subject=subject,
+            defaults={}
+        )
+        print((" created " if created else "↺ updated ") + f"subject: {obj.subject}")
+
 
 
 
@@ -1285,19 +1578,38 @@ def get_coordinates(address):
 
 
 
+# def run_contact():
+#     address = "Pl. de la Minoterie 10, 1080 Molenbeek-Saint-Jean"
+#     latitude, longitude = get_coordinates(address)
+    
+#     if latitude is not None and longitude is not None:
+#         ContactInfo.objects.create(
+#             phone="+980 (1234) 567 220",
+#             email="hotelroyella@gmail.com",
+#             address=address,
+#             latitude=latitude,
+#             longitude=longitude
+#         )
+#         print("seeded successfully!")
+#     else:
+#         print("Failed")
+
+
 def run_contact():
     address = "Pl. de la Minoterie 10, 1080 Molenbeek-Saint-Jean"
-    latitude, longitude = get_coordinates(address)
-    
-    if latitude is not None and longitude is not None:
-        ContactInfo.objects.create(
-            phone="+980 (1234) 567 220",
-            email="hotelroyella@gmail.com",
-            address=address,
-            latitude=latitude,
-            longitude=longitude
-        )
-        print("seeded successfully!")
-    else:
-        print("Failed")
+    lat, lng = get_coordinates(address)
+    if lat is None or lng is None:
+        print("Failed geocoding, contact not created.")
+        return
+    ContactInfo.objects.update_or_create(
+        email="hotelroyella@gmail.com",  
+        defaults={
+            'phone': "+980 (1234) 567 220",
+            'address': address,
+            'latitude': lat,
+            'longitude': lng
+        }
+    )
+    print(" contact upserted")
+
 
