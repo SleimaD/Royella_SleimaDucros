@@ -741,48 +741,25 @@ def create_blogs(admin_user, categories, tags):
             )
 
 def create_comments(admin_user):
-    blogs = Blog.objects.all()
+    blogs = list(Blog.objects.all())
+    if not blogs:
+        print(" No blogs found. Skipping comment seeding.")
+        return
+    
     comments_data = [
         {"content": "Great post!", "author": admin_user, "blog": blogs[0]},
-        {"content": "Very informative.", "author": admin_user, "blog": blogs[1]},
-        {"content": "I loved this place!", "author": admin_user, "blog": blogs[3]},
-        {"content": "I disagree with some points.", "author": admin_user, "blog": blogs[2]},
-        {"content": "Would love to visit here.", "author": admin_user, "blog": blogs[4]},
-        {"content": "Good tips!", "author": admin_user, "blog": blogs[5]},
-        {"content": "Thanks for sharing.", "author": admin_user, "blog": blogs[6]},
-        {"content": "Amazing destination!", "author": admin_user, "blog": blogs[0]},
-        {"content": "Great post!", "author": admin_user, "blog": blogs[1]},
-        {"content": "Very informative.", "author": admin_user, "blog": blogs[2]},
-        {"content": "I loved this place!", "author": admin_user, "blog": blogs[3]},
-        {"content": "I disagree with some points.", "author": admin_user, "blog": blogs[4]},
-        {"content": "Would love to visit here.", "author": admin_user, "blog": blogs[5]},
-        {"content": "Good tips!", "author": admin_user, "blog": blogs[6]},
-        {"content": "Thanks for sharing.", "author": admin_user, "blog": blogs[6]},
-        {"content": "Amazing destination!", "author": admin_user, "blog": blogs[3]},
+        {"content": "Very informative.", "author": admin_user, "blog": blogs[min(1, len(blogs)-1)]},
+        {"content": "I loved this place!", "author": admin_user, "blog": blogs[min(2, len(blogs)-1)]},
+        {"content": "Would love to visit here.", "author": admin_user, "blog": blogs[min(3, len(blogs)-1)]},
     ]
 
     for comment_data in comments_data:
-        qs = Comment.objects.filter(
+        Comment.objects.create(
             content=comment_data["content"],
             author=comment_data["author"],
             blog=comment_data["blog"]
-        ).order_by('id')
-        if qs.exists():
-            keep = qs.first()
-            # remove any duplicates beyond the first one
-            if qs.count() > 1:
-                Comment.objects.filter(
-                    content=comment_data["content"],
-                    author=comment_data["author"],
-                    blog=comment_data["blog"]
-                ).exclude(id=keep.id).delete()
-        else:
-            Comment.objects.create(
-                content=comment_data["content"],
-                author=comment_data["author"],
-                blog=comment_data["blog"]
-            )
-
+        )
+    print(f" Created {len(comments_data)} comments")
 
 
 #region amenity
